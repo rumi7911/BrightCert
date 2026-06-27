@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
+@theme {
+  /* Brand colours */
+  --color-navy: #0F2044;
+  --color-navy-light: #1a3366;
+  --color-navy-dark: #08152e;
+
+  /* Emerald — CTA uses #047857 (WCAG AA 5.9:1), decorative uses #059669 */
+  --color-emerald-cta: #047857;
+  --color-emerald-cta-hover: #065F46;
+  --color-emerald-DEFAULT: #059669;
+  --color-emerald-light: #ECFDF5;
+  --color-emerald-border: #A7F3D0;
+  --color-emerald-text: #065F46;
+
+  /* Slate scale */
+  --color-slate-50: #F8FAFC;
+  --color-slate-100: #F1F5F9;
+  --color-slate-200: #E2E8F0;
+  --color-slate-300: #CBD5E1;
+  --color-slate-400: #94A3B8;
+  --color-slate-500: #64748B;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+
+  /* Semantic status */
+  --color-amber-DEFAULT: #D97706;
+  --color-amber-light: #FFFBEB;
+  --color-amber-border: #FDE68A;
+  --color-amber-text: #92400E;
+
+  --color-red-DEFAULT: #DC2626;
+  --color-red-light: #FEF2F2;
+  --color-red-border: #FECACA;
+  --color-red-text: #B91C1C;
+
+  --color-blue-DEFAULT: #2563EB;
+  --color-blue-light: #EFF6FF;
+  --color-blue-border: #BFDBFE;
+  --color-blue-text: #1D4ED8;
+
+  /* Score tier colours */
+  --color-score-ready: #059669;
+  --color-score-nearly: #D97706;
+  --color-score-needs-fixes: #EA580C;
+  --color-score-not-ready: #DC2626;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Border radius */
+  --radius-btn: 8px;
+  --radius-card: 12px;
+  --radius-card-lg: 16px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #F8FAFC;
+  --foreground: #0F172A;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
