@@ -1,13 +1,38 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Sign in",
-};
+import { useState } from "react";
+import Link from "next/link";
+import { ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setSent(true);
+    }
+  }
+
   return (
     <div className="w-full max-w-md">
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8">
@@ -23,26 +48,40 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Magic link form — wired to Supabase Auth in Phase 2 */}
-        <form className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#334155] mb-1.5">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              placeholder="you@yourcompany.co.uk"
-              className="w-full h-11 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
-            />
+        {sent ? (
+          <div className="text-center py-4">
+            <CheckCircle2 className="h-10 w-10 text-[#047857] mx-auto mb-3" strokeWidth={1.5} />
+            <p className="font-semibold text-[#0F2044] mb-1">Check your inbox</p>
+            <p className="text-sm text-[#64748B]">
+              We sent a sign-in link to <strong>{email}</strong>. Click it to access your account.
+            </p>
           </div>
-          <Button type="submit" className="w-full">
-            Send magic link
-          </Button>
-        </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-[#334155] mb-1.5">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@yourcompany.co.uk"
+                className="w-full h-11 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-[#DC2626]">{error}</p>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Sending…" : "Send magic link"}
+            </Button>
+          </form>
+        )}
 
         <p className="text-center text-xs text-[#64748B] mt-6">
           No account yet?{" "}

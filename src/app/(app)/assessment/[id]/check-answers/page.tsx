@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Pencil, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SECTIONS, QUESTIONS, getSection } from "@/lib/questions";
+import { SECTIONS, QUESTIONS } from "@/lib/questions";
+import { createClient } from "@/lib/supabase/client";
 import { use } from "react";
 
 export default function CheckAnswersPage({
@@ -18,14 +19,27 @@ export default function CheckAnswersPage({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
-  // Load all answers from localStorage
   useEffect(() => {
-    const loaded: Record<string, string> = {};
-    QUESTIONS.forEach((q) => {
-      const saved = localStorage.getItem(`bc_${assessmentId}_${q.key}`);
-      if (saved) loaded[q.key] = saved;
-    });
-    setAnswers(loaded);
+    async function loadAnswers() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("responses")
+        .select("question_key, answer")
+        .eq("assessment_id", assessmentId);
+
+      const loaded: Record<string, string> = {};
+      if (data?.length) {
+        data.forEach((r) => { loaded[r.question_key] = r.answer; });
+      } else {
+        // Fall back to localStorage
+        QUESTIONS.forEach((q) => {
+          const saved = localStorage.getItem(`bc_${assessmentId}_${q.key}`);
+          if (saved) loaded[q.key] = saved;
+        });
+      }
+      setAnswers(loaded);
+    }
+    loadAnswers();
   }, [assessmentId]);
 
   const getAnswerLabel = (questionKey: string, value: string): string => {
@@ -38,11 +52,29 @@ export default function CheckAnswersPage({
   const totalQuestions = QUESTIONS.length;
   const allAnswered = answeredCount === totalQuestions;
 
+  const [submitError, setSubmitError] = useState("");
+
   const handleSubmit = async () => {
     setSubmitting(true);
-    // Phase 2: save responses to Supabase then call /api/assessment/analyze
-    // For now, redirect to results page
-    router.push(`/assessment/${assessmentId}/results`);
+    setSubmitError("");
+
+    try {
+      const res = await fetch("/api/assessment/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assessmentId }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Analysis failed. Please try again.");
+      }
+
+      router.push(`/assessment/${assessmentId}/results`);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -118,21 +150,29 @@ export default function CheckAnswersPage({
         <p className="text-xs text-[#64748B] mb-5">
           You can unlock the full readiness report for £199 after reviewing your score.
         </p>
+        {submitError && (
+          <p className="text-sm text-[#DC2626] mb-4">{submitError}</p>
+        )}
         <Button
           onClick={handleSubmit}
-          disabled={!allAnswered || submitting}
+          disabled={submitting}
           size="lg"
           className="w-full sm:w-auto"
         >
           {submitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Analysing your responses...
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              Analysing your responses…
             </>
           ) : (
             "Submit Assessment"
           )}
         </Button>
+        {submitting && (
+          <p className="text-xs text-[#64748B] mt-3">
+            Our AI is reviewing all five control areas — this takes around 15–30 seconds.
+          </p>
+        )}
       </div>
     </div>
   );

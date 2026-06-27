@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   ClipboardList,
@@ -12,6 +13,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Start Assessment" };
 
@@ -32,16 +34,40 @@ const prepItems = [
   "Software update processes",
 ];
 
+async function createAssessment() {
+  "use server";
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.org_id) redirect("/login");
+
+  const { data: assessment, error } = await supabase
+    .from("assessments")
+    .insert({ org_id: profile.org_id, status: "draft" })
+    .select("id")
+    .single();
+
+  if (error || !assessment) redirect("/dashboard");
+
+  redirect(`/assessment/${assessment.id}/section/1?q=1`);
+}
+
 export default function AssessmentNewPage() {
   return (
     <div className="max-w-2xl">
-      {/* Back link */}
       <Link href="/dashboard" className="text-sm text-[#64748B] hover:text-[#0F2044] mb-6 inline-flex items-center gap-1">
         ← Back to dashboard
       </Link>
 
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 mt-4">
-        {/* Header */}
         <div className="flex items-start gap-4 mb-6">
           <div className="h-12 w-12 rounded-[12px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
             <ClipboardList className="h-6 w-6 text-[#047857]" strokeWidth={1.5} />
@@ -56,18 +82,15 @@ export default function AssessmentNewPage() {
           </div>
         </div>
 
-        {/* Intro */}
         <p className="text-sm text-[#475569] leading-relaxed mb-6">
           You will answer questions across five areas: firewalls, secure configuration, user access, malware protection, and security updates.
         </p>
 
-        {/* Time estimate */}
         <div className="flex items-center gap-2 text-sm text-[#475569] mb-6 p-3 rounded-[8px] bg-[#F8FAFC] border border-[#E2E8F0]">
           <Clock className="h-4 w-4 text-[#64748B]" strokeWidth={1.5} />
           <span><strong className="text-[#0F2044]">Time estimate:</strong> Most businesses can complete the assessment in around 2 hours.</span>
         </div>
 
-        {/* Five areas */}
         <div className="mb-6">
           <p className="text-sm font-semibold text-[#0F2044] mb-3">The assessment covers five control areas:</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -82,7 +105,6 @@ export default function AssessmentNewPage() {
           </div>
         </div>
 
-        {/* Prep items */}
         <div className="mb-8">
           <p className="text-sm font-semibold text-[#0F2044] mb-3">Before you start — you may find it helpful to have:</p>
           <ul className="space-y-1.5">
@@ -95,7 +117,6 @@ export default function AssessmentNewPage() {
           </ul>
         </div>
 
-        {/* What happens next */}
         <div className="rounded-[8px] bg-[#ECFDF5] border border-[#A7F3D0] p-4 mb-8">
           <div className="flex items-start gap-2">
             <FileText className="h-4 w-4 text-[#047857] shrink-0 mt-0.5" strokeWidth={1.5} />
@@ -105,11 +126,11 @@ export default function AssessmentNewPage() {
           </div>
         </div>
 
-        {/* CTA */}
-        {/* In Phase 2 this will be a form action that creates an assessment in Supabase */}
-        <Button asChild size="lg" className="w-full">
-          <Link href="/assessment/demo/section/1?q=1">Begin Assessment</Link>
-        </Button>
+        <form action={createAssessment}>
+          <Button type="submit" size="lg" className="w-full">
+            Begin Assessment
+          </Button>
+        </form>
       </div>
     </div>
   );

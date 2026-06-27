@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getQuestionsBySection, getSection } from "@/lib/questions";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
-// Async params are awaited at the page level in Next.js 16
-// This must be a client component to use useSearchParams
 export default function QuestionPage({
   params,
 }: {
@@ -29,12 +28,31 @@ export default function QuestionPage({
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [whyOpen, setWhyOpen] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Load saved answer from localStorage
+  const loadSavedAnswer = useCallback(async () => {
+    if (!question) return;
+    // Try Supabase first, fall back to localStorage
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("responses")
+      .select("answer")
+      .eq("assessment_id", assessmentId)
+      .eq("question_key", question.key)
+      .single();
+
+    if (data?.answer) {
+      setSelectedAnswer(data.answer);
+    } else {
+      const saved = localStorage.getItem(`bc_${assessmentId}_${question.key}`);
+      if (saved) setSelectedAnswer(saved);
+    }
+  }, [assessmentId, question]);
+
   useEffect(() => {
-    const saved = localStorage.getItem(`bc_${assessmentId}_${question?.key}`);
-    if (saved) setSelectedAnswer(saved);
-  }, [assessmentId, question?.key]);
+    setSelectedAnswer("");
+    loadSavedAnswer();
+  }, [loadSavedAnswer]);
 
   if (!section || !question) {
     return (
@@ -51,18 +69,29 @@ export default function QuestionPage({
   const currentNumber = questionIndex + 1;
   const isLast = questionIndex === totalInSection - 1;
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedAnswer) {
       setHasError(true);
       return;
     }
     setHasError(false);
+    setSaving(true);
 
-    // Save to localStorage (migrated to Supabase in Phase 2)
+    // Save to localStorage immediately for resilience
     localStorage.setItem(`bc_${assessmentId}_${question.key}`, selectedAnswer);
 
+    // Save to Supabase
+    const supabase = createClient();
+    await supabase.from("responses").upsert({
+      assessment_id: assessmentId,
+      section_id: sectionId,
+      question_key: question.key,
+      answer: selectedAnswer,
+    }, { onConflict: "assessment_id,question_key" });
+
+    setSaving(false);
+
     if (isLast) {
-      // Move to next section or check answers
       if (sectionId < 5) {
         router.push(`/assessment/${assessmentId}/section/${sectionId + 1}?q=1`);
       } else {
@@ -88,7 +117,6 @@ export default function QuestionPage({
 
   return (
     <div className="max-w-2xl">
-      {/* Back link */}
       <button
         onClick={handleBack}
         className="text-sm text-[#64748B] hover:text-[#0F2044] mb-8 inline-flex items-center gap-1"
@@ -96,7 +124,6 @@ export default function QuestionPage({
         ← Back
       </button>
 
-      {/* Progress */}
       <div className="flex items-center justify-between mb-6">
         <p className="text-xs font-semibold text-[#047857] uppercase tracking-wider">
           {section.title}
@@ -106,7 +133,6 @@ export default function QuestionPage({
         </p>
       </div>
 
-      {/* Question */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#0F2044] mb-2 leading-snug">
           {question.text}
@@ -116,15 +142,13 @@ export default function QuestionPage({
         )}
       </div>
 
-      {/* Error message */}
       {hasError && (
         <div className="rounded-[8px] border border-[#FECACA] bg-[#FEF2F2] p-3 mb-4">
           <p className="text-sm text-[#B91C1C] font-medium">Select an answer to continue</p>
         </div>
       )}
 
-      {/* Answer options */}
-      <div className="space-y-2 mb-8" role="radiogroup" aria-labelledby="question-label">
+      <div className="space-y-2 mb-8" role="radiogroup">
         {question.options.map((option) => {
           const isSelected = selectedAnswer === option.value;
           return (
@@ -164,7 +188,6 @@ export default function QuestionPage({
         })}
       </div>
 
-      {/* Why we ask — collapsible */}
       <div className="rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] mb-8 overflow-hidden">
         <button
           onClick={() => setWhyOpen(!whyOpen)}
@@ -187,12 +210,9 @@ export default function QuestionPage({
         )}
       </div>
 
-      {/* Continue button */}
-      <div className="flex gap-3">
-        <Button onClick={handleContinue} size="lg" className="min-w-[140px]">
-          {isLast && sectionId === 5 ? "Check your answers" : "Continue"}
-        </Button>
-      </div>
+      <Button onClick={handleContinue} size="lg" className="min-w-[140px]" disabled={saving}>
+        {saving ? "Saving…" : isLast && sectionId === 5 ? "Check your answers" : "Continue"}
+      </Button>
     </div>
   );
 }
