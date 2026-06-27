@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, ShieldCheck } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -19,9 +20,8 @@ export function Navbar() {
     <header className="sticky top-0 z-50 h-16 bg-white border-b border-[#E2E8F0]">
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-[#0F2044] text-lg">
-          <ShieldCheck className="h-6 w-6 text-[#047857]" strokeWidth={1.5} />
-          BrightCert
+        <Link href="/" className="flex items-center">
+          <Image src="/logo.png" alt="BrightCert" width={148} height={44} priority className="h-9 w-auto" />
         </Link>
 
         {/* Desktop nav */}

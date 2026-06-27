@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
 const footerColumns = [
   {
@@ -39,9 +39,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 font-bold text-lg mb-3">
-              <ShieldCheck className="h-5 w-5 text-[#059669]" strokeWidth={1.5} />
-              BrightCert
+            <div className="mb-3">
+              <div className="inline-flex items-center justify-center h-10 w-10 rounded-[10px] bg-white/10">
+                <Image src="/logo-icon.png" alt="BrightCert" width={32} height={32} className="h-7 w-7 object-contain" />
+              </div>
+              <span className="ml-2 font-bold text-lg align-middle">BrightCert</span>
             </div>
             <p className="text-sm text-[#94A3B8] leading-relaxed">
               BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports.

@@ -8,6 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://brightcert.co.uk"),
   title: {
     default: "BrightCert — Cyber Essentials Readiness for UK SMEs",
     template: "%s | BrightCert",
@@ -23,6 +24,13 @@ export const metadata: Metadata = {
     title: "BrightCert — Cyber Essentials Readiness for UK SMEs",
     description:
       "Guided Cyber Essentials readiness assessment, gap analysis, and remediation reports for UK businesses.",
+    images: [{ url: "/logo.png", width: 1270, height: 630, alt: "BrightCert" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BrightCert — Cyber Essentials Readiness for UK SMEs",
+    description: "Guided Cyber Essentials readiness assessment for UK businesses.",
+    images: ["/logo.png"],
   },
 };
 
