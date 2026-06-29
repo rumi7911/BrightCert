@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { uploadReport } from "@/lib/gcs/upload";
 
 export const maxDuration = 60; // PDF generation can take up to 60 seconds
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "assessmentId is required" }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Check assessment is paid
     const { data: assessment, error: assessmentError } = await supabase

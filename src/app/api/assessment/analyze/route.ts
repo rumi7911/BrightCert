@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeAssessment } from "@/lib/gemini/analyze";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { getOverallStatus } from "@/types/assessment";
 
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "assessmentId is required" }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Check if already analysed
     const { data: existingScores } = await supabase

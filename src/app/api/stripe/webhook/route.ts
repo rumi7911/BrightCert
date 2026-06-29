@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe/client";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Mark assessment as paid
     const { error } = await supabase
