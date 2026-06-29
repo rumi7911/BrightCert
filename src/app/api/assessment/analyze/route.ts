@@ -70,13 +70,14 @@ export async function POST(request: NextRequest) {
       throw new Error(`Failed to save scores: ${scoresError.message}`);
     }
 
-    // Update assessment overall score
+    // Update assessment overall score + summary
     const overallStatus = getOverallStatus(result.overallScore);
     await supabase
       .from("assessments")
       .update({
         overall_score: result.overallScore,
         overall_status: overallStatus,
+        executive_summary: result.executiveSummary,
         status: "analysed",
         submitted_at: new Date().toISOString(),
       })
