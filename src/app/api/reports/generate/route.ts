@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { uploadReport } from "@/lib/gcs/upload";
+import { sendReportReadyEmail } from "@/lib/resend/emails";
 
 export const maxDuration = 60; // PDF generation can take up to 60 seconds
 
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
     // Check assessment is paid
     const { data: assessment, error: assessmentError } = await supabase
       .from("assessments")
-      .select("id, status, overall_score, overall_status, organisations(name)")
+      .select("id, org_id, status, overall_score, overall_status, organisations(name)")
       .eq("id", assessmentId)
       .single();
 
@@ -80,6 +81,26 @@ export async function POST(request: NextRequest) {
       assessment_id: assessmentId,
       gcs_url: gcsUrl,
     });
+
+    // Send report-ready email (fire-and-forget)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("org_id", assessment.org_id)
+      .limit(1)
+      .single();
+
+    if (profile) {
+      const { data: authUser } = await supabase.auth.admin.getUserById(profile.id);
+      if (authUser?.user?.email) {
+        sendReportReadyEmail(
+          authUser.user.email,
+          orgName,
+          gcsUrl,
+          assessment.overall_score ?? 0,
+        ).catch((err) => console.error("Report-ready email failed:", err));
+      }
+    }
 
     return NextResponse.json({ url: gcsUrl });
   } catch (error) {

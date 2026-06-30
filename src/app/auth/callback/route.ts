@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendWelcomeEmail } from "@/lib/resend/emails";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -42,6 +43,10 @@ export async function GET(request: Request) {
         org_id: org.id,
         role: "owner",
       });
+      // Fire-and-forget — don't block the redirect on email delivery
+      sendWelcomeEmail(user.email!, orgName).catch((err) =>
+        console.error("Welcome email failed:", err)
+      );
     }
   }
 
