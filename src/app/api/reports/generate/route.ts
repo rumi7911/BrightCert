@@ -30,12 +30,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Assessment not paid" }, { status: 403 });
     }
 
-    // Check if report already exists
+    // Check if a report already exists — tolerate duplicates (pick newest) so a
+    // second concurrent trigger short-circuits instead of generating again.
     const { data: existingReport } = await supabase
       .from("reports")
       .select("gcs_url")
       .eq("assessment_id", assessmentId)
-      .single();
+      .order("generated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (existingReport) {
       return NextResponse.json({ url: existingReport.gcs_url });

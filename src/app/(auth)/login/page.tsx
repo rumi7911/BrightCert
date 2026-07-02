@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GoogleButton } from "@/components/brightcert/google-button";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -11,6 +12,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+
+  // Surface auth errors passed back from /auth/callback (e.g. expired link)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    if (err) setError(err);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,7 +65,14 @@ export default function LoginPage() {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <>
+            <GoogleButton label="Sign in with Google" />
+            <div className="flex items-center gap-3 my-4">
+              <div className="h-px flex-1 bg-[#E2E8F0]" />
+              <span className="text-xs text-[#94A3B8]">or</span>
+              <div className="h-px flex-1 bg-[#E2E8F0]" />
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[#334155] mb-1.5">
                 Email address
@@ -80,7 +95,8 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Sending…" : "Send magic link"}
             </Button>
-          </form>
+            </form>
+          </>
         )}
 
         <p className="text-center text-xs text-[#64748B] mt-6">

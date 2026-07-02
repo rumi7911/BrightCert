@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
@@ -12,13 +12,13 @@ import { cn } from "@/lib/utils";
 export default function QuestionPage({
   params,
 }: {
-  params: { id: string; sectionId: string };
+  params: Promise<{ id: string; sectionId: string }>;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const assessmentId = params.id;
-  const sectionId = parseInt(params.sectionId, 10);
+  const { id: assessmentId, sectionId: sectionIdParam } = use(params);
+  const sectionId = parseInt(sectionIdParam, 10);
   const questionIndex = parseInt(searchParams.get("q") ?? "1", 10) - 1;
 
   const section = getSection(sectionId);

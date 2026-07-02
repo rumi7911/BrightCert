@@ -61,6 +61,8 @@ export default async function ReportPage({
     .from("reports")
     .select("gcs_url")
     .eq("assessment_id", assessmentId)
+    .order("generated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   // If no report yet, kick off generation (idempotent — route checks for existing report)

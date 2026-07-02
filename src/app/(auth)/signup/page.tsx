@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GoogleButton } from "@/components/brightcert/google-button";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
@@ -61,7 +62,14 @@ export default function SignupPage() {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <>
+            <GoogleButton label="Sign up with Google" />
+            <div className="flex items-center gap-3 my-4">
+              <div className="h-px flex-1 bg-[#E2E8F0]" />
+              <span className="text-xs text-[#94A3B8]">or</span>
+              <div className="h-px flex-1 bg-[#E2E8F0]" />
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="org-name" className="block text-sm font-medium text-[#334155] mb-1.5">
                 Organisation name
@@ -99,7 +107,8 @@ export default function SignupPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Sending…" : "Create account & start assessment"}
             </Button>
-          </form>
+            </form>
+          </>
         )}
 
         <p className="text-center text-xs text-[#64748B] mt-6">

@@ -13,10 +13,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/settings" className="text-sm text-[#64748B] hover:text-[#0F2044]">Settings</Link>
-          <Link href="/login" className="text-sm text-[#64748B] hover:text-[#0F2044] flex items-center gap-1">
-            <LogOut className="h-4 w-4" strokeWidth={1.5} />
-            Sign out
-          </Link>
+          <form action="/auth/signout" method="post">
+            <button
+              type="submit"
+              className="text-sm text-[#64748B] hover:text-[#0F2044] flex items-center gap-1 cursor-pointer"
+            >
+              <LogOut className="h-4 w-4" strokeWidth={1.5} />
+              Sign out
+            </button>
+          </form>
         </div>
       </header>
 
