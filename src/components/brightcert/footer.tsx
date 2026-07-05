@@ -17,14 +17,12 @@ const footerColumns = [
     links: [
       { href: "/how-it-works", label: "Cyber Essentials readiness" },
       { href: "/#what-we-check", label: "The five control areas" },
-      { href: "/how-it-works#preparing", label: "Preparing for certification" },
-      { href: "/faq", label: "FAQs" },
+      { href: "/#faq", label: "FAQs" },
     ],
   },
   {
     heading: "Company",
     links: [
-      { href: "/about", label: "About BrightCert" },
       { href: "mailto:hello@brightcert.co.uk", label: "Contact" },
       { href: "/privacy", label: "Privacy Policy" },
       { href: "/terms", label: "Terms" },

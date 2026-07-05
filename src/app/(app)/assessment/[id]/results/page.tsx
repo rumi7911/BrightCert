@@ -23,7 +23,7 @@ function ControlCard({ control }: { control: ControlScore }) {
   const Icon = statusConfig.icon;
 
   return (
-    <div className="rounded-[12px] border border-[#E2E8F0] bg-white">
+    <div className="rounded-[12px] border border-[#E2E8F0] bg-white shadow-[0_1px_3px_rgba(15,32,68,0.05)] transition-all duration-200 hover:shadow-[0_8px_24px_-8px_rgba(15,32,68,0.12)]">
       <details>
         <summary className="flex items-center justify-between p-5 cursor-pointer list-none">
           <div className="flex items-center gap-3">
@@ -136,11 +136,11 @@ export default async function ResultsPage({
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold text-[#0F2044] mb-1">Your readiness results</h1>
+      <h1 className="text-3xl font-bold text-[#0F2044] mb-1">Your readiness results</h1>
       <p className="text-sm text-[#64748B] mb-6">Based on your assessment responses</p>
 
       {/* Score summary */}
-      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-6 mb-5">
+      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-6 mb-5 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.1)]">
         <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
           <ScoreCircle score={overallScore} size="lg" />
           <div className="flex-1 text-center sm:text-left">
@@ -184,7 +184,7 @@ export default async function ResultsPage({
       )}
 
       {/* Report lock card */}
-      <div className="rounded-[16px] border-2 border-[#047857] bg-white p-6">
+      <div className="rounded-[16px] border-2 border-[#047857] bg-white p-6 shadow-[0_16px_40px_-12px_rgba(4,120,87,0.25)]">
         <div className="flex items-start gap-4 mb-5">
           <div className="h-10 w-10 rounded-[10px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
             <Lock className="h-5 w-5 text-[#047857]" strokeWidth={1.5} />

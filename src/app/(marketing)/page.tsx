@@ -19,18 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { Reveal } from "@/components/brightcert/reveal";
-
-// ─── Section eyebrow ──────────────────────────────────────────────────────────
-function Eyebrow({ children, center = false, light = false }: { children: React.ReactNode; center?: boolean; light?: boolean }) {
-  const tone = light ? "text-[#6EE7B7]" : "text-[#047857]";
-  const dash = light ? "bg-[#6EE7B7]" : "bg-[#047857]";
-  return (
-    <p className={`flex items-center gap-2 text-xs font-bold ${tone} uppercase tracking-widest mb-4 ${center ? "justify-center" : ""}`}>
-      <span className={`h-px w-6 ${dash}`} aria-hidden />
-      {children}
-    </p>
-  );
-}
+import { Eyebrow } from "@/components/brightcert/eyebrow";
 
 // ─── Control area card ────────────────────────────────────────────────────────
 function ControlCard({
@@ -924,7 +913,7 @@ export default function HomePage() {
       </section>
 
       {/* ── 13. FAQ ─────────────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28" aria-labelledby="faq-heading">
+      <section id="faq" className="py-20 md:py-28" aria-labelledby="faq-heading">
         <div className="max-w-3xl mx-auto px-4">
           <Reveal className="mb-10">
             <Eyebrow>FAQs</Eyebrow>

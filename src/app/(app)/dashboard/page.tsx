@@ -92,7 +92,7 @@ export default async function DashboardPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#0F2044]">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-[#0F2044]">Dashboard</h1>
           <p className="text-sm text-[#64748B] mt-1">Your Cyber Essentials readiness overview</p>
         </div>
         <Button asChild size="sm">
@@ -106,11 +106,11 @@ export default async function DashboardPage() {
       {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         {/* Score */}
-        <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 flex items-center gap-4">
+        <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 flex items-center gap-4 shadow-[0_1px_3px_rgba(15,32,68,0.05)] transition-all duration-200 hover:shadow-[0_8px_24px_-8px_rgba(15,32,68,0.15)]">
           <ScoreCircle score={latest.overall_score ?? 0} size="sm" />
           <div>
             <p className="text-xs text-[#64748B] mb-0.5">Current readiness</p>
-            <p className="text-2xl font-bold text-[#0F2044]">
+            <p className="font-display text-3xl font-bold text-[#0F2044] tabular-nums">
               {latest.overall_score != null ? `${latest.overall_score}%` : "–"}
             </p>
             {latest.overall_status && (
@@ -122,12 +122,12 @@ export default async function DashboardPage() {
         </div>
 
         {/* P1 actions */}
-        <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5">
+        <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)] transition-all duration-200 hover:shadow-[0_8px_24px_-8px_rgba(15,32,68,0.15)]">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="h-4 w-4 text-[#DC2626]" strokeWidth={1.5} />
             <span className="text-xs text-[#64748B]">Open P1 actions</span>
           </div>
-          <p className="text-2xl font-bold text-[#0F2044]">{p1Count > 0 ? p1Count : "–"}</p>
+          <p className="font-display text-3xl font-bold text-[#0F2044] tabular-nums">{p1Count > 0 ? p1Count : "–"}</p>
           {p1Count > 0 && (
             <p className="text-xs text-[#64748B] mt-0.5">Must fix before applying</p>
           )}
@@ -137,12 +137,12 @@ export default async function DashboardPage() {
         </div>
 
         {/* Reports */}
-        <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5">
+        <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)] transition-all duration-200 hover:shadow-[0_8px_24px_-8px_rgba(15,32,68,0.15)]">
           <div className="flex items-center gap-2 mb-2">
             <FileText className="h-4 w-4 text-[#047857]" strokeWidth={1.5} />
             <span className="text-xs text-[#64748B]">Reports</span>
           </div>
-          <p className="text-2xl font-bold text-[#0F2044]">{paidIds.length}</p>
+          <p className="font-display text-3xl font-bold text-[#0F2044] tabular-nums">{paidIds.length}</p>
           <p className="text-xs text-[#64748B] mt-0.5">
             {paidIds.length === 0 ? "Unlock from results page" : `${paidIds.length} unlocked`}
           </p>
@@ -150,8 +150,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* Assessment history */}
-      <h2 className="text-base font-semibold text-[#0F2044] mb-3">Assessment history</h2>
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
+      <h2 className="text-lg font-semibold text-[#0F2044] mb-3">Assessment history</h2>
+      <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9] shadow-[0_1px_3px_rgba(15,32,68,0.05)]">
         {assessments.map((a) => {
           const reportUrl = reportMap[a.id];
           const date = new Date(a.created_at).toLocaleDateString("en-GB", {

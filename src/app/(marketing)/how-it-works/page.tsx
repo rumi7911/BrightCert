@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Wifi, Settings, Users, Bug, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
+import { Eyebrow } from "@/components/brightcert/eyebrow";
+import { Reveal } from "@/components/brightcert/reveal";
 
 export const metadata: Metadata = {
   title: "How It Works",
@@ -19,14 +21,19 @@ const controlAreas = [
 
 export default function HowItWorksPage() {
   return (
-    <div className="bg-[#F8FAFC] py-16 md:py-20">
+    <div className="bg-[#F8FAFC] py-20 md:py-28">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-[#0F2044] mb-4">Cyber Essentials preparation, step by step</h1>
-        <p className="text-lg text-[#475569] mb-12 leading-relaxed">
-          BrightCert gives UK SMEs a clear way to prepare for Cyber Essentials before applying for official certification. Instead of starting with uncertainty, you start with a guided assessment.
-        </p>
+        <Reveal className="max-w-2xl mb-16">
+          <Eyebrow>How It Works</Eyebrow>
+          <h1 className="text-4xl md:text-5xl font-bold text-[#0F2044] mb-5 leading-tight">
+            Cyber Essentials preparation, step by step
+          </h1>
+          <p className="text-lg text-[#475569] leading-relaxed">
+            BrightCert gives UK SMEs a clear way to prepare for Cyber Essentials before applying for official certification. Instead of starting with uncertainty, you start with a guided assessment.
+          </p>
+        </Reveal>
 
-        <div className="space-y-10 mb-16">
+        <div className="space-y-14 mb-20">
           {[
             {
               step: "01",
@@ -38,11 +45,11 @@ export default function HowItWorksPage() {
               title: "Answer questions across five control areas",
               body: "The assessment is split into the five Cyber Essentials control areas. Each section is designed to be clear and manageable. You can work through the questions in order and see your progress as you go.",
               extra: (
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {controlAreas.map(({ icon: Icon, title }, idx) => (
-                    <div key={title} className="flex items-center gap-2 text-sm text-[#475569]">
-                      <div className="h-6 w-6 rounded-[6px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
-                        <Icon className="h-3.5 w-3.5 text-[#047857]" strokeWidth={1.5} />
+                    <div key={title} className="flex items-center gap-2.5 text-sm text-[#475569] rounded-[8px] border border-[#E2E8F0] bg-white px-3 py-2.5">
+                      <div className="h-7 w-7 rounded-[6px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
+                        <Icon className="h-4 w-4 text-[#047857]" strokeWidth={1.5} />
                       </div>
                       {idx + 1}. {title}
                     </div>
@@ -66,22 +73,24 @@ export default function HowItWorksPage() {
               body: "Your full report gives you a structured action plan that can be shared internally, reviewed with your IT provider, or used to support your preparation before applying through a Certification Body.",
             },
           ].map((item) => (
-            <div key={item.step} className="flex gap-6">
-              <div className="text-4xl font-bold text-[#E2E8F0] shrink-0 w-12 text-center">{item.step}</div>
-              <div className="flex-1 pb-8 border-b border-[#E2E8F0] last:border-b-0">
-                <h2 className="text-xl font-bold text-[#0F2044] mb-3">{item.title}</h2>
-                <p className="text-[#475569] leading-relaxed">{item.body}</p>
+            <Reveal key={item.step} className="grid grid-cols-[auto_1fr] gap-6 md:gap-10">
+              <div className="font-display text-5xl font-bold text-transparent [-webkit-text-stroke:1.5px_#94A3B8] pt-1 w-16 shrink-0">
+                {item.step}
+              </div>
+              <div className="border-t-2 border-[#0F2044] pt-5">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#0F2044] mb-3">{item.title}</h2>
+                <p className="text-base text-[#475569] leading-relaxed max-w-2xl">{item.body}</p>
                 {"extra" in item && item.extra}
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
 
-        <div className="text-center mb-12">
+        <Reveal className="text-center mb-16">
           <Button asChild size="lg">
             <Link href="/assessment/new">Start your Cyber Essentials readiness assessment today</Link>
           </Button>
-        </div>
+        </Reveal>
 
         <CertificationDisclaimer />
       </div>
