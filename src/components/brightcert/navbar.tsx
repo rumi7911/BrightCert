@@ -3,8 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/how-it-works", label: "How it works" },
@@ -15,9 +17,10 @@ const navLinks = [
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 h-16 bg-white border-b border-[#E2E8F0]">
+    <header className="sticky top-0 z-50 h-16 bg-white/90 backdrop-blur-md border-b border-[#E2E8F0]">
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -30,7 +33,12 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-[#475569] hover:text-[#0F2044] transition-colors"
+              className={cn(
+                "text-sm transition-colors",
+                pathname === link.href
+                  ? "text-[#0F2044] font-semibold"
+                  : "text-[#475569] hover:text-[#0F2044]"
+              )}
             >
               {link.label}
             </Link>

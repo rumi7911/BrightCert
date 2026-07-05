@@ -6,14 +6,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         // Primary CTA — Emerald #047857, WCAG AA 5.9:1
-        cta: "bg-[#047857] text-white hover:bg-[#065F46] focus-visible:ring-[#047857]",
+        cta: "bg-[#047857] text-white shadow-[0_1px_2px_rgba(4,120,87,0.3),0_4px_12px_-2px_rgba(4,120,87,0.25)] hover:bg-[#065F46] hover:shadow-[0_2px_4px_rgba(4,120,87,0.3),0_8px_20px_-4px_rgba(4,120,87,0.35)] hover:-translate-y-px focus-visible:ring-[#047857]",
         // Secondary outline
-        outline: "border border-[#E2E8F0] bg-white text-[#0F2044] hover:bg-[#F8FAFC] focus-visible:ring-[#047857]",
+        outline: "border border-[#E2E8F0] bg-white text-[#0F2044] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] focus-visible:ring-[#047857]",
         // Navy filled
         navy: "bg-[#0F2044] text-white hover:bg-[#1a3366] focus-visible:ring-[#0F2044]",
         // Ghost
