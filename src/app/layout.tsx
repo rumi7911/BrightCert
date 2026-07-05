@@ -18,7 +18,7 @@ const bricolage = Bricolage_Grotesque({
 export const metadata: Metadata = {
   metadataBase: new URL("https://brightcert.co.uk"),
   title: {
-    default: "BrightCert — Cyber Essentials Readiness for UK SMEs",
+    default: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     template: "%s | BrightCert",
   },
   description:
@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: "https://brightcert.co.uk",
     siteName: "BrightCert",
-    title: "BrightCert — Cyber Essentials Readiness for UK SMEs",
+    title: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     description:
       "Guided Cyber Essentials readiness assessment, gap analysis, and remediation reports for UK businesses.",
     images: [{ url: "/logo.png", width: 1270, height: 630, alt: "BrightCert" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BrightCert — Cyber Essentials Readiness for UK SMEs",
+    title: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     description: "Guided Cyber Essentials readiness assessment for UK businesses.",
     images: ["/logo.png"],
   },

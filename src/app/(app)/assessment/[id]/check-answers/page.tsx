@@ -170,7 +170,7 @@ export default function CheckAnswersPage({
         </Button>
         {submitting && (
           <p className="text-xs text-[#64748B] mt-3">
-            Our AI is reviewing all five control areas — this takes around 15–30 seconds.
+            Our AI is reviewing all five control areas. This takes around 15–30 seconds.
           </p>
         )}
       </div>

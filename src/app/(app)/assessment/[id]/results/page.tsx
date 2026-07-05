@@ -203,7 +203,7 @@ export default async function ResultsPage({
             "Prioritised P1, P2, P3 remediation roadmap",
             "Step-by-step fix instructions",
             "Preparation notes for your Certification Body",
-            "PDF download — save, print, or share with your IT provider",
+            "PDF download: save, print, or share with your IT provider",
           ].map((feature) => (
             <li key={feature} className="flex items-start gap-2 text-sm text-[#475569]">
               <CheckCircle2 className="h-4 w-4 text-[#059669] shrink-0 mt-0.5" strokeWidth={1.5} />
@@ -214,7 +214,7 @@ export default async function ResultsPage({
         <div className="flex flex-col sm:flex-row gap-3 items-center">
           <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href={`/api/stripe/checkout?assessmentId=${assessmentId}`}>
-              Unlock Full Report — £199
+              Unlock Full Report · £199
             </Link>
           </Button>
           <div className="flex items-center gap-2 text-sm text-[#64748B]">

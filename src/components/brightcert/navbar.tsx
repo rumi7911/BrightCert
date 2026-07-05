@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/how-it-works", label: "How it works" },
   { href: "/#what-we-check", label: "What we check" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/#for-msps", label: "For MSPs" },
+  { href: "/#msp-partner", label: "For MSPs" },
 ];
 
 export function Navbar() {

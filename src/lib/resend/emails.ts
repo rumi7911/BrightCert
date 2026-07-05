@@ -84,7 +84,7 @@ export async function sendWelcomeEmail(email: string, orgName: string): Promise<
   await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
-    subject: "Welcome to BrightCert — start your Cyber Essentials assessment",
+    subject: "Welcome to BrightCert: start your Cyber Essentials assessment",
     html: baseTemplate(body),
   });
 }
@@ -122,7 +122,7 @@ export async function sendReportReadyEmail(
   await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
-    subject: `Your BrightCert report is ready — ${overallScore}% readiness score`,
+    subject: `Your BrightCert report is ready: ${overallScore}% readiness score`,
     html: baseTemplate(body),
   });
 }

@@ -95,7 +95,7 @@ export default async function ReportPage({
             Your Cyber Essentials Readiness Report
           </h1>
           <p className="text-sm text-[#64748B] mt-1">
-            {orgName} —{" "}
+            {orgName} ·{" "}
             {new Date().toLocaleDateString("en-GB", {
               day: "numeric",
               month: "long",
@@ -126,7 +126,7 @@ export default async function ReportPage({
             <FileText className="h-5 w-5 text-[#047857]" strokeWidth={1.5} />
             <div>
               <p className="text-sm font-semibold text-[#0F2044]">
-                BrightCert Readiness Report — {orgName}
+                BrightCert Readiness Report · {orgName}
               </p>
               <p className="text-xs text-[#64748B]">
                 Full report with gap analysis and remediation roadmap
@@ -159,7 +159,7 @@ export default async function ReportPage({
         <h3 className="text-sm font-semibold text-[#0F2044] mb-3">Next steps</h3>
         <ol className="space-y-2">
           {[
-            "Work through the P1 priority actions in your report — these must be resolved before applying.",
+            "Work through the P1 priority actions in your report. These must be resolved before applying.",
             "Share the report PDF with your IT provider or internal team to begin remediation.",
             "Once gaps are addressed, apply for official Cyber Essentials through an IASME Certification Body.",
           ].map((step, i) => (

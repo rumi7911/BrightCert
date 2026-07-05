@@ -175,7 +175,7 @@ export default async function DashboardPage() {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[#0F2044] truncate">Assessment — {date}</p>
+                  <p className="text-sm font-medium text-[#0F2044] truncate">Assessment · {date}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <StatusBadge status={a.status} />
                     {a.overall_score != null && (

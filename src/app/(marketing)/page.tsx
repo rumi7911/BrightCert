@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Check,
   XCircle,
-  ChevronDown,
   Wifi,
   Settings,
   Users,
@@ -192,19 +191,6 @@ function MockReportCard() {
   );
 }
 
-// ─── FAQ item ─────────────────────────────────────────────────────────────────
-function FaqItem({ q, a }: { q: string; a: string }) {
-  return (
-    <details className="group border-b border-[#E2E8F0] py-5">
-      <summary className="flex items-center justify-between cursor-pointer list-none gap-4">
-        <span className="text-base font-medium text-[#0F2044]">{q}</span>
-        <ChevronDown className="h-4 w-4 text-[#64748B] group-open:rotate-180 transition-transform duration-200 shrink-0" />
-      </summary>
-      <p className="mt-3 text-sm text-[#475569] leading-relaxed max-w-2xl">{a}</p>
-    </details>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   return (
@@ -226,13 +212,10 @@ export default function HomePage() {
           <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] font-bold leading-[1.05] mb-6 max-w-3xl mx-auto">
             Get Cyber Essentials ready in <span className="text-[#6EE7B7]">2 hours</span>
           </h1>
-          <p className="text-lg text-white/80 mb-3 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-white/80 mb-9 leading-relaxed max-w-2xl mx-auto">
             BrightCert guides UK SMEs through a plain-English Cyber Essentials readiness assessment, highlights what needs attention, and creates a practical report before you apply for certification.
           </p>
-          <p className="text-sm text-white/60 mb-9 max-w-xl mx-auto">
-            No confusing forms. No expensive consultancy-first process. Just clear questions, smart analysis, and a step-by-step view of what to fix next.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-5">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild size="lg">
               <Link href="/assessment/new">Start Your Assessment</Link>
             </Button>
@@ -240,7 +223,6 @@ export default function HomePage() {
               <Link href="/how-it-works">See How It Works</Link>
             </Button>
           </div>
-          <p className="text-xs text-white/50">Built for UK businesses preparing for Cyber Essentials.</p>
         </div>
 
         {/* Dashboard preview — overlaps into the next section */}
@@ -305,7 +287,7 @@ export default function HomePage() {
                 },
                 {
                   title: "The language feels technical",
-                  body: "Firewalls, secure configuration, access control, malware protection, patching — the requirements are important, but they are not always explained in a way SMEs can act on quickly.",
+                  body: "Firewalls, secure configuration, access control, malware protection, patching: the requirements are important, but they are not always explained in a way SMEs can act on quickly.",
                 },
                 {
                   title: "Consultants can be expensive",
@@ -335,7 +317,6 @@ export default function HomePage() {
       <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="solution-heading">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <Reveal>
-            <Eyebrow center>The Solution</Eyebrow>
             <h2 id="solution-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-6 leading-tight">
               A clearer way to prepare for Cyber Essentials
             </h2>
@@ -367,7 +348,7 @@ export default function HomePage() {
                 step: "01",
                 title: "Answer simple questions",
                 body: "Complete a guided assessment covering the five Cyber Essentials control areas. Each question is written in plain English, with helpful context where needed.",
-                note: "Answer honestly. The goal is not to look perfect — it is to understand what needs fixing before you apply.",
+                note: "Answer honestly. The goal is not to look perfect. It is to understand what needs fixing before you apply.",
                 mockup: <MockQuestionCard />,
               },
               {
@@ -416,7 +397,6 @@ export default function HomePage() {
       >
         <div className="max-w-6xl mx-auto px-4">
           <Reveal className="max-w-2xl mb-12">
-            <Eyebrow>The Five Control Areas</Eyebrow>
             <h2 id="what-we-check-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
               Built around the Cyber Essentials requirements
             </h2>
@@ -509,7 +489,6 @@ export default function HomePage() {
       <section className="py-20 md:py-28" aria-labelledby="features-heading">
         <div className="max-w-6xl mx-auto px-4">
           <Reveal className="max-w-2xl mb-12">
-            <Eyebrow>What You Get</Eyebrow>
             <h2 id="features-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
               A practical readiness report, not another vague checklist
             </h2>
@@ -603,7 +582,8 @@ export default function HomePage() {
                     <li key={item.label} className="flex items-start gap-3">
                       <Check className="h-4 w-4 text-[#6EE7B7] shrink-0 mt-0.5" strokeWidth={2} />
                       <span className="text-sm text-white/80">
-                        <strong className="text-white font-medium">{item.label}</strong> — {item.desc}
+                        <strong className="block text-white font-medium">{item.label}</strong>
+                        {item.desc}
                       </span>
                     </li>
                   ))}
@@ -706,7 +686,7 @@ export default function HomePage() {
             </div>
 
             {/* Monitor */}
-            <div className="flex flex-col rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)]">
+            <div className="flex flex-col rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)]" id="monitor">
               <p className="text-xs font-semibold text-[#475569] uppercase tracking-wider mb-2 mt-1">Monitor</p>
               <div className="flex items-baseline gap-1.5 mb-2">
                 <span className="font-display text-4xl font-bold text-[#0F2044] tabular-nums">£99</span>
@@ -781,7 +761,6 @@ export default function HomePage() {
       <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="comparison-heading">
         <div className="max-w-4xl mx-auto px-4">
           <Reveal>
-            <Eyebrow>Why BrightCert</Eyebrow>
             <h2 id="comparison-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
               Understand your gaps before you spend more
             </h2>
@@ -832,7 +811,6 @@ export default function HomePage() {
       <section className="py-20 md:py-28" aria-labelledby="audience-heading">
         <div className="max-w-6xl mx-auto px-4">
           <Reveal className="max-w-2xl mb-12">
-            <Eyebrow>Who It Is For</Eyebrow>
             <h2 id="audience-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
               Built for the businesses that need clarity fast
             </h2>
@@ -844,7 +822,7 @@ export default function HomePage() {
             {[
               {
                 title: "Small business owners",
-                body: "You need to show customers, suppliers, or partners that your business takes cyber security seriously — but you do not have a large internal IT team.",
+                body: "You need to show customers, suppliers, or partners that your business takes cyber security seriously, but you do not have a large internal IT team.",
               },
               {
                 title: "Operations managers",
@@ -872,12 +850,11 @@ export default function HomePage() {
       <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="trust-heading">
         <div className="max-w-4xl mx-auto px-4">
           <Reveal className="text-center">
-            <Eyebrow center>Trust &amp; Clarity</Eyebrow>
             <h2 id="trust-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-5 leading-tight">
               Clear guidance without false promises
             </h2>
             <p className="text-[#475569] mb-12 leading-relaxed max-w-2xl mx-auto">
-              BrightCert is careful about what it does — and what it does not do. We help you prepare for Cyber Essentials by assessing your readiness, identifying gaps, and creating a practical report. We do not issue the official Cyber Essentials certificate. Official certification is handled through IASME Certification Bodies.
+              BrightCert is careful about what it does, and what it does not do. We help you prepare for Cyber Essentials by assessing your readiness, identifying gaps, and creating a practical report. We do not issue the official Cyber Essentials certificate. Official certification is handled through IASME Certification Bodies.
             </p>
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 mb-10">
@@ -914,14 +891,14 @@ export default function HomePage() {
 
       {/* ── 13. FAQ ─────────────────────────────────────────────────────── */}
       <section id="faq" className="py-20 md:py-28" aria-labelledby="faq-heading">
-        <div className="max-w-3xl mx-auto px-4">
-          <Reveal className="mb-10">
+        <div className="max-w-5xl mx-auto px-4">
+          <Reveal className="mb-12">
             <Eyebrow>FAQs</Eyebrow>
             <h2 id="faq-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
               Common questions
             </h2>
           </Reveal>
-          <div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
             {[
               { q: "Does BrightCert issue the official Cyber Essentials certificate?", a: "No. BrightCert provides readiness assessment and preparation support. Official Cyber Essentials certification must be completed through an IASME-licensed Certification Body." },
               { q: "Do I need to pay before starting the assessment?", a: "No. You can complete the full assessment first. Payment of £199 is required only when you want to unlock your full readiness report and PDF download." },
@@ -934,7 +911,10 @@ export default function HomePage() {
               { q: "Do you store my answers securely?", a: "Yes. Your assessment responses are stored securely and used only to generate your readiness report. We do not share your data with third parties." },
               { q: "What is the difference between Cyber Essentials and Cyber Essentials Plus?", a: "Cyber Essentials is a self-assessed questionnaire reviewed by a Certification Body. Cyber Essentials Plus also includes an external technical verification. BrightCert currently supports preparation for both, with specific CE Plus guidance in the CE Plus Pack." },
             ].map((item) => (
-              <FaqItem key={item.q} q={item.q} a={item.a} />
+              <div key={item.q}>
+                <p className="text-base font-medium text-[#0F2044] mb-2">{item.q}</p>
+                <p className="text-sm text-[#475569] leading-relaxed">{item.a}</p>
+              </div>
             ))}
           </div>
         </div>

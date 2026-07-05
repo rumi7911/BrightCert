@@ -106,7 +106,7 @@ export default function AssessmentNewPage() {
         </div>
 
         <div className="mb-8">
-          <p className="text-sm font-semibold text-[#0F2044] mb-3">Before you start — you may find it helpful to have:</p>
+          <p className="text-sm font-semibold text-[#0F2044] mb-3">Before you start, you may find it helpful to have:</p>
           <ul className="space-y-1.5">
             {prepItems.map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm text-[#475569]">
