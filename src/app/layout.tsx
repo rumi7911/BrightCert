@@ -32,13 +32,13 @@ export const metadata: Metadata = {
     title: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     description:
       "Guided Cyber Essentials readiness assessment, gap analysis, and remediation reports for UK businesses.",
-    images: [{ url: "/logo.png", width: 1270, height: 630, alt: "BrightCert" }],
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "BrightCert | Get Cyber Essentials ready in 2 hours" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     description: "Guided Cyber Essentials readiness assessment for UK businesses.",
-    images: ["/logo.png"],
+    images: ["/og.jpg"],
   },
 };
 

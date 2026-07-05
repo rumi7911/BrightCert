@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { Reveal } from "@/components/brightcert/reveal";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
+import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 
 // ─── Control area card ────────────────────────────────────────────────────────
 function ControlCard({
@@ -232,10 +233,10 @@ export default function HomePage() {
             aria-hidden
           />
           <Image
-            src="/dashboard-preview.png"
+            src="/dashboard-demo.png"
             alt="BrightCert dashboard showing a 67% readiness score, open priority actions, and assessment history"
-            width={1586}
-            height={992}
+            width={2480}
+            height={1550}
             priority
             className="relative w-full h-auto rounded-[16px] ring-1 ring-white/15 shadow-[0_48px_120px_-24px_rgba(3,10,28,0.85)]"
           />
@@ -315,21 +316,29 @@ export default function HomePage() {
 
       {/* ── 4. SOLUTION ─────────────────────────────────────────────────── */}
       <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="solution-heading">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <Reveal>
-            <h2 id="solution-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-6 leading-tight">
-              A clearer way to prepare for Cyber Essentials
-            </h2>
-            <p className="text-[#475569] leading-relaxed mb-4">
-              BrightCert turns Cyber Essentials preparation into a guided, step-by-step process.
-            </p>
-            <p className="text-[#475569] leading-relaxed mb-9">
-              You answer simple questions about your organisation, devices, users, software, and security controls. BrightCert analyses your responses across the five Cyber Essentials control areas and gives you a readiness score, plain-English gap findings, and prioritised remediation steps.
-            </p>
-            <Button asChild size="lg">
-              <Link href="/assessment/new">Start Your Readiness Assessment</Link>
-            </Button>
-          </Reveal>
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <Reveal>
+              <h2 id="solution-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-6 leading-tight">
+                A clearer way to prepare for Cyber Essentials
+              </h2>
+              <p className="text-[#475569] leading-relaxed mb-4">
+                BrightCert turns Cyber Essentials preparation into a guided, step-by-step process.
+              </p>
+              <p className="text-[#475569] leading-relaxed mb-9">
+                You answer simple questions about your organisation, devices, users, software, and security controls. BrightCert analyses your responses across the five Cyber Essentials control areas and gives you a readiness score, plain-English gap findings, and prioritised remediation steps.
+              </p>
+              <Button asChild size="lg">
+                <Link href="/assessment/new">Start Your Readiness Assessment</Link>
+              </Button>
+            </Reveal>
+            <Reveal delay={120} className="lg:max-w-md lg:justify-self-end w-full">
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wider mb-3">
+                Try a 30-second sample
+              </p>
+              <ReadinessTeaser />
+            </Reveal>
+          </div>
         </div>
       </section>
 

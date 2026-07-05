@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/brightcert/logo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -23,8 +23,8 @@ export function Navbar() {
     <header className="sticky top-0 z-50 h-16 bg-white/90 backdrop-blur-md border-b border-[#E2E8F0]">
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <Image src="/logo.png" alt="BrightCert" width={148} height={44} priority className="h-9 w-auto" />
+        <Link href="/" className="flex items-center" aria-label="BrightCert home">
+          <Logo />
         </Link>
 
         {/* Desktop nav */}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { Logo } from "@/components/brightcert/logo";
 
 const footerColumns = [
   {
@@ -38,10 +38,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-3">
-              <div className="inline-flex items-center justify-center h-10 w-10 rounded-[10px] bg-white/10">
-                <Image src="/logo-icon.png" alt="BrightCert" width={32} height={32} className="h-7 w-7 object-contain" />
-              </div>
-              <span className="ml-2 font-bold text-lg align-middle">BrightCert</span>
+              <Logo light markClassName="h-8 w-8" textClassName="text-lg" />
             </div>
             <p className="text-sm text-[#94A3B8] leading-relaxed">
               BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports.

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { AppSidebar } from "@/components/brightcert/app-sidebar";
+import { Logo } from "@/components/brightcert/logo";
 
 // Auth protection wired in Phase 2 via proxy.ts + Supabase
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -9,8 +9,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       {/* Top bar */}
       <header className="sticky top-0 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-[#E2E8F0] flex items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center">
-          <Image src="/logo.png" alt="BrightCert" width={148} height={44} priority className="h-8 w-auto" />
+        <Link href="/" className="flex items-center" aria-label="BrightCert home">
+          <Logo markClassName="h-7 w-7" textClassName="text-lg" />
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/settings" className="text-sm text-[#64748B] hover:text-[#0F2044]">Settings</Link>
