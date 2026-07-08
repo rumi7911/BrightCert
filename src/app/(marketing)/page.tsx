@@ -899,7 +899,59 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 13. FAQ ─────────────────────────────────────────────────────── */}
+      {/* ── 13. FOUNDER'S NOTE ──────────────────────────────────────────── */}
+      <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="founder-heading">
+        <div className="max-w-4xl mx-auto px-4">
+          <Reveal>
+            <Eyebrow>Founder&apos;s Note</Eyebrow>
+            <h2 id="founder-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-8 leading-tight">
+              Why I built BrightCert
+            </h2>
+          </Reveal>
+          <Reveal
+            delay={80}
+            className="rounded-[16px] border border-[#E2E8F0] bg-[#F8FAFC] p-8 md:p-10 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.1)]"
+          >
+            <div className="space-y-4 text-[#475569] leading-relaxed mb-8">
+              <p>
+                I started BrightCert after watching UK small businesses stall out on Cyber Essentials, not because the technical controls are hard, but because the preparation process is opaque and the language is written for auditors, not business owners.
+              </p>
+              <p>
+                My background is in cybersecurity research. I hold a Master&apos;s degree in Cyber Security with Advanced Research from the University of Hertfordshire, awarded with distinction, and my thesis compared the Nessus and OpenVAS vulnerability scanners on Ubuntu web servers. I also hold certifications in Digital Forensics, Ethical Hacking, and Network Defense from EC-Council, alongside Fortinet&apos;s Cybersecurity Fundamentals and Huawei&apos;s HCIP in Routing and Switching.
+              </p>
+              <p>
+                Outside BrightCert, I run Cognumi, where I build AI-managed operations and security-focused automation for service businesses. BrightCert brings that same approach, plain-English analysis backed by real security research, to Cyber Essentials preparation.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {[
+                "MSc Cyber Security (Distinction)",
+                "EC-Council Certified",
+                "Fortinet Certified",
+                "Founder, Cognumi",
+              ].map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs font-medium text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="flex items-center gap-3 pt-6 border-t border-[#E2E8F0]">
+              <div className="h-11 w-11 rounded-full bg-[#0F2044] flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                MSR
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#0F2044]">Muhammad Sohaib Roomi</p>
+                <p className="text-xs text-[#64748B]">Founder, BrightCert · Cognumi Ltd</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── 14. FAQ ─────────────────────────────────────────────────────── */}
       <section id="faq" className="py-20 md:py-28" aria-labelledby="faq-heading">
         <div className="max-w-5xl mx-auto px-4">
           <Reveal className="mb-12">
@@ -930,7 +982,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 14. CTA BANNER ──────────────────────────────────────────────── */}
+      {/* ── 15. CTA BANNER ──────────────────────────────────────────────── */}
       <section className="pb-20 md:pb-28 pt-4" aria-label="Call to action">
         <div className="max-w-6xl mx-auto px-4">
           <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0F2044] to-[#142A56] text-white px-6 py-16 md:py-20 text-center">

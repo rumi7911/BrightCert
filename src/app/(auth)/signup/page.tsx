@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GoogleButton } from "@/components/brightcert/google-button";
-import { IconTile } from "@/components/brightcert/icon-tile";
+import { LogoMark } from "@/components/brightcert/logo";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
@@ -44,7 +44,7 @@ export default function SignupPage() {
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.12)]">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <IconTile icon={ShieldCheck} size="lg" />
+            <LogoMark className="h-14 w-14" />
           </div>
           <h1 className="text-2xl font-bold text-[#0F2044]">Start your Cyber Essentials assessment</h1>
           <p className="text-sm text-[#64748B] mt-1">
