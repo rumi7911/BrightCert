@@ -21,7 +21,7 @@ import { Reveal } from "@/components/brightcert/reveal";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { IconTile } from "@/components/brightcert/icon-tile";
-import { SocialProofBadge } from "@/components/brightcert/social-proof-badge";
+import { SocialProofBadge, getAssessmentCountLabel } from "@/components/brightcert/social-proof-badge";
 import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
 import { createAdminClient } from "@/lib/supabase/server";
 
@@ -219,6 +219,15 @@ export default async function HomePage() {
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 text-center">
+          {(assessmentCount ?? 0) >= 1 && (
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-4 py-1.5 mb-6 text-xs font-medium text-white/80">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-[#6EE7B7] opacity-75 animate-ping" aria-hidden />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6EE7B7]" aria-hidden />
+              </span>
+              {getAssessmentCountLabel(assessmentCount ?? 0)}
+            </span>
+          )}
           <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] font-bold leading-[1.05] mb-6 max-w-3xl mx-auto">
             Get Cyber Essentials ready in <span className="text-[#6EE7B7]">2 hours</span>
           </h1>
@@ -955,9 +964,17 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto px-4">
           <Reveal className="mb-12">
             <Eyebrow>FAQs</Eyebrow>
-            <h2 id="faq-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
-              Common questions
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+              <h2 id="faq-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
+                Common questions
+              </h2>
+              <p className="text-sm text-[#64748B]">
+                Still have questions?{" "}
+                <a href="mailto:hello@brightcert.co.uk" className="font-semibold text-[#047857] hover:underline">
+                  Contact us
+                </a>
+              </p>
+            </div>
           </Reveal>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
             {[

@@ -1,12 +1,15 @@
 import { Users } from "lucide-react";
 
+export function getAssessmentCountLabel(count: number) {
+  return count === 1
+    ? "1 UK business has started a readiness assessment"
+    : `${count.toLocaleString("en-GB")} UK businesses have started a readiness assessment`;
+}
+
 export function SocialProofBadge({ count }: { count: number }) {
   if (count < 1) return null;
 
-  const label =
-    count === 1
-      ? "1 UK business has started a readiness assessment"
-      : `${count.toLocaleString("en-GB")} UK businesses have started a readiness assessment`;
+  const label = getAssessmentCountLabel(count);
 
   return (
     <div className="absolute -bottom-5 left-4 md:left-8 z-10 flex items-center gap-3 rounded-[12px] border border-[#E2E8F0] bg-white px-4 py-3 shadow-[0_16px_40px_-12px_rgba(15,32,68,0.35)]">
