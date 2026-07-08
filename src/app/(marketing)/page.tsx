@@ -22,6 +22,7 @@ import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { IconTile } from "@/components/brightcert/icon-tile";
 import { SocialProofBadge } from "@/components/brightcert/social-proof-badge";
+import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
 import { createAdminClient } from "@/lib/supabase/server";
 
 // Live count is a light server read — cache for 5 minutes rather than
@@ -270,6 +271,10 @@ export default async function HomePage() {
                 <p className="text-sm text-[#64748B]">{item.desc}</p>
               </Reveal>
             ))}
+          </div>
+          <div className="mt-10 pt-8 border-t border-[#F1F5F9]">
+            <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-5">Powered by</p>
+            <PoweredByMarquee />
           </div>
         </div>
       </section>
