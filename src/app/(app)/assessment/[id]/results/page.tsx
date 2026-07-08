@@ -5,6 +5,7 @@ import { AlertTriangle, CheckCircle2, XCircle, Lock, FileText, ChevronDown } fro
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
+import { IconTile } from "@/components/brightcert/icon-tile";
 import { SECTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/server";
 import type { ControlScore, Gap } from "@/types/assessment";
@@ -186,9 +187,7 @@ export default async function ResultsPage({
       {/* Report lock card */}
       <div className="rounded-[16px] border-2 border-[#047857] bg-white p-6 shadow-[0_16px_40px_-12px_rgba(4,120,87,0.25)]">
         <div className="flex items-start gap-4 mb-5">
-          <div className="h-10 w-10 rounded-[10px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
-            <Lock className="h-5 w-5 text-[#047857]" strokeWidth={1.5} />
-          </div>
+          <IconTile icon={Lock} size="sm" />
           <div>
             <h3 className="text-base font-bold text-[#0F2044]">Unlock your full readiness report</h3>
             <p className="text-sm text-[#64748B] mt-1">

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { getScoreColor, getOverallStatus, SCORE_STATUS_MAP } from "@/types/assessment";
 
 type ScoreCircleProps = {
@@ -11,18 +14,66 @@ const SIZE_CONFIG = {
   lg: { dim: 144, stroke: 10, textSize: "text-3xl" },
 };
 
+// Cubic ease-out — quick start, gentle settle.
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
 export function ScoreCircle({ score, size = "md" }: ScoreCircleProps) {
   const config = SIZE_CONFIG[size];
   const { dim, stroke } = config;
   const radius = (dim - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [displayScore, setDisplayScore] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplayScore(score);
+      return;
+    }
+    let frame: number;
+    const duration = 900;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      setDisplayScore(Math.round(easeOutCubic(t) * score));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [visible, score]);
+
+  const offset = circumference - (displayScore / 100) * circumference;
   const color = getScoreColor(score);
   const status = getOverallStatus(score);
   const { label } = SCORE_STATUS_MAP[status];
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div ref={ref} className="flex flex-col items-center gap-2">
       <div className="relative" style={{ width: dim, height: dim }}>
         <svg
           width={dim}
@@ -48,14 +99,15 @@ export function ScoreCircle({ score, size = "md" }: ScoreCircleProps) {
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
+            style={{ transition: "stroke 300ms ease" }}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
-            className={`font-bold leading-none ${config.textSize}`}
+            className={`font-bold leading-none tabular-nums ${config.textSize}`}
             style={{ color }}
           >
-            {score}%
+            {displayScore}%
           </span>
         </div>
       </div>

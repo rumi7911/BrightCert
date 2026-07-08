@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
 import { PdfPoller } from "@/components/brightcert/pdf-poller";
+import { IconTile } from "@/components/brightcert/icon-tile";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe/client";
 
@@ -87,9 +88,7 @@ export default async function ReportPage({
 
       {/* Header */}
       <div className="flex items-start gap-4 mb-8">
-        <div className="h-12 w-12 rounded-[12px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
-          <ShieldCheck className="h-6 w-6 text-[#047857]" strokeWidth={1.5} />
-        </div>
+        <IconTile icon={ShieldCheck} size="lg" />
         <div>
           <h1 className="text-2xl font-bold text-[#0F2044]">
             Your Cyber Essentials Readiness Report

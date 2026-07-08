@@ -20,6 +20,7 @@ import { CertificationDisclaimer } from "@/components/brightcert/certification-d
 import { Reveal } from "@/components/brightcert/reveal";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
+import { IconTile } from "@/components/brightcert/icon-tile";
 
 // ─── Control area card ────────────────────────────────────────────────────────
 function ControlCard({
@@ -38,9 +39,7 @@ function ControlCard({
   return (
     <div className={`group rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:border-[#A7F3D0] hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.18)] hover:-translate-y-0.5 ${className}`}>
       <div className="flex items-start gap-3 mb-4">
-        <div className="h-10 w-10 rounded-[10px] bg-[#ECFDF5] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#D1FAE5]">
-          <Icon className="h-5 w-5 text-[#047857]" strokeWidth={1.5} />
-        </div>
+        <IconTile icon={Icon} size="sm" />
         <div>
           <p className="text-[11px] font-semibold text-[#047857] uppercase tracking-wider mb-0.5">Area {number}</p>
           <h3 className="text-base font-semibold text-[#0F2044] leading-snug">{title}</h3>
@@ -163,9 +162,7 @@ function MockReportCard() {
   return (
     <div aria-hidden className="rounded-[12px] border border-[#E2E8F0] bg-white p-6 shadow-[0_16px_40px_-16px_rgba(15,32,68,0.18)] max-w-sm w-full">
       <div className="flex items-center gap-3 mb-5">
-        <div className="h-11 w-11 rounded-[10px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
-          <FileText className="h-5.5 w-5.5 text-[#047857]" strokeWidth={1.5} />
-        </div>
+        <IconTile icon={FileText} />
         <div>
           <p className="text-sm font-semibold text-[#0F2044]">Readiness Report</p>
           <p className="text-xs text-[#94A3B8]">PDF · Fenwick &amp; Hale Ltd</p>
@@ -266,8 +263,11 @@ export default function HomePage() {
       </section>
 
       {/* ── 3. PROBLEM ──────────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28" aria-labelledby="problem-heading">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="relative py-20 md:py-28" aria-labelledby="problem-heading">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <div className="absolute -top-16 right-[-8%] h-[420px] w-[420px] rounded-full bg-[#059669]/[0.05] blur-[130px]" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
             <Reveal className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
@@ -549,9 +549,7 @@ export default function HomePage() {
                 delay={(i % 3) * 80}
                 className="group rounded-[16px] bg-white p-6 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_8px_24px_-12px_rgba(15,32,68,0.08)] transition-all duration-200 hover:shadow-[0_16px_40px_-12px_rgba(15,32,68,0.18)] hover:-translate-y-0.5"
               >
-                <div className="h-10 w-10 rounded-[10px] bg-[#ECFDF5] flex items-center justify-center mb-4 transition-colors group-hover:bg-[#D1FAE5]">
-                  <item.icon className="h-5 w-5 text-[#047857]" strokeWidth={1.5} />
-                </div>
+                <IconTile icon={item.icon} size="sm" className="mb-4" />
                 <h3 className="text-lg font-semibold text-[#0F2044] mb-2">{item.title}</h3>
                 <p className="text-sm text-[#475569] mb-2 leading-relaxed">{item.body}</p>
                 <p className="text-xs text-[#64748B] italic">{item.note}</p>
@@ -646,8 +644,11 @@ export default function HomePage() {
       </section>
 
       {/* ── 9. PRICING ──────────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28" aria-labelledby="pricing-heading">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="relative py-20 md:py-28" aria-labelledby="pricing-heading">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <div className="absolute -top-16 left-1/2 -translate-x-1/2 h-[460px] w-[720px] rounded-full bg-[#059669]/[0.05] blur-[130px]" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4">
           <Reveal className="text-center max-w-2xl mx-auto mb-12">
             <Eyebrow center>Pricing</Eyebrow>
             <h2 id="pricing-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">

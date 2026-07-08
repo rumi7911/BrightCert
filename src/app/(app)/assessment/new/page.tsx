@@ -13,6 +13,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IconTile } from "@/components/brightcert/icon-tile";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Start Assessment" };
@@ -69,9 +70,7 @@ export default function AssessmentNewPage() {
 
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 mt-4 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.1)]">
         <div className="flex items-start gap-4 mb-6">
-          <div className="h-12 w-12 rounded-[12px] bg-[#ECFDF5] flex items-center justify-center shrink-0">
-            <ClipboardList className="h-6 w-6 text-[#047857]" strokeWidth={1.5} />
-          </div>
+          <IconTile icon={ClipboardList} size="lg" />
           <div>
             <h1 className="text-2xl font-bold text-[#0F2044] leading-tight">
               Start your Cyber Essentials readiness assessment

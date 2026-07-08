@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GoogleButton } from "@/components/brightcert/google-button";
+import { IconTile } from "@/components/brightcert/icon-tile";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -46,9 +47,7 @@ export default function LoginPage() {
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.12)]">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="h-12 w-12 rounded-[12px] bg-[#ECFDF5] flex items-center justify-center">
-              <ShieldCheck className="h-6 w-6 text-[#047857]" strokeWidth={1.5} />
-            </div>
+            <IconTile icon={ShieldCheck} size="lg" />
           </div>
           <h1 className="text-2xl font-bold text-[#0F2044]">Sign in to BrightCert</h1>
           <p className="text-sm text-[#64748B] mt-1">

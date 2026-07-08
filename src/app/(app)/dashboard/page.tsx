@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
+import { IconTile } from "@/components/brightcert/icon-tile";
 import { createClient } from "@/lib/supabase/server";
 import type { Gap } from "@/types/assessment";
 
@@ -232,9 +233,7 @@ function EmptyState() {
         <p className="text-sm text-[#64748B] mt-1">Your Cyber Essentials readiness overview</p>
       </div>
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-12 text-center">
-        <div className="h-12 w-12 rounded-[12px] bg-[#ECFDF5] flex items-center justify-center mx-auto mb-4">
-          <ClipboardList className="h-6 w-6 text-[#047857]" strokeWidth={1.5} />
-        </div>
+        <IconTile icon={ClipboardList} size="lg" className="mx-auto mb-4" />
         <h2 className="text-lg font-semibold text-[#0F2044] mb-2">Start your first assessment</h2>
         <p className="text-sm text-[#64748B] max-w-sm mx-auto mb-6">
           Complete a Cyber Essentials readiness assessment to see your score, identify gaps, and unlock a practical report.
