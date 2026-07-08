@@ -256,26 +256,8 @@ export default async function HomePage() {
       {/* ── 2. TRUST STRIP ──────────────────────────────────────────────── */}
       <section className="bg-white border-b border-[#E2E8F0] pt-40 md:pt-56 pb-12" aria-label="Trust strip">
         <div className="max-w-6xl mx-auto px-4">
-          <p className="text-sm font-semibold text-[#475569] mb-8">
-            Designed for UK SMEs preparing for Cyber Essentials
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
-            {[
-              { label: "Plain-English questions", desc: "No jargon-heavy compliance language." },
-              { label: "AI-assisted gap analysis", desc: "Clear scoring across the five control areas." },
-              { label: "Practical remediation report", desc: "Know what to fix before applying." },
-              { label: "UK-specific guidance", desc: "Built around Cyber Essentials, GBP pricing, and SME needs." },
-            ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 80} className="border-l-2 border-[#A7F3D0] pl-4">
-                <p className="text-sm font-semibold text-[#0F2044] mb-1">{item.label}</p>
-                <p className="text-sm text-[#64748B]">{item.desc}</p>
-              </Reveal>
-            ))}
-          </div>
-          <div className="mt-10 pt-8 border-t border-[#F1F5F9]">
-            <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-5">Powered by</p>
-            <PoweredByMarquee />
-          </div>
+          <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-5">Powered by</p>
+          <PoweredByMarquee />
         </div>
       </section>
 

@@ -17,18 +17,18 @@ export function PoweredByMarquee() {
   const track = [...BRANDS, ...BRANDS];
 
   return (
-    <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-      <ul className="flex w-max items-center gap-12 animate-marquee">
+    <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent)]">
+      <ul className="flex w-max items-center gap-14 animate-marquee">
         {track.map((brand, i) => (
           <li
             key={`${brand.name}-${i}`}
-            className="flex shrink-0 items-center gap-2 whitespace-nowrap"
+            className="flex shrink-0 items-center gap-2.5 whitespace-nowrap"
             aria-hidden={i >= BRANDS.length}
           >
-            <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#94A3B8]" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#64748B]" fill="currentColor" aria-hidden>
               <path d={brand.path} />
             </svg>
-            <span className="text-sm font-semibold tracking-wide text-[#94A3B8]">{brand.name}</span>
+            <span className="text-base font-bold tracking-wide text-[#64748B]">{brand.name}</span>
           </li>
         ))}
       </ul>
