@@ -14,10 +14,11 @@ export default function LoginPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
 
-  // Surface auth errors passed back from /auth/callback (e.g. expired link)
+  // Surface auth errors passed back from /auth/callback (e.g. expired link).
+  // window.location isn't available during SSR, so this has to run in an effect.
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const err = params.get("error");
+    const err = new URLSearchParams(window.location.search).get("error");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of the URL on mount, not an ongoing sync
     if (err) setError(err);
   }, []);
 

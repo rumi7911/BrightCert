@@ -33,8 +33,8 @@ export function ScoreCircle({ score, size = "md" }: ScoreCircleProps) {
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
+      const frame = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(frame);
     }
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -51,15 +51,12 @@ export function ScoreCircle({ score, size = "md" }: ScoreCircleProps) {
 
   useEffect(() => {
     if (!visible) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplayScore(score);
-      return;
-    }
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = reduceMotion ? 0 : 900;
     let frame: number;
-    const duration = 900;
     const start = performance.now();
     const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
+      const t = duration === 0 ? 1 : Math.min((now - start) / duration, 1);
       setDisplayScore(Math.round(easeOutCubic(t) * score));
       if (t < 1) frame = requestAnimationFrame(tick);
     };

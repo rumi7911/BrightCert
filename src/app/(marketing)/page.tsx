@@ -21,6 +21,12 @@ import { Reveal } from "@/components/brightcert/reveal";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { IconTile } from "@/components/brightcert/icon-tile";
+import { SocialProofBadge } from "@/components/brightcert/social-proof-badge";
+import { createAdminClient } from "@/lib/supabase/server";
+
+// Live count is a light server read — cache for 5 minutes rather than
+// hitting Supabase on every landing page visit.
+export const revalidate = 300;
 
 // ─── Control area card ────────────────────────────────────────────────────────
 function ControlCard({
@@ -190,7 +196,12 @@ function MockReportCard() {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = createAdminClient();
+  const { count: assessmentCount } = await supabase
+    .from("assessments")
+    .select("id", { count: "exact", head: true });
+
   return (
     <div className="bg-[#F8FAFC]">
 
@@ -237,6 +248,7 @@ export default function HomePage() {
             priority
             className="relative w-full h-auto rounded-[16px] ring-1 ring-white/15 shadow-[0_48px_120px_-24px_rgba(3,10,28,0.85)]"
           />
+          <SocialProofBadge count={assessmentCount ?? 0} />
         </div>
       </section>
 
