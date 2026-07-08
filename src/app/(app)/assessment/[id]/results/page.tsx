@@ -166,7 +166,7 @@ export default async function ResultsPage({
 
       {/* P1 priority actions */}
       {p1Gaps.length > 0 && (
-        <div className="mb-8">
+        <div id="priority-actions" className="mb-8 scroll-mt-24">
           <h2 className="text-base font-semibold text-[#0F2044] mb-3">Priority P1 actions</h2>
           <div className="rounded-[12px] border border-[#FECACA] bg-[#FEF2F2] divide-y divide-[#FECACA]">
             {p1Gaps.map((gap, i) => (

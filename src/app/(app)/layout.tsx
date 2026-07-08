@@ -30,7 +30,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <AppSidebar />
 
         {/* Main content */}
-        <main className="flex-1 px-4 md:px-8 py-8 max-w-5xl">{children}</main>
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8">{children}</main>
       </div>
     </div>
   );
