@@ -18,23 +18,22 @@ const navLinks = [
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  // Homepage hero is navy — the navbar can float transparently over it.
-  // Every other marketing page opens on a light background, so it stays solid there.
-  const transparent = pathname === "/";
+  // Homepage opens on a navy hero — colour the header's own box to match so
+  // there's no gap around the (always-white) pill. Padding lives on the
+  // header itself, not as a sticky offset, so the background has no holes.
+  const isHome = pathname === "/";
 
   return (
-    <header className={cn("z-50 px-4", transparent ? "absolute top-4 inset-x-0" : "sticky top-4")}>
-      <div
-        className={cn(
-          "max-w-6xl mx-auto rounded-[18px] pl-6 pr-3 py-3 flex items-center justify-between",
-          transparent
-            ? "bg-white/10 backdrop-blur-md border border-white/15"
-            : "bg-white shadow-[0_8px_30px_-8px_rgba(15,32,68,0.25)]"
-        )}
-      >
+    <header
+      className={cn(
+        "sticky top-0 z-50 px-4 pt-4 pb-2",
+        isHome && "bg-gradient-to-br from-[#0F2044] to-[#142A56]"
+      )}
+    >
+      <div className="max-w-6xl mx-auto rounded-[18px] bg-white shadow-[0_8px_30px_-8px_rgba(15,32,68,0.25)] pl-6 pr-3 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="BrightCert home">
-          <Logo light={transparent} />
+          <Logo />
         </Link>
 
         {/* Desktop nav */}
@@ -45,13 +44,9 @@ export function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm transition-colors",
-                transparent
-                  ? pathname === link.href
-                    ? "text-white font-semibold"
-                    : "text-white/75 hover:text-white"
-                  : pathname === link.href
-                    ? "text-[#0F2044] font-semibold"
-                    : "text-[#475569] hover:text-[#0F2044]"
+                pathname === link.href
+                  ? "text-[#0F2044] font-semibold"
+                  : "text-[#475569] hover:text-[#0F2044]"
               )}
             >
               {link.label}
@@ -61,12 +56,7 @@ export function Navbar() {
 
         {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-3">
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className={transparent ? "border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30 shadow-none" : undefined}
-          >
+          <Button asChild variant="outline" size="sm">
             <Link href="/login">Sign in</Link>
           </Button>
           <Button asChild size="sm">
@@ -76,7 +66,7 @@ export function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className={cn("md:hidden p-2", transparent ? "text-white" : "text-[#475569]")}
+          className="md:hidden p-2 text-[#475569]"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
