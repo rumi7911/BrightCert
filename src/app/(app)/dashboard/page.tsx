@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
 import { IconTile } from "@/components/brightcert/icon-tile";
+import { Card } from "@/components/brightcert/card";
 import { SECTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/server";
 import { getOverallStatus, getScoreColor, SCORE_STATUS_MAP, type Gap } from "@/types/assessment";
@@ -115,26 +116,15 @@ function MetricTile({
   helper: string;
   tone?: "emerald" | "red" | "slate";
 }) {
-  const tones = {
-    emerald: { bg: "#ECFDF5", color: "#047857" },
-    red: { bg: "#FEF2F2", color: "#DC2626" },
-    slate: { bg: "#F1F5F9", color: "#475569" },
-  }[tone];
-
   return (
-    <div className="flex items-center gap-4 border-b border-[#E2E8F0] p-4 sm:border-b-0 sm:border-r sm:last:border-r-0 lg:p-5">
-      <div
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-        style={{ backgroundColor: tones.bg, color: tones.color }}
-      >
-        <Icon className="h-5 w-5" strokeWidth={1.5} />
-      </div>
+    <Card className="flex items-center gap-4 p-4 lg:p-5">
+      <IconTile icon={Icon} tone={tone} />
       <div className="min-w-0">
         <p className="text-xs text-[#64748B]">{label}</p>
         <p className="mt-0.5 text-lg font-bold text-[#0F2044]">{value}</p>
         <p className="text-xs text-[#64748B]">{helper}</p>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -142,7 +132,7 @@ function EmptyState() {
   return (
     <div>
       <DashboardHeader />
-      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 text-center shadow-[0_1px_3px_rgba(15,32,68,0.05)] sm:p-12">
+      <Card className="rounded-[16px] p-8 text-center sm:p-12">
         <IconTile icon={ClipboardList} size="lg" className="mx-auto mb-4" />
         <h2 className="text-lg font-semibold text-[#0F2044]">Start your first assessment</h2>
         <p className="mx-auto mt-2 mb-6 max-w-md text-sm leading-relaxed text-[#64748B]">
@@ -151,7 +141,7 @@ function EmptyState() {
         <Button asChild>
           <Link href="/assessment/new">Start Assessment</Link>
         </Button>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -177,7 +167,7 @@ function DraftState({ assessment }: { assessment: AssessmentRow }) {
   return (
     <div>
       <DashboardHeader />
-      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.05)]">
+      <Card className="rounded-[16px] p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <IconTile icon={ClipboardList} size="lg" />
@@ -193,7 +183,7 @@ function DraftState({ assessment }: { assessment: AssessmentRow }) {
             <Link href={`/assessment/${assessment.id}/section/1?q=1`}>Continue Assessment</Link>
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -202,7 +192,7 @@ function SubmittedState({ assessment }: { assessment: AssessmentRow }) {
   return (
     <div>
       <DashboardHeader />
-      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.05)]">
+      <Card className="rounded-[16px] p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <IconTile icon={Clock} size="lg" />
@@ -218,7 +208,7 @@ function SubmittedState({ assessment }: { assessment: AssessmentRow }) {
             <Link href={`/assessment/${assessment.id}/check-answers`}>View Answers</Link>
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -236,7 +226,7 @@ function ReadinessPanel({
   const scoreColor = getScoreColor(score);
 
   return (
-    <section className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)] lg:p-6">
+    <Card as="section">
       <h2 className="text-base font-semibold text-[#0F2044]">Overall readiness</h2>
       <div className="mt-6 grid gap-6 md:grid-cols-[auto_1fr] md:items-center">
         <ScoreCircle score={score} size="lg" />
@@ -274,7 +264,7 @@ function ReadinessPanel({
           </Link>
         </div>
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -296,7 +286,7 @@ function PriorityPanel({
   });
 
   return (
-    <section className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)] lg:p-6">
+    <Card as="section">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-[#DC2626]">Fix these first (P1 priority)</h2>
@@ -311,9 +301,7 @@ function PriorityPanel({
         <div className="mt-5 divide-y divide-[#F1F5F9]">
           {p1Gaps.slice(0, 3).map((gap, index) => (
             <div key={`${gap.issue}-${index}`} className="flex items-center gap-3 py-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-[#FEF2F2] text-[#DC2626]">
-                <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
-              </div>
+              <IconTile icon={AlertTriangle} size="sm" tone="red" />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-semibold text-[#0F2044]">{gap.issue}</p>
@@ -351,7 +339,7 @@ function PriorityPanel({
         View all issues
         <ChevronRight className="h-4 w-4" strokeWidth={1.5} />
       </Link>
-    </section>
+    </Card>
   );
 }
 
@@ -364,7 +352,7 @@ function ControlAreas({ controls }: { controls: ControlScoreRow[] }) {
   };
 
   return (
-    <section className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)]">
+    <Card as="section">
       <h2 className="text-base font-semibold text-[#0F2044]">Cyber Essentials control areas</h2>
       <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         {SECTIONS.map((section) => {
@@ -374,11 +362,9 @@ function ControlAreas({ controls }: { controls: ControlScoreRow[] }) {
           const color = control ? getScoreColor(score) : "#CBD5E1";
 
           return (
-            <div key={section.id} className="rounded-[10px] border border-[#E2E8F0] bg-white p-4">
+            <div key={section.id} className="rounded-[10px] border border-[#F1F5F9] bg-white p-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-[#ECFDF5] text-[#047857]">
-                  <ShieldCheck className="h-4 w-4" strokeWidth={1.5} />
-                </div>
+                <IconTile icon={ShieldCheck} size="sm" />
                 <div>
                   <h3 className="text-sm font-semibold leading-snug text-[#0F2044]">
                     {section.id}. {section.shortTitle}
@@ -399,7 +385,7 @@ function ControlAreas({ controls }: { controls: ControlScoreRow[] }) {
           );
         })}
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -413,25 +399,25 @@ function AssessmentHistory({
   p1CountMap: Map<string, number>;
 }) {
   return (
-    <section className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)]">
+    <Card as="section">
       <h2 className="text-base font-semibold text-[#0F2044]">Assessment history</h2>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[620px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[#E2E8F0] text-xs font-medium text-[#64748B]">
-              <th className="pb-2 pr-4">Assessment</th>
-              <th className="pb-2 pr-4">Date</th>
-              <th className="pb-2 pr-4">Status</th>
-              <th className="pb-2 pr-4">Score</th>
-              <th className="pb-2 pr-4">P1 blockers</th>
-              <th className="pb-2 text-right">Action</th>
+            <tr className="border-b border-[#F1F5F9] text-xs font-medium text-[#94A3B8] uppercase tracking-wider">
+              <th className="pb-2 pr-4 font-medium">Assessment</th>
+              <th className="pb-2 pr-4 font-medium">Date</th>
+              <th className="pb-2 pr-4 font-medium">Status</th>
+              <th className="pb-2 pr-4 font-medium">Score</th>
+              <th className="pb-2 pr-4 font-medium">P1 blockers</th>
+              <th className="pb-2 text-right font-medium">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#F1F5F9]">
             {assessments.slice(0, 5).map((assessment, index) => {
               const reportUrl = reportMap.get(assessment.id);
               return (
-                <tr key={assessment.id}>
+                <tr key={assessment.id} className="transition-colors hover:bg-[#F8FAFC]">
                   <td className="py-3 pr-4 font-medium text-[#0F2044]">
                     <div className="flex items-center gap-2">
                       {index === 0 && (
@@ -469,7 +455,7 @@ function AssessmentHistory({
           </tbody>
         </table>
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -484,60 +470,56 @@ function ReportsPanel({
   const isAnalysed = latest.status === "analysed";
 
   return (
-    <section className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_3px_rgba(15,32,68,0.05)]">
+    <Card as="section">
       <h2 className="text-base font-semibold text-[#0F2044]">Reports</h2>
-      <div className="mt-4 rounded-[12px] border border-[#E2E8F0] bg-[#F8FAFC] p-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-white text-[#475569] ring-1 ring-[#E2E8F0]">
-              <FileText className="h-6 w-6" strokeWidth={1.5} />
+      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <IconTile icon={FileText} size="lg" />
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-sm font-semibold text-[#0F2044]">Cyber Essentials Readiness Report</p>
+              <span className="rounded-[6px] bg-[#ECFDF5] px-2 py-0.5 text-xs font-semibold text-[#047857]">
+                {reportUrl ? "PDF ready" : isPaid ? "Generating" : isAnalysed ? "Ready to unlock" : "Locked"}
+              </span>
             </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-semibold text-[#0F2044]">Cyber Essentials Readiness Report</p>
-                <span className="rounded-[6px] bg-[#ECFDF5] px-2 py-0.5 text-xs font-semibold text-[#047857]">
-                  {reportUrl ? "PDF ready" : isPaid ? "Generating" : isAnalysed ? "Ready to unlock" : "Locked"}
-                </span>
-              </div>
-              <p className="mt-1 text-xs leading-relaxed text-[#64748B]">
-                Includes your score, key findings, and recommended actions from Assessment {formatDate(latest.created_at)}.
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-            {reportUrl ? (
-              <Button asChild size="sm">
-                <a href={reportUrl} target="_blank" rel="noopener noreferrer">
-                  <Download className="h-4 w-4" />
-                  Download PDF
-                </a>
-              </Button>
-            ) : isPaid ? (
-              <Button asChild size="sm">
-                <Link href={`/assessment/${latest.id}/report`}>Generate report</Link>
-              </Button>
-            ) : isAnalysed ? (
-              <Button asChild size="sm">
-                <Link href={`/api/stripe/checkout?assessmentId=${latest.id}`}>
-                  <Lock className="h-4 w-4" />
-                  Unlock report
-                </Link>
-              </Button>
-            ) : (
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/assessment/${latest.id}/results`}>View results</Link>
-              </Button>
-            )}
-            <Button asChild variant="outline" size="sm">
-              <Link href={isPaid ? `/assessment/${latest.id}/report` : `/assessment/${latest.id}/results`}>
-                View report
-                <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
-            </Button>
+            <p className="mt-1 text-xs leading-relaxed text-[#64748B]">
+              Includes your score, key findings, and recommended actions from Assessment {formatDate(latest.created_at)}.
+            </p>
           </div>
         </div>
+        <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+          {reportUrl ? (
+            <Button asChild size="sm">
+              <a href={reportUrl} target="_blank" rel="noopener noreferrer">
+                <Download className="h-4 w-4" />
+                Download PDF
+              </a>
+            </Button>
+          ) : isPaid ? (
+            <Button asChild size="sm">
+              <Link href={`/assessment/${latest.id}/report`}>Generate report</Link>
+            </Button>
+          ) : isAnalysed ? (
+            <Button asChild size="sm">
+              <Link href={`/api/stripe/checkout?assessmentId=${latest.id}`}>
+                <Lock className="h-4 w-4" />
+                Unlock report
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/assessment/${latest.id}/results`}>View results</Link>
+            </Button>
+          )}
+          <Button asChild variant="outline" size="sm">
+            <Link href={isPaid ? `/assessment/${latest.id}/report` : `/assessment/${latest.id}/results`}>
+              View report
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </div>
       </div>
-    </section>
+    </Card>
   );
 }
 

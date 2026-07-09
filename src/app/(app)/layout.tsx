@@ -8,7 +8,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 h-16 bg-white/90 backdrop-blur-md border-b border-[#E2E8F0] flex items-center justify-between px-4 md:px-6">
+      <header className="sticky top-0 z-40 h-16 bg-white/80 backdrop-blur-md border-b border-[#E2E8F0] shadow-[0_1px_2px_rgba(15,32,68,0.03)] flex items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center" aria-label="BrightCert home">
           <Logo markClassName="h-7 w-7" textClassName="text-lg" />
         </Link>
