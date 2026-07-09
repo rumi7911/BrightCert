@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,23 +17,40 @@ const navLinks = [
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  // Homepage opens on a navy hero — colour the header's own box to match so
-  // there's no gap around the (always-white) pill. Padding lives on the
-  // header itself, not as a sticky offset, so the background has no holes.
   const isHome = pathname === "/";
+
+  // Homepage nav floats transparently over the navy hero and only needs to
+  // react to scroll there — other pages never leave their solid state.
+  useEffect(() => {
+    if (!isHome) return;
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  // `fixed` (not `sticky`) on the homepage so the header reserves no flow
+  // space — the hero's own navy background then extends naturally to the
+  // very top of the page, with the nav floating transparently on top of it.
+  const floating = isHome && !scrolled;
 
   return (
     <header
-      className={cn(
-        "sticky top-0 z-50 px-4 pt-4 pb-2",
-        isHome && "bg-gradient-to-br from-[#0F2044] to-[#142A56]"
-      )}
+      className={cn("z-50 px-4 pt-4 pb-2", isHome ? "fixed top-0 inset-x-0" : "sticky top-0")}
     >
-      <div className="max-w-6xl mx-auto rounded-[18px] bg-white shadow-[0_8px_30px_-8px_rgba(15,32,68,0.25)] pl-6 pr-3 py-3 flex items-center justify-between">
+      <div
+        className={cn(
+          "max-w-6xl mx-auto rounded-[18px] pl-6 pr-3 py-3 flex items-center justify-between transition-colors duration-300",
+          floating
+            ? "bg-white/10 backdrop-blur-md border border-white/15"
+            : "bg-white shadow-[0_8px_30px_-8px_rgba(15,32,68,0.25)]"
+        )}
+      >
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="BrightCert home">
-          <Logo />
+          <Logo light={floating} />
         </Link>
 
         {/* Desktop nav */}
@@ -44,9 +61,13 @@ export function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm transition-colors",
-                pathname === link.href
-                  ? "text-[#0F2044] font-semibold"
-                  : "text-[#475569] hover:text-[#0F2044]"
+                floating
+                  ? pathname === link.href
+                    ? "text-white font-semibold"
+                    : "text-white/75 hover:text-white"
+                  : pathname === link.href
+                    ? "text-[#0F2044] font-semibold"
+                    : "text-[#475569] hover:text-[#0F2044]"
               )}
             >
               {link.label}
@@ -56,7 +77,12 @@ export function Navbar() {
 
         {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-3">
-          <Button asChild variant="outline" size="sm">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className={floating ? "border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30 shadow-none" : undefined}
+          >
             <Link href="/login">Sign in</Link>
           </Button>
           <Button asChild size="sm">
@@ -66,7 +92,7 @@ export function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 text-[#475569]"
+          className={cn("md:hidden p-2", floating ? "text-white" : "text-[#475569]")}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
