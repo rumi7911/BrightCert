@@ -20,8 +20,8 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 h-16 bg-white/90 backdrop-blur-md border-b border-[#E2E8F0]">
-      <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
+    <header className="sticky top-4 z-50 px-4">
+      <div className="max-w-6xl mx-auto rounded-[18px] bg-white shadow-[0_8px_30px_-8px_rgba(15,32,68,0.25)] pl-6 pr-3 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="BrightCert home">
           <Logo />
@@ -43,16 +43,17 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            className="text-sm text-[#475569] hover:text-[#0F2044] transition-colors"
-          >
-            Sign in
-          </Link>
+        </nav>
+
+        {/* Desktop actions */}
+        <div className="hidden md:flex items-center gap-3">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/login">Sign in</Link>
+          </Button>
           <Button asChild size="sm">
             <Link href="/assessment/new">Start Assessment</Link>
           </Button>
-        </nav>
+        </div>
 
         {/* Mobile toggle */}
         <button
@@ -66,7 +67,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-[#E2E8F0] px-4 py-4 flex flex-col gap-4">
+        <div className="md:hidden max-w-6xl mx-auto mt-2 rounded-[18px] bg-white shadow-[0_8px_30px_-8px_rgba(15,32,68,0.25)] px-4 py-4 flex flex-col gap-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
