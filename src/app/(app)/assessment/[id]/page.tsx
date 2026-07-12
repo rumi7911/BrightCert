@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CheckCircle2, Circle, Clock, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SECTIONS, getQuestionsBySection } from "@/lib/questions";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Assessment" };
 
@@ -74,17 +75,34 @@ export default async function AssessmentTaskListPage({
 }) {
   const { id } = await params;
 
-  // Phase 2: fetch real completion status from Supabase
-  // For now, show all sections as not started
-  const sectionStatuses: Record<number, SectionTaskStatus> = {
-    1: "not_started",
-    2: "not_started",
-    3: "not_started",
-    4: "not_started",
-    5: "not_started",
-  };
+  const supabase = await createClient();
+  const { data: responses } = await supabase
+    .from("responses")
+    .select("section_id")
+    .eq("assessment_id", id);
+
+  const answeredBySection: Record<number, number> = {};
+  (responses ?? []).forEach((r) => {
+    answeredBySection[r.section_id] = (answeredBySection[r.section_id] ?? 0) + 1;
+  });
+
+  const sectionStatuses: Record<number, SectionTaskStatus> = {};
+  SECTIONS.forEach((section) => {
+    const total = getQuestionsBySection(section.id).length;
+    const answered = answeredBySection[section.id] ?? 0;
+    sectionStatuses[section.id] =
+      answered === 0 ? "not_started" : answered >= total ? "completed" : "in_progress";
+  });
 
   const allCompleted = Object.values(sectionStatuses).every((s) => s === "completed");
+
+  // Resume where the user left off: first incomplete section, first unanswered question
+  const firstIncomplete = SECTIONS.find((s) => sectionStatuses[s.id] !== "completed");
+  const continueSectionId = firstIncomplete?.id ?? 1;
+  const continueQuestion = Math.min(
+    (answeredBySection[continueSectionId] ?? 0) + 1,
+    getQuestionsBySection(continueSectionId).length
+  );
 
   return (
     <div className="max-w-2xl">
@@ -127,7 +145,9 @@ export default async function AssessmentTaskListPage({
             </Button>
           ) : (
             <Button asChild size="lg">
-              <Link href={`/assessment/${id}/section/1?q=1`}>Continue assessment</Link>
+              <Link href={`/assessment/${id}/section/${continueSectionId}?q=${continueQuestion}`}>
+                Continue assessment
+              </Link>
             </Button>
           )}
         </div>

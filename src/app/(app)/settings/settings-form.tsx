@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState } from "react";
 import { updateOrganisation } from "./actions";
 import { CheckCircle2, Loader2 } from "lucide-react";
 
@@ -19,21 +19,13 @@ const SIZE_OPTIONS = [
 
 export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
   const [state, action, pending] = useActionState(updateOrganisation, null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  useEffect(() => {
-    if (state?.success) {
-      const t = setTimeout(() => {}, 3000);
-      return () => clearTimeout(t);
-    }
-  }, [state]);
 
   return (
-    <form ref={formRef} action={action} className="space-y-6">
+    <form action={action} className="space-y-6">
       {/* Organisation details */}
       <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
-        <div className="px-5 py-4">
-          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-3">Organisation</p>
+        <div className="px-5 py-3">
+          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide">Organisation</p>
         </div>
 
         <div className="px-5 py-4">
@@ -85,8 +77,8 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
 
       {/* Account details — read-only */}
       <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
-        <div className="px-5 py-4">
-          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-3">Account</p>
+        <div className="px-5 py-3">
+          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide">Account</p>
         </div>
         <div className="px-5 py-4">
           <label className="block text-sm font-medium text-[#0F2044] mb-1.5">Email address</label>
