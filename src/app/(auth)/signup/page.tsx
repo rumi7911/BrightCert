@@ -43,7 +43,7 @@ export default function SignupPage() {
     <div className="w-full max-w-md">
       <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.12)]">
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-4 lg:hidden">
             <LogoMark className="h-14 w-14" />
           </div>
           <h1 className="text-2xl font-bold text-[#0F2044]">Start your Cyber Essentials assessment</h1>
