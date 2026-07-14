@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  AlertTriangle,
   CheckCircle2,
-  ChevronRight,
   ClipboardList,
   Clock,
   Download,
   Lock,
   Plus,
-  XCircle,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +18,6 @@ import { cn } from "@/lib/utils";
 import {
   getOverallStatus,
   getScoreColor,
-  SCORE_STATUS_MAP,
   type Gap,
   type OverallStatus,
 } from "@/types/assessment";
@@ -38,6 +34,13 @@ const VERDICT_SENTENCES: Record<OverallStatus, string> = {
   needs_fixes: "Not yet ready for Cyber Essentials.",
   not_ready: "Not ready for Cyber Essentials.",
 };
+
+const CONTROL_STATUS = {
+  pass: { label: "On track", dot: "#059669" },
+  warning: { label: "Needs work", dot: "#D97706" },
+  fail: { label: "At risk", dot: "#DC2626" },
+  missing: { label: "Not scored", dot: "#CBD5E1" },
+} as const;
 
 type AssessmentRow = {
   id: string;
@@ -117,50 +120,6 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// Thin meter with the 70% target as a rule — every score is read against
-// the same line.
-function Meter({
-  value,
-  color,
-  target,
-  className,
-}: {
-  value: number;
-  color: string;
-  target?: number;
-  className?: string;
-}) {
-  return (
-    <div className={cn("relative h-2 rounded-full bg-[#EEF2F7]", className)}>
-      <div
-        className="h-full rounded-full"
-        style={{ width: `${Math.min(Math.max(value, 0), 100)}%`, backgroundColor: color }}
-      />
-      {target != null && (
-        <span
-          className="absolute -top-[3px] -bottom-[3px] w-[2px] rounded-full bg-[#0F2044]/45"
-          style={{ left: `${target}%` }}
-          aria-hidden
-        />
-      )}
-    </div>
-  );
-}
-
-function OverallStatusChip({ status }: { status: OverallStatus }) {
-  const meta = SCORE_STATUS_MAP[status];
-  const Icon = status === "ready" ? CheckCircle2 : status === "nearly_ready" ? AlertTriangle : XCircle;
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
-      style={{ color: meta.color, backgroundColor: meta.bgColor }}
-    >
-      <Icon className="h-3.5 w-3.5" strokeWidth={2} />
-      {meta.label}
-    </span>
-  );
-}
-
 function EmptyState() {
   return (
     <div>
@@ -181,10 +140,10 @@ function EmptyState() {
 
 function DashboardHeader({ subtitle }: { subtitle?: string }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 border-b border-[#EEF1F6] pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#0F2044] sm:text-3xl">Dashboard</h1>
-        <p className="mt-1 text-sm text-[#64748B]">{subtitle ?? "Your Cyber Essentials readiness overview"}</p>
+        <h1 className="text-xl font-bold tracking-tight text-[#0F2044] sm:text-2xl">Dashboard</h1>
+        <p className="mt-1 text-sm text-[#8A94A8]">{subtitle ?? "Your Cyber Essentials readiness overview"}</p>
       </div>
       <Button asChild size="sm">
         <Link href="/assessment/new">
@@ -246,6 +205,8 @@ function SubmittedState({ assessment }: { assessment: AssessmentRow }) {
   );
 }
 
+// Option A's dark verdict band: the navy hero carrying the assessor's verdict,
+// the score, the delta, and the target meter — over the marketing site's glow.
 function VerdictBand({
   latest,
   p1Count,
@@ -263,115 +224,185 @@ function VerdictBand({
   const scoreColor = getScoreColor(score);
 
   return (
-    <Card as="section" className="mb-4 p-6 lg:p-8">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-12">
-        <div className="flex shrink-0 items-baseline justify-center gap-1 md:justify-start">
-          <span
-            className="font-display text-[64px] font-bold leading-none tracking-tight tabular-nums"
-            style={{ color: scoreColor }}
-          >
-            {score}
-          </span>
-          <span className="text-2xl font-bold text-[#94A3B8]">%</span>
-        </div>
+    <section className="relative mb-8 overflow-hidden rounded-[14px] bg-[#0C1A38] px-6 py-6 sm:px-8 sm:py-7">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-36 right-[-70px] h-80 w-80 rounded-full bg-[#059669]/25 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-44 left-[-90px] h-80 w-80 rounded-full bg-[#2563EB]/15 blur-3xl"
+      />
+      <div aria-hidden className="bg-noise pointer-events-none absolute inset-0 opacity-[0.04]" />
 
-        <div className="min-w-0 flex-1">
-          <div className="mb-2 flex flex-wrap items-center gap-3">
-            <OverallStatusChip status={status} />
-            {scoreChange != null && previousDate && (
-              <span
-                className={cn(
-                  "text-xs font-semibold tabular-nums",
-                  scoreChange < 0 ? "text-[#B91C1C]" : "text-[#047857]"
-                )}
+      <div className="relative">
+        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#6EE7B7]">
+          Readiness verdict
+        </p>
+
+        <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-baseline sm:gap-8">
+          <div className="flex shrink-0 items-baseline gap-1">
+            <span className="font-display text-[68px] font-extrabold leading-none tracking-tight text-white tabular-nums sm:text-[76px]">
+              {score}
+            </span>
+            <span className="text-[26px] font-bold text-[#8DA0C4]">%</span>
+          </div>
+          <div className="min-w-0">
+            <h2 className="font-display text-[22px] font-bold leading-snug tracking-tight text-white sm:text-2xl">
+              {verdict}
+            </h2>
+            <p className="mt-1.5 text-[13px] text-[#A9B8D6]">
+              {scoreChange != null && previousDate && (
+                <>
+                  <span
+                    className={cn(
+                      "font-semibold tabular-nums",
+                      scoreChange < 0 ? "text-[#FCA5A5]" : "text-[#6EE7B7]"
+                    )}
+                  >
+                    {scoreChange < 0 ? "▼" : "▲"} {Math.abs(scoreChange)} pts
+                  </span>{" "}
+                  since {previousDate} ·{" "}
+                </>
+              )}
+              {p1Count > 0
+                ? `${p1Count} critical ${p1Count === 1 ? "issue" : "issues"} open`
+                : "no critical issues open"}
+              {" · "}
+              <Link
+                href={`/assessment/${latest.id}/results`}
+                className="font-semibold text-[#6EE7B7] hover:text-white"
               >
-                {scoreChange < 0 ? "▼" : "▲"} {Math.abs(scoreChange)} pts since {previousDate}
-              </span>
-            )}
+                What does my score mean? →
+              </Link>
+            </p>
           </div>
+        </div>
 
-          <h2 className="font-display mb-5 text-2xl font-bold tracking-tight text-[#0F2044] sm:text-[26px]">
-            {verdict}
-          </h2>
-
-          <Meter value={score} color={scoreColor} target={TARGET_SCORE} />
-          <div className="mt-1.5 flex justify-between text-[11px] text-[#94A3B8]">
-            <span>0</span>
-            <span className="font-medium text-[#64748B]">Target {TARGET_SCORE}%</span>
-            <span>100</span>
-          </div>
-
-          <p className="mt-4 text-sm text-[#475569]">
-            {p1Count > 0
-              ? `Fix the ${p1Count} critical ${p1Count === 1 ? "issue" : "issues"} below to move towards the ${TARGET_SCORE}% target.`
-              : "No critical blockers are open. Review the control areas before applying."}{" "}
-            <Link
-              href={`/assessment/${latest.id}/results`}
-              className="font-semibold text-[#047857] hover:text-[#065F46]"
-            >
-              What does my score mean? →
-            </Link>
-          </p>
+        <div className="relative mt-6 h-1.5 max-w-2xl rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: `${Math.min(Math.max(score, 0), 100)}%`,
+              backgroundColor: scoreColor,
+              boxShadow: `0 0 16px ${scoreColor}88`,
+            }}
+          />
+          <span
+            className="absolute -top-1 -bottom-1 w-[2px] rounded-full bg-[#6EE7B7]"
+            style={{ left: `${TARGET_SCORE}%` }}
+            aria-hidden
+          />
+        </div>
+        <div className="mt-1.5 flex max-w-2xl justify-between text-[10.5px] text-[#8DA0C4]">
+          <span>0</span>
+          <span>Target {TARGET_SCORE}%</span>
+          <span>100</span>
         </div>
       </div>
-    </Card>
+    </section>
   );
 }
 
-function ControlMeters({ latest, controls }: { latest: AssessmentRow; controls: ControlScoreRow[] }) {
-  const statusMeta: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
-    pass: { label: "On track", color: "#065F46", bg: "#ECFDF5", icon: CheckCircle2 },
-    warning: { label: "Needs work", color: "#92400E", bg: "#FFFBEB", icon: AlertTriangle },
-    fail: { label: "At risk", color: "#B91C1C", bg: "#FEF2F2", icon: XCircle },
-    missing: { label: "Not scored", color: "#64748B", bg: "#F1F5F9", icon: Clock },
-  };
-
+// Ledger-style section header: title + optional action link on one baseline
+function SectionHeader({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
-    <Card as="section" className="p-0">
-      <div className="flex items-center justify-between border-b border-[#F1F5F9] px-5 py-3.5">
-        <h2 className="text-sm font-semibold text-[#0F2044]">Control areas</h2>
-        <span className="text-[11px] text-[#94A3B8]">Target {TARGET_SCORE}%</span>
-      </div>
-      {SECTIONS.map((section) => {
-        const control = controls.find((row) => row.section_id === section.id);
-        const score = control?.score ?? 0;
-        const meta = statusMeta[control?.status ?? "missing"] ?? statusMeta.missing;
-        const Icon = meta.icon;
-
-        return (
-          <Link
-            key={section.id}
-            href={`/assessment/${latest.id}/results`}
-            className="flex items-center gap-3 border-t border-[#F1F5F9] px-5 py-3 transition-colors first:border-t-0 hover:bg-[#F8FAFC] sm:gap-4"
-          >
-            <span className="w-3 shrink-0 text-xs font-semibold text-[#94A3B8]">{section.id}</span>
-            <span className="w-32 shrink-0 truncate text-sm font-medium text-[#0F2044] sm:w-40">
-              {section.shortTitle}
-            </span>
-            <Meter
-              value={score}
-              color={control ? getScoreColor(score) : "#CBD5E1"}
-              target={TARGET_SCORE}
-              className="hidden flex-1 sm:block"
-            />
-            <span className="ml-auto w-11 shrink-0 text-right text-sm font-bold tabular-nums text-[#0F2044] sm:ml-0">
-              {control ? `${score}%` : "—"}
-            </span>
-            <span
-              className="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold sm:w-[110px]"
-              style={{ color: meta.color, backgroundColor: meta.bg }}
-            >
-              <Icon className="h-3 w-3" strokeWidth={2} />
-              {meta.label}
-            </span>
-          </Link>
-        );
-      })}
-    </Card>
+    <div className="mb-1 flex items-baseline justify-between">
+      <h2 className="text-[13px] font-semibold text-[#0F2044]">{title}</h2>
+      {action}
+    </div>
   );
 }
 
-function PriorityQueue({ latest, controls }: { latest: AssessmentRow; controls: ControlScoreRow[] }) {
+function MiniMeter({ value, color }: { value: number; color: string }) {
+  return (
+    <span className="relative inline-block h-[5px] w-[130px] rounded-full bg-[#F0F3F8] align-middle">
+      <span
+        className="absolute inset-y-0 left-0 rounded-full"
+        style={{ width: `${Math.min(Math.max(value, 0), 100)}%`, backgroundColor: color }}
+      />
+      <span
+        className="absolute -top-[3px] -bottom-[3px] w-[1.5px] rounded-full bg-[#99A2B4]"
+        style={{ left: `${TARGET_SCORE}%` }}
+        aria-hidden
+      />
+    </span>
+  );
+}
+
+function DotStatus({ status }: { status: keyof typeof CONTROL_STATUS }) {
+  const meta = CONTROL_STATUS[status] ?? CONTROL_STATUS.missing;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#33405C]">
+      <span className="h-[7px] w-[7px] rounded-full" style={{ backgroundColor: meta.dot }} aria-hidden />
+      {meta.label}
+    </span>
+  );
+}
+
+function ControlTable({ latest, controls }: { latest: AssessmentRow; controls: ControlScoreRow[] }) {
+  return (
+    <div>
+      <SectionHeader
+        title="Control areas"
+        action={
+          <Link
+            href={`/assessment/${latest.id}/results`}
+            className="text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+          >
+            Full results →
+          </Link>
+        }
+      />
+      <div>
+        <table className="w-full border-collapse text-[13px]">
+          <thead>
+            <tr>
+              <th className="border-b border-[#EEF1F6] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4]">
+                Control
+              </th>
+              <th className="hidden border-b border-[#EEF1F6] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4] sm:table-cell">
+                Progress to {TARGET_SCORE}%
+              </th>
+              <th className="border-b border-[#EEF1F6] py-2 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4]">
+                Score
+              </th>
+              <th className="border-b border-[#EEF1F6] py-2 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4]">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {SECTIONS.map((section) => {
+              const control = controls.find((row) => row.section_id === section.id);
+              const score = control?.score ?? 0;
+              const status = (control?.status ?? "missing") as keyof typeof CONTROL_STATUS;
+
+              return (
+                <tr key={section.id}>
+                  <td className="border-b border-[#F4F6FA] py-2.5 pr-4 text-[#33405C]">
+                    <b className="font-semibold text-[#0F2044]">{section.id}.</b> {section.shortTitle}
+                  </td>
+                  <td className="hidden border-b border-[#F4F6FA] py-2.5 pr-4 sm:table-cell">
+                    <MiniMeter value={score} color={control ? getScoreColor(score) : "#CBD5E1"} />
+                  </td>
+                  <td className="border-b border-[#F4F6FA] py-2.5 pr-4 text-right font-bold tabular-nums text-[#0F2044]">
+                    {control ? `${score}%` : "—"}
+                  </td>
+                  <td className="border-b border-[#F4F6FA] py-2.5 text-right">
+                    <DotStatus status={status} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function FixFirstList({ latest, controls }: { latest: AssessmentRow; controls: ControlScoreRow[] }) {
   const p1Gaps = controls.flatMap((control) => {
     const section = SECTIONS.find((item) => item.id === control.section_id);
     return getGaps(control)
@@ -383,55 +414,43 @@ function PriorityQueue({ latest, controls }: { latest: AssessmentRow; controls: 
   });
 
   return (
-    <Card as="section" className="p-0">
-      <div className="flex items-center justify-between border-b border-[#F1F5F9] px-5 py-3.5">
-        <h2 className="text-sm font-semibold text-[#0F2044]">Fix these first</h2>
-        {p1Gaps.length > 0 ? (
-          <span className="inline-flex items-center rounded-full bg-[#FEF2F2] px-2.5 py-0.5 text-[11px] font-semibold text-[#B91C1C]">
-            {p1Gaps.length} P1 {p1Gaps.length === 1 ? "issue" : "issues"}
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2.5 py-0.5 text-[11px] font-semibold text-[#065F46]">
-            <CheckCircle2 className="h-3 w-3" strokeWidth={2} />
-            None open
-          </span>
-        )}
-      </div>
-
+    <div className="mt-8">
+      <SectionHeader
+        title="Fix these first"
+        action={
+          p1Gaps.length > 0 ? (
+            <Link
+              href={`/assessment/${latest.id}/results#priority-actions`}
+              className="text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+            >
+              All {p1Gaps.length} →
+            </Link>
+          ) : undefined
+        }
+      />
       {p1Gaps.length > 0 ? (
-        <>
+        <div className="border-t border-[#EEF1F6]">
           {p1Gaps.slice(0, 5).map((gap, index) => (
             <Link
               key={`${gap.issue}-${index}`}
               href={`/assessment/${latest.id}/results#priority-actions`}
-              className="flex items-center gap-3 border-t border-[#F1F5F9] px-5 py-3 transition-colors first:border-t-0 hover:bg-[#F8FAFC]"
+              className="flex items-baseline gap-4 border-b border-[#F4F6FA] py-2.5 transition-colors hover:bg-[#F8FAFC]"
             >
-              <span className="shrink-0 rounded-[4px] border border-[#FECACA] bg-[#FEF2F2] px-1.5 py-0.5 text-[10px] font-bold text-[#B91C1C]">
-                P1
-              </span>
-              <span className="min-w-0 flex-1 truncate text-sm font-medium text-[#0F2044]">{gap.issue}</span>
-              <span className="hidden shrink-0 text-xs text-[#94A3B8] sm:block">{gap.sectionTitle}</span>
-              <ChevronRight className="h-4 w-4 shrink-0 text-[#CBD5E1]" strokeWidth={1.5} />
+              <span className="min-w-0 flex-1 truncate text-[13px] text-[#33405C]">{gap.issue}</span>
+              <span className="shrink-0 text-xs text-[#8A94A8]">{gap.sectionTitle}</span>
             </Link>
           ))}
-          <Link
-            href={`/assessment/${latest.id}/results#priority-actions`}
-            className="block border-t border-[#F1F5F9] px-5 py-3 text-[13px] font-semibold text-[#047857] transition-colors hover:bg-[#F8FAFC] hover:text-[#065F46]"
-          >
-            View all {p1Gaps.length} issues →
-          </Link>
-        </>
-      ) : (
-        <div className="px-5 py-4">
-          <p className="text-sm font-medium text-[#0F2044]">No critical blockers found</p>
-          <p className="mt-1 text-sm text-[#64748B]">Review the control areas and report notes before applying.</p>
         </div>
+      ) : (
+        <p className="border-t border-[#EEF1F6] pt-3 text-[13px] text-[#77829A]">
+          No critical blockers found. Review the control areas and report notes before applying.
+        </p>
       )}
-    </Card>
+    </div>
   );
 }
 
-function ReportCard({
+function ReportSection({
   latest,
   reportUrl,
 }: {
@@ -441,66 +460,49 @@ function ReportCard({
   const isPaid = latest.status === "paid";
   const isAnalysed = latest.status === "analysed";
 
-  const chip = reportUrl
-    ? { label: "PDF ready", color: "#065F46", bg: "#ECFDF5" }
-    : isPaid
-      ? { label: "Generating", color: "#1E40AF", bg: "#EFF6FF" }
-      : isAnalysed
-        ? { label: "Ready to unlock", color: "#92400E", bg: "#FFFBEB" }
-        : { label: "Locked", color: "#64748B", bg: "#F1F5F9" };
-
   return (
-    <Card as="section" className="p-0">
-      <div className="flex items-center justify-between border-b border-[#F1F5F9] px-5 py-3.5">
-        <h2 className="text-sm font-semibold text-[#0F2044]">Readiness report</h2>
-        <span
-          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
-          style={{ color: chip.color, backgroundColor: chip.bg }}
-        >
-          {chip.label}
-        </span>
-      </div>
-      <div className="px-5 py-4">
-        <p className="mb-4 text-[13px] leading-relaxed text-[#64748B]">
-          Your score, key findings, and remediation roadmap from the {formatDate(latest.created_at)} assessment — as a PDF you can share with your IT provider.
-        </p>
-        {reportUrl ? (
-          <Button asChild size="sm" className="w-full">
-            <a href={reportUrl} target="_blank" rel="noopener noreferrer">
-              <Download className="h-4 w-4" />
-              Download PDF
-            </a>
-          </Button>
-        ) : isPaid ? (
-          <Button asChild size="sm" className="w-full">
-            <Link href={`/assessment/${latest.id}/report`}>Generate report</Link>
-          </Button>
-        ) : isAnalysed ? (
-          <Button asChild size="sm" className="w-full">
-            <Link href={`/api/stripe/checkout?assessmentId=${latest.id}`}>
-              <Lock className="h-4 w-4" />
-              Unlock report · £199
-            </Link>
-          </Button>
-        ) : (
-          <Button asChild variant="outline" size="sm" className="w-full">
-            <Link href={`/assessment/${latest.id}/results`}>View results</Link>
-          </Button>
-        )}
-        <p className="mt-3 text-center text-xs text-[#94A3B8]">
-          <Link
-            href={isPaid ? `/assessment/${latest.id}/report` : `/assessment/${latest.id}/results`}
-            className="hover:text-[#0F2044]"
-          >
-            {isPaid ? "View report online →" : "View free results →"}
+    <div>
+      <SectionHeader title="Readiness report" />
+      <p className="mb-3 text-xs leading-relaxed text-[#77829A]">
+        Your score, key findings, and remediation roadmap from the {formatDate(latest.created_at)}{" "}
+        assessment — as a PDF you can hand to your IT provider.
+      </p>
+      {reportUrl ? (
+        <Button asChild size="sm" className="w-full">
+          <a href={reportUrl} target="_blank" rel="noopener noreferrer">
+            <Download className="h-4 w-4" />
+            Download PDF
+          </a>
+        </Button>
+      ) : isPaid ? (
+        <Button asChild size="sm" className="w-full">
+          <Link href={`/assessment/${latest.id}/report`}>Generate report</Link>
+        </Button>
+      ) : isAnalysed ? (
+        <Button asChild size="sm" className="w-full">
+          <Link href={`/api/stripe/checkout?assessmentId=${latest.id}`}>
+            <Lock className="h-4 w-4" />
+            Unlock report · £199
           </Link>
-        </p>
-      </div>
-    </Card>
+        </Button>
+      ) : (
+        <Button asChild variant="outline" size="sm" className="w-full">
+          <Link href={`/assessment/${latest.id}/results`}>View results</Link>
+        </Button>
+      )}
+      <p className="mt-2.5 text-center text-xs text-[#99A2B4]">
+        <Link
+          href={isPaid ? `/assessment/${latest.id}/report` : `/assessment/${latest.id}/results`}
+          className="hover:text-[#0F2044]"
+        >
+          {isPaid ? "View report online →" : "View free results →"}
+        </Link>
+      </p>
+    </div>
   );
 }
 
-function HistoryCard({
+function HistorySection({
   assessments,
   reportMap,
 }: {
@@ -508,47 +510,49 @@ function HistoryCard({
   reportMap: Map<string, string>;
 }) {
   return (
-    <Card as="section" className="p-0">
-      <div className="border-b border-[#F1F5F9] px-5 py-3.5">
-        <h2 className="text-sm font-semibold text-[#0F2044]">History</h2>
-      </div>
-      {assessments.slice(0, 5).map((assessment, index) => {
-        const reportUrl = reportMap.get(assessment.id);
-        const href =
-          assessment.status === "draft"
-            ? `/assessment/${assessment.id}`
-            : `/assessment/${assessment.id}/results`;
+    <div className="mt-7 border-t border-[#EEF1F6] pt-4">
+      <SectionHeader title="History" />
+      <div>
+        {assessments.slice(0, 5).map((assessment, index) => {
+          const reportUrl = reportMap.get(assessment.id);
+          const href =
+            assessment.status === "draft"
+              ? `/assessment/${assessment.id}`
+              : `/assessment/${assessment.id}/results`;
 
-        return (
-          <div
-            key={assessment.id}
-            className="flex items-center gap-3 border-t border-[#F1F5F9] px-5 py-3 first:border-t-0"
-          >
-            <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-[#0F2044]">
-              {assessment.overall_score != null ? `${assessment.overall_score}%` : "—"}
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[13px] text-[#64748B]">
-              #{assessments.length - index} · {shortDate(assessment.created_at)}
-            </span>
-            <StatusBadge status={assessment.status} />
-            {assessment.status === "paid" && reportUrl ? (
-              <a
-                href={reportUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-semibold text-[#047857] hover:text-[#065F46]"
-              >
-                PDF
-              </a>
-            ) : (
-              <Link href={href} className="text-xs font-semibold text-[#047857] hover:text-[#065F46]">
-                {assessment.status === "draft" ? "Continue" : "View"}
-              </Link>
-            )}
-          </div>
-        );
-      })}
-    </Card>
+          return (
+            <div
+              key={assessment.id}
+              className="flex items-baseline gap-2 border-b border-[#F4F6FA] py-2 text-[13px]"
+            >
+              <span className="font-bold tabular-nums text-[#0F2044]">
+                {assessment.overall_score != null ? `${assessment.overall_score}%` : "—"}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-[#77829A]">
+                · #{assessments.length - index} · {shortDate(assessment.created_at)}
+              </span>
+              {assessment.status === "paid" && reportUrl ? (
+                <a
+                  href={reportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+                >
+                  PDF
+                </a>
+              ) : (
+                <Link
+                  href={href}
+                  className="shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+                >
+                  {assessment.status === "draft" ? "Continue" : "View"}
+                </Link>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -631,17 +635,17 @@ export default async function DashboardPage() {
         latest={latest}
         p1Count={p1Count}
         scoreChange={scoreChange}
-        previousDate={previousWithScore ? formatDate(previousWithScore.created_at) : null}
+        previousDate={previousWithScore ? shortDate(previousWithScore.created_at) : null}
       />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="min-w-0 space-y-4">
-          <ControlMeters latest={latest} controls={latestControls} />
-          <PriorityQueue latest={latest} controls={latestControls} />
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="min-w-0">
+          <ControlTable latest={latest} controls={latestControls} />
+          <FixFirstList latest={latest} controls={latestControls} />
         </div>
-        <div className="space-y-4">
-          <ReportCard latest={latest} reportUrl={latestReportUrl} />
-          <HistoryCard assessments={assessments} reportMap={reportMap} />
+        <div>
+          <ReportSection latest={latest} reportUrl={latestReportUrl} />
+          <HistorySection assessments={assessments} reportMap={reportMap} />
         </div>
       </div>
     </div>
