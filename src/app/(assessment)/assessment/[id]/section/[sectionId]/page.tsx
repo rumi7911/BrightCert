@@ -96,6 +96,23 @@ export default function QuestionPage({
     .map((q, index) => ({ question: q, index, answer: sectionAnswers[q.key] }))
     .filter((item) => item.index < questionIndex && item.answer);
 
+  // GOV.UK "Change" behaviour: when this question was reached via a Change
+  // link, ?return= carries where to jump back to after saving — instead of
+  // forcing the user forward through questions they have already answered.
+  const returnParam = searchParams.get("return");
+  const returnTarget = (() => {
+    if (returnParam === "check") return `/assessment/${assessmentId}/check-answers`;
+    const match = /^([1-5])-(\d{1,2})$/.exec(returnParam ?? "");
+    if (match) {
+      const s = parseInt(match[1], 10);
+      const q = parseInt(match[2], 10);
+      if (q >= 1 && q <= getQuestionsBySection(s).length) {
+        return `/assessment/${assessmentId}/section/${s}?q=${q}`;
+      }
+    }
+    return null;
+  })();
+
   const handleContinue = async () => {
     if (!selectedAnswer) {
       setHasError(true);
@@ -118,7 +135,9 @@ export default function QuestionPage({
 
     setSaving(false);
 
-    if (isLast) {
+    if (returnTarget) {
+      router.push(returnTarget);
+    } else if (isLast) {
       if (sectionId < 5) {
         router.push(`/assessment/${assessmentId}/section/${sectionId + 1}?q=1`);
       } else {
@@ -130,6 +149,11 @@ export default function QuestionPage({
   };
 
   const handleBack = () => {
+    if (returnTarget) {
+      // Came here via a Change link — Back cancels and returns without saving
+      router.push(returnTarget);
+      return;
+    }
     if (questionIndex === 0) {
       if (sectionId > 1) {
         const prevQuestions = getQuestionsBySection(sectionId - 1);
@@ -246,7 +270,7 @@ export default function QuestionPage({
                 </dd>
                 <dd className="m-0 col-start-2 row-start-1 sm:col-start-3 text-right">
                   <Link
-                    href={`/assessment/${assessmentId}/section/${sectionId}?q=${index + 1}`}
+                    href={`/assessment/${assessmentId}/section/${sectionId}?q=${index + 1}&return=${sectionId}-${currentNumber}`}
                     className="text-sm font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
                   >
                     Change<span className="sr-only"> answer to: {q.text}</span>

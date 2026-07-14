@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Pencil, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SECTIONS, QUESTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/client";
@@ -102,30 +102,30 @@ export default function CheckAnswersPage({
           const sectionQuestions = QUESTIONS.filter((q) => q.sectionId === section.id);
           return (
             <div key={section.id}>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-semibold text-[#0F2044]">{section.title}</h2>
-                <Link
-                  href={`/assessment/${assessmentId}/section/${section.id}?q=1`}
-                  className="text-sm text-[#047857] hover:underline flex items-center gap-1"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                  Change
-                </Link>
-              </div>
+              <h2 className="text-base font-semibold text-[#0F2044] mb-3">{section.title}</h2>
               <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
                 {sectionQuestions.map((question) => {
                   const answer = answers[question.key];
+                  const questionNumber = sectionQuestions.indexOf(question) + 1;
                   return (
                     <div key={question.key} className="flex items-start justify-between gap-4 px-5 py-4">
                       <p className="text-sm text-[#475569] flex-1">{question.text}</p>
-                      <div className="text-right shrink-0">
+                      <div className="flex shrink-0 items-start gap-4 text-right">
                         {answer ? (
-                          <p className="text-sm font-medium text-[#0F2044]">
-                            {getAnswerLabel(question.key, answer)}
-                          </p>
+                          <>
+                            <p className="text-sm font-medium text-[#0F2044]">
+                              {getAnswerLabel(question.key, answer)}
+                            </p>
+                            <Link
+                              href={`/assessment/${assessmentId}/section/${section.id}?q=${questionNumber}&return=check`}
+                              className="text-sm font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
+                            >
+                              Change<span className="sr-only"> answer to: {question.text}</span>
+                            </Link>
+                          </>
                         ) : (
                           <Link
-                            href={`/assessment/${assessmentId}/section/${section.id}?q=${sectionQuestions.indexOf(question) + 1}`}
+                            href={`/assessment/${assessmentId}/section/${section.id}?q=${questionNumber}`}
                             className="text-sm text-[#DC2626] hover:underline"
                           >
                             Not answered
