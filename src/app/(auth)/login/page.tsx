@@ -28,16 +28,23 @@ export default function LoginPage() {
     setError("");
 
     const supabase = createClient();
+    // shouldCreateUser: false — logging in must never create an account,
+    // otherwise it bypasses the signup checks (org name, blocked domains).
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
+        shouldCreateUser: false,
       },
     });
 
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError(
+        error.message.toLowerCase().includes("signups not allowed")
+          ? "No account found for this email. Create one free from the sign-up page."
+          : error.message
+      );
     } else {
       setSent(true);
     }

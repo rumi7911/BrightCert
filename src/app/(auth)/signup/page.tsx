@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { GoogleButton } from "@/components/brightcert/google-button";
 import { LogoMark } from "@/components/brightcert/logo";
 import { createClient } from "@/lib/supabase/client";
+import { isDisposableEmail } from "@/lib/auth/disposable-domains";
 
 export default function SignupPage() {
   const [orgName, setOrgName] = useState("");
@@ -17,9 +18,14 @@ export default function SignupPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
+    if (isDisposableEmail(email)) {
+      setError("Temporary email addresses are not supported. Please use your work email address.");
+      return;
+    }
+
+    setLoading(true);
     const supabase = createClient();
 
     // Sign up via magic link — org name stored in metadata, profile created in callback
