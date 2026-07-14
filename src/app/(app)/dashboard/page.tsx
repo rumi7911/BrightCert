@@ -150,8 +150,8 @@ function DashboardHeader() {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight text-[#0F2044] sm:text-5xl">Dashboard</h1>
-        <p className="mt-2 text-sm text-[#64748B]">Your Cyber Essentials readiness overview</p>
+        <h1 className="text-2xl font-bold tracking-tight text-[#0F2044] sm:text-3xl">Dashboard</h1>
+        <p className="mt-1 text-sm text-[#64748B]">Your Cyber Essentials readiness overview</p>
       </div>
       <Button asChild size="sm">
         <Link href="/assessment/new">
@@ -611,7 +611,7 @@ export default async function DashboardPage() {
     <div>
       <DashboardHeader />
 
-      <section className="mb-4 grid overflow-hidden rounded-[12px] border border-[#E2E8F0] bg-white shadow-[0_1px_3px_rgba(15,32,68,0.05)] sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricTile
           icon={ShieldAlert}
           label="P1 blockers"
