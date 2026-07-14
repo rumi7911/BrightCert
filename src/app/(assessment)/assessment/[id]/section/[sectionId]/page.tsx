@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getQuestionsBySection, getSection } from "@/lib/questions";
+import { getQuestionsBySection, getSection, QUESTIONS, SECTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +30,18 @@ export default function QuestionPage({
   const [whyOpen, setWhyOpen] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [sectionDone, setSectionDone] = useState<{
+    target: string;
+    completedCount: number;
+    allDone: boolean;
+  } | null>(null);
+
+  // Auto-continue from the section-complete interstitial
+  useEffect(() => {
+    if (!sectionDone) return;
+    const timer = setTimeout(() => router.push(sectionDone.target), 2600);
+    return () => clearTimeout(timer);
+  }, [sectionDone, router]);
 
   const questionKey = question?.key;
 
@@ -138,11 +150,35 @@ export default function QuestionPage({
     if (returnTarget) {
       router.push(returnTarget);
     } else if (isLast) {
-      if (sectionId < 5) {
-        router.push(`/assessment/${assessmentId}/section/${sectionId + 1}?q=1`);
-      } else {
-        router.push(`/assessment/${assessmentId}/check-answers`);
+      // Section finished — celebrate, then return to the section list so the
+      // user picks their next section. Only when every question across all
+      // five sections is answered do we go straight to check-answers.
+      const { data } = await supabase
+        .from("responses")
+        .select("question_key")
+        .eq("assessment_id", assessmentId);
+
+      const answeredKeys = new Set((data ?? []).map((row) => row.question_key));
+      if (answeredKeys.size === 0) {
+        // Anonymous flow — fall back to localStorage
+        QUESTIONS.forEach((q) => {
+          if (localStorage.getItem(`bc_${assessmentId}_${q.key}`)) answeredKeys.add(q.key);
+        });
       }
+      answeredKeys.add(question.key);
+
+      const completedCount = SECTIONS.filter((s) =>
+        getQuestionsBySection(s.id).every((q) => answeredKeys.has(q.key))
+      ).length;
+      const allDone = completedCount === SECTIONS.length;
+
+      setSectionDone({
+        target: allDone
+          ? `/assessment/${assessmentId}/check-answers`
+          : `/assessment/${assessmentId}`,
+        completedCount,
+        allDone,
+      });
     } else {
       router.push(`/assessment/${assessmentId}/section/${sectionId}?q=${questionIndex + 2}`);
     }
@@ -165,6 +201,50 @@ export default function QuestionPage({
       router.push(`/assessment/${assessmentId}/section/${sectionId}?q=${questionIndex}`);
     }
   };
+
+  if (sectionDone) {
+    return (
+      <div className="mx-auto flex max-w-2xl flex-col items-center pt-10 text-center sm:pt-16">
+        <div className="bc-pop grid h-20 w-20 place-items-center rounded-full bg-[#ECFDF5] ring-1 ring-[#A7F3D0]">
+          <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path
+              d="M4 12.5l5 5L20 6.5"
+              stroke="#047857"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="bc-check"
+            />
+          </svg>
+        </div>
+
+        <p className="bc-rise mt-7 text-xs font-semibold uppercase tracking-wider text-[#047857]" style={{ animationDelay: "0.25s" }}>
+          Section {sectionId} complete
+        </p>
+        <h1 className="bc-rise mt-2 text-[26px] font-bold leading-tight tracking-tight text-[#0F2044] sm:text-3xl" style={{ animationDelay: "0.35s" }}>
+          {section.title}
+        </h1>
+        <p className="bc-rise mt-3 text-sm text-[#64748B]" style={{ animationDelay: "0.45s" }}>
+          {sectionDone.allDone
+            ? "All five sections answered. Time to review and submit."
+            : `${sectionDone.completedCount} of ${SECTIONS.length} sections complete.`}
+        </p>
+
+        <div className="bc-rise mt-8" style={{ animationDelay: "0.55s" }}>
+          <Button asChild size="lg">
+            <Link href={sectionDone.target}>
+              {sectionDone.allDone ? "Check your answers" : "Choose your next section"}
+            </Link>
+          </Button>
+          <p className="mt-4 text-xs text-[#94A3B8]">
+            {sectionDone.allDone
+              ? "Taking you to review automatically…"
+              : "Taking you back to the section list automatically…"}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
