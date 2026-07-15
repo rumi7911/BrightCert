@@ -1,20 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ShieldCheck,
-  FileText,
-  Target,
-  AlertCircle,
-  CheckCircle2,
-  Check,
-  XCircle,
-  Wifi,
-  Settings,
-  Users,
-  Bug,
-  RefreshCw,
-  Star,
-} from "lucide-react";
+import { Check, FileText, ShieldCheck, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { Reveal } from "@/components/brightcert/reveal";
@@ -28,46 +14,41 @@ import {
   getAssessmentCountLabel,
 } from "@/components/brightcert/social-proof-badge";
 import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
+import { getQuestionsBySection } from "@/lib/questions";
 import { createAdminClient } from "@/lib/supabase/server";
 
 // Live count is a light server read — cache for 5 minutes rather than
 // hitting Supabase on every landing page visit.
 export const revalidate = 300;
 
-// ─── Control area card ────────────────────────────────────────────────────────
-function ControlCard({
-  icon: Icon,
-  number,
-  title,
-  checks,
-  className = "",
-}: {
-  icon: React.ElementType;
-  number: number;
-  title: string;
-  checks: string[];
-  className?: string;
-}) {
-  return (
-    <div className={`group rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:border-[#A7F3D0] hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.18)] hover:-translate-y-0.5 ${className}`}>
-      <div className="flex items-start gap-3 mb-4">
-        <IconTile icon={Icon} size="sm" />
-        <div>
-          <p className="text-[11px] font-semibold text-[#047857] uppercase tracking-wider mb-0.5">Area {number}</p>
-          <h3 className="text-base font-semibold text-[#0F2044] leading-snug">{title}</h3>
-        </div>
-      </div>
-      <ul className="space-y-2">
-        {checks.map((check) => (
-          <li key={check} className="flex items-start gap-2.5 text-sm text-[#475569]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#059669] shrink-0 mt-[7px]" aria-hidden />
-            <span>{check}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+// ─── What-we-check table rows (one-line summaries from COPY.md) ──────────────
+const CONTROL_AREA_ROWS = [
+  {
+    id: 1,
+    title: "Boundary Firewalls & Internet Gateways",
+    summary: "Whether your business has suitable protections between your internal systems and the internet.",
+  },
+  {
+    id: 2,
+    title: "Secure Configuration",
+    summary: "Whether devices, systems, and software are configured securely before they are used.",
+  },
+  {
+    id: 3,
+    title: "User Access Control",
+    summary: "Who has access to your systems and whether permissions are appropriate.",
+  },
+  {
+    id: 4,
+    title: "Malware Protection",
+    summary: "Whether your devices are protected from malware and unsafe applications.",
+  },
+  {
+    id: 5,
+    title: "Security Update Management",
+    summary: "Whether software and devices are kept updated against known vulnerabilities.",
+  },
+];
 
 // ─── How-it-works step mockups (decorative) ───────────────────────────────────
 function MockQuestionCard() {
@@ -321,7 +302,6 @@ export default async function HomePage() {
                   delay={i * 80}
                   className={`rounded-[12px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)] hover:-translate-y-0.5 ${i % 2 === 1 ? "sm:mt-8" : ""}`}
                 >
-                  <XCircle className="h-5 w-5 text-[#DC2626] mb-3" strokeWidth={1.5} />
                   <h3 className="text-base font-semibold text-[#0F2044] mb-2 leading-snug">{card.title}</h3>
                   <p className="text-sm text-[#64748B] leading-relaxed">{card.body}</p>
                 </Reveal>
@@ -346,7 +326,7 @@ export default async function HomePage() {
                 You answer simple questions about your organisation, devices, users, software, and security controls. BrightCert analyses your responses across the five Cyber Essentials control areas and gives you a readiness score, plain-English gap findings, and prioritised remediation steps.
               </p>
               <Button asChild size="lg">
-                <Link href="/assessment/new">Start Your Readiness Assessment</Link>
+                <Link href="/assessment/new">Start Your Assessment</Link>
               </Button>
             </Reveal>
             <Reveal delay={120} className="lg:max-w-md lg:justify-self-end w-full">
@@ -374,28 +354,24 @@ export default async function HomePage() {
                 step: "01",
                 title: "Answer simple questions",
                 body: "Complete a guided assessment covering the five Cyber Essentials control areas. Each question is written in plain English, with helpful context where needed.",
-                note: "Answer honestly. The goal is not to look perfect. It is to understand what needs fixing before you apply.",
                 mockup: <MockQuestionCard />,
               },
               {
                 step: "02",
                 title: "Get your readiness score",
                 body: "BrightCert analyses your answers and scores your organisation across the core Cyber Essentials areas.",
-                note: "See your overall readiness score and understand which areas are strong, weak, or incomplete.",
                 mockup: <MockScoreCard />,
               },
               {
                 step: "03",
                 title: "Review your gaps",
                 body: "Your results show where your business may fall short, with clear explanations and practical next steps.",
-                note: "No alarmist language. Just clear findings, prioritised by what matters most.",
                 mockup: <MockGapsCard />,
               },
               {
                 step: "04",
                 title: "Unlock your full report",
                 body: "Pay £199 to unlock your full readiness report, including detailed gap analysis, remediation actions, and a preparation summary.",
-                note: "Use the report to fix issues internally or prepare for your application with a Certification Body.",
                 mockup: <MockReportCard />,
               },
             ].map((item, i) => (
@@ -403,8 +379,7 @@ export default async function HomePage() {
                 <div className={i % 2 === 1 ? "lg:order-2" : ""}>
                   <div className="font-display text-5xl font-bold text-transparent mb-5 [-webkit-text-stroke:1.5px_#94A3B8]">{item.step}</div>
                   <h3 className="text-xl md:text-2xl font-semibold text-[#0F2044] mb-3">{item.title}</h3>
-                  <p className="text-base text-[#475569] leading-relaxed mb-3 max-w-lg">{item.body}</p>
-                  <p className="text-sm text-[#64748B] italic max-w-lg">{item.note}</p>
+                  <p className="text-base text-[#475569] leading-relaxed max-w-lg">{item.body}</p>
                 </div>
                 <div className={`flex justify-center ${i % 2 === 1 ? "lg:order-1 lg:justify-start" : "lg:justify-end"}`}>
                   {item.mockup}
@@ -415,14 +390,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── 6. WHAT WE CHECK ────────────────────────────────────────────── */}
+      {/* ── 6. WHAT WE CHECK — ledger table echoing the product's own UI ─── */}
       <section
         id="what-we-check"
         className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]"
         aria-labelledby="what-we-check-heading"
       >
         <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl mb-12">
+          <Reveal className="max-w-2xl mb-10">
             <h2 id="what-we-check-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
               Built around the Cyber Essentials requirements
             </h2>
@@ -430,153 +405,42 @@ export default async function HomePage() {
               Cyber Essentials focuses on five technical control areas that help protect organisations from common internet-based cyber threats. BrightCert structures your assessment around these same five areas.
             </p>
           </Reveal>
-          {/* Bento: 3 across, then 2 wider */}
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-5">
-            <Reveal className="md:col-span-2" delay={0}>
-              <ControlCard
-                icon={Wifi}
-                number={1}
-                title="Boundary Firewalls & Internet Gateways"
-                checks={[
-                  "Whether firewalls are in place",
-                  "Whether default settings have been changed",
-                  "Whether inbound access is controlled",
-                  "Whether unnecessary services are exposed",
-                  "Whether network boundaries are understood",
-                ]}
-                className="h-full"
-              />
-            </Reveal>
-            <Reveal className="md:col-span-2" delay={80}>
-              <ControlCard
-                icon={Settings}
-                number={2}
-                title="Secure Configuration"
-                checks={[
-                  "Whether default passwords are changed",
-                  "Whether unused accounts are removed",
-                  "Whether unnecessary software is disabled",
-                  "Whether devices are configured consistently",
-                  "Whether secure setup processes are documented",
-                ]}
-                className="h-full"
-              />
-            </Reveal>
-            <Reveal className="md:col-span-2" delay={160}>
-              <ControlCard
-                icon={Users}
-                number={3}
-                title="User Access Control"
-                checks={[
-                  "Whether users have only the access they need",
-                  "Whether admin accounts are limited",
-                  "Whether leavers are removed quickly",
-                  "Whether multi-factor authentication is used",
-                  "Whether access is reviewed regularly",
-                ]}
-                className="h-full"
-              />
-            </Reveal>
-            <Reveal className="md:col-span-3" delay={240}>
-              <ControlCard
-                icon={Bug}
-                number={4}
-                title="Malware Protection"
-                checks={[
-                  "Whether anti-malware protection is active",
-                  "Whether protection is kept up to date",
-                  "Whether application controls are used",
-                  "Whether users can install software freely",
-                  "Whether mobile and desktop devices are covered",
-                ]}
-                className="h-full"
-              />
-            </Reveal>
-            <Reveal className="md:col-span-3" delay={320}>
-              <ControlCard
-                icon={RefreshCw}
-                number={5}
-                title="Security Update Management"
-                checks={[
-                  "Whether security updates are applied promptly",
-                  "Whether unsupported software is removed",
-                  "Whether operating systems are still supported",
-                  "Whether update responsibilities are clear",
-                  "Whether patching is tracked across devices",
-                ]}
-                className="h-full"
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 7. PRODUCT FEATURES ─────────────────────────────────────────── */}
-      <section className="py-20 md:py-28" aria-labelledby="features-heading">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl mb-12">
-            <h2 id="features-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
-              A practical readiness report, not another vague checklist
-            </h2>
-            <p className="text-[#475569] leading-relaxed">
-              BrightCert does more than ask questions. It turns your answers into a clear picture of your Cyber Essentials readiness, so your business can take action with confidence.
-            </p>
+          <Reveal>
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr>
+                  <th className="border-b border-[#E2E8F0] py-2.5 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
+                    Control area
+                  </th>
+                  <th className="hidden border-b border-[#E2E8F0] py-2.5 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B] sm:table-cell">
+                    What we check
+                  </th>
+                  <th className="border-b border-[#E2E8F0] py-2.5 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
+                    Questions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {CONTROL_AREA_ROWS.map((area) => (
+                  <tr key={area.id}>
+                    <td className="border-b border-[#EEF1F6] py-4 pr-6 align-baseline font-semibold text-[#0F2044] sm:whitespace-nowrap">
+                      <b className="font-semibold">{area.id}.</b> {area.title}
+                    </td>
+                    <td className="hidden border-b border-[#EEF1F6] py-4 pr-6 align-baseline text-[#47536B] sm:table-cell">
+                      {area.summary}
+                    </td>
+                    <td className="border-b border-[#EEF1F6] py-4 text-right align-baseline tabular-nums text-[#64748B]">
+                      {getQuestionsBySection(area.id).length}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              {
-                icon: Target,
-                title: "Readiness score",
-                body: "See your overall readiness level at a glance, with clear pass, warning, and fail indicators across each control area.",
-                note: "Your score helps you understand whether you are close to applying or whether key gaps need attention first.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Control-by-control analysis",
-                body: "Break down your results across all five Cyber Essentials areas, so you know exactly where the risks are.",
-                note: "Instead of one generic result, BrightCert shows which parts of your setup are strong and which need work.",
-              },
-              {
-                icon: AlertCircle,
-                title: "Plain-English gap findings",
-                body: "Understand what each issue means without needing to be a cyber security expert.",
-                note: "BrightCert explains findings in simple language, helping business owners and IT providers act quickly.",
-              },
-              {
-                icon: CheckCircle2,
-                title: "Prioritised remediation steps",
-                body: "Get a clear action list showing what to fix first.",
-                note: "Each recommendation helps your team move from 'we know there is a problem' to 'we know what to do next.'",
-              },
-              {
-                icon: FileText,
-                title: "Downloadable PDF report",
-                body: "Unlock a professional report you can save, share, and use as part of your preparation process.",
-                note: "The report gives your team a structured summary of your readiness, key gaps, and recommended next steps.",
-              },
-              {
-                icon: Star,
-                title: "Built for UK SMEs",
-                body: "BrightCert is designed for UK businesses that want practical guidance without unnecessary complexity.",
-                note: "The language, pricing, structure, and compliance context are UK-specific from the start.",
-              },
-            ].map((item, i) => (
-              <Reveal
-                key={item.title}
-                delay={(i % 3) * 80}
-                className="group rounded-[16px] bg-white p-6 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_8px_24px_-12px_rgba(15,32,68,0.08)] transition-all duration-200 hover:shadow-[0_16px_40px_-12px_rgba(15,32,68,0.18)] hover:-translate-y-0.5"
-              >
-                <IconTile icon={item.icon} size="sm" className="mb-4" />
-                <h3 className="text-lg font-semibold text-[#0F2044] mb-2">{item.title}</h3>
-                <p className="text-sm text-[#475569] mb-2 leading-relaxed">{item.body}</p>
-                <p className="text-xs text-[#64748B] italic">{item.note}</p>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* ── 8. REPORT PREVIEW ───────────────────────────────────────────── */}
+      {/* ── 7. REPORT PREVIEW — the single "what you get" moment ─────────── */}
       <section className="py-4 md:py-8" aria-labelledby="report-heading">
         <div className="max-w-6xl mx-auto px-4">
           <div className="relative overflow-hidden rounded-[24px] bg-[#0F2044] text-white px-6 py-16 md:px-14 md:py-20">
@@ -596,12 +460,12 @@ export default async function HomePage() {
                 </p>
                 <ul className="space-y-3 mb-9">
                   {[
-                    { label: "Executive summary", desc: "A simple overview of your readiness score, strongest areas, and main risks." },
-                    { label: "Five control area scores", desc: "A breakdown of your performance across the five Cyber Essentials control areas." },
-                    { label: "Gap analysis", desc: "Clear explanations of where your current setup may not meet expected requirements." },
-                    { label: "Priority action plan", desc: "A practical list of recommended fixes, ordered by importance." },
-                    { label: "Preparation notes", desc: "Helpful guidance to support your next steps before working with a Certification Body." },
-                    { label: "PDF download", desc: "A professional copy of your report that can be saved, shared, or reviewed with your team." },
+                    { label: "Executive summary", desc: "Your readiness score, strongest areas, and main risks." },
+                    { label: "Five control area scores", desc: "Performance across the five control areas." },
+                    { label: "Gap analysis", desc: "Where your current setup may not meet expected requirements." },
+                    { label: "Priority action plan", desc: "Recommended fixes, ordered by importance." },
+                    { label: "Preparation notes", desc: "Guidance before working with a Certification Body." },
+                    { label: "PDF download", desc: "Save it, share it, review it with your team." },
                   ].map((item) => (
                     <li key={item.label} className="flex items-start gap-3">
                       <Check className="h-4 w-4 text-[#6EE7B7] shrink-0 mt-0.5" strokeWidth={2} />
@@ -613,8 +477,11 @@ export default async function HomePage() {
                   ))}
                 </ul>
                 <Button asChild size="lg" className="bg-white text-[#0F2044] hover:bg-white/90 shadow-none">
-                  <Link href="/assessment/new">Unlock Full Report for £199</Link>
+                  <Link href="/assessment/new">Start Your Assessment</Link>
                 </Button>
+                <p className="mt-3 text-xs text-white/55">
+                  Complete the assessment first. Pay £199 only when you are ready to unlock the full report.
+                </p>
               </div>
               {/* Mock report card */}
               <div className="rounded-[16px] border border-white/10 bg-white/[0.06] backdrop-blur-md p-6 max-w-xs w-full shadow-[0_24px_60px_-16px_rgba(3,10,28,0.6)]">
@@ -675,7 +542,7 @@ export default async function HomePage() {
               Start with a guided readiness assessment. Upgrade only when you need ongoing monitoring, CE Plus preparation, or partner features.
             </p>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-10 items-start">
             {/* Featured: Assessment */}
             <div className="relative flex flex-col rounded-[16px] border-2 border-[#047857] bg-white p-6 shadow-[0_16px_40px_-12px_rgba(4,120,87,0.25)]">
               <div className="absolute -top-3 left-6">
@@ -686,19 +553,15 @@ export default async function HomePage() {
                 <span className="font-display text-4xl font-bold text-[#0F2044] tabular-nums">£199</span>
                 <span className="text-xs text-[#64748B]">one-time</span>
               </div>
-              <p className="text-xs text-[#475569] mb-5 min-h-[48px]">Best for UK SMEs preparing for Cyber Essentials and wanting a clear view before applying.</p>
+              <p className="text-xs text-[#475569] mb-5">Best for UK SMEs preparing for Cyber Essentials and wanting a clear view before applying.</p>
               <ul className="space-y-2 mb-6">
                 {[
-                  "Guided CE readiness assessment",
-                  "Questions across all five control areas",
+                  "Guided readiness assessment across all five control areas",
                   "AI-assisted scoring and gap analysis",
-                  "Overall readiness score",
-                  "Control-by-control results",
                   "Prioritised remediation steps",
                   "Downloadable PDF report",
-                  "Plain-English preparation guidance",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-[#475569]">
+                  <li key={f} className="flex items-start gap-2 text-[13px] text-[#475569]">
                     <Check className="h-3.5 w-3.5 text-[#047857] shrink-0 mt-0.5" strokeWidth={2} />
                     {f}
                   </li>
@@ -706,79 +569,58 @@ export default async function HomePage() {
               </ul>
               <div className="mt-auto">
                 <Button asChild className="w-full">
-                  <Link href="/assessment/new">Start Assessment</Link>
+                  <Link href="/assessment/new">Start Your Assessment</Link>
                 </Button>
                 <p className="text-xs text-[#64748B] text-center mt-2">Complete first. Pay when you&apos;re ready to unlock.</p>
               </div>
             </div>
 
-            {/* Monitor */}
-            <div className="flex flex-col rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)]" id="monitor">
-              <p className="text-xs font-semibold text-[#475569] uppercase tracking-wider mb-2 mt-1">Monitor</p>
-              <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="font-display text-4xl font-bold text-[#0F2044] tabular-nums">£99</span>
-                <span className="text-xs text-[#64748B]">/month</span>
-              </div>
-              <p className="text-xs text-[#475569] mb-5 min-h-[48px]">Businesses that want ongoing visibility after their initial readiness report.</p>
-              <ul className="space-y-2 mb-6">
-                {["Monthly readiness review", "Saved assessment history", "Ongoing remediation tracking", "Updated action list", "Report access", "Renewal preparation support"].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-[#475569]">
-                    <Check className="h-3.5 w-3.5 text-[#059669] shrink-0 mt-0.5" strokeWidth={2} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto">
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/pricing">Join Monitor</Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* CE Plus */}
-            <div className="flex flex-col rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)]">
-              <p className="text-xs font-semibold text-[#475569] uppercase tracking-wider mb-2 mt-1">CE Plus Pack</p>
-              <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="font-display text-4xl font-bold text-[#0F2044] tabular-nums">£499</span>
-                <span className="text-xs text-[#64748B]">one-time</span>
-              </div>
-              <p className="text-xs text-[#475569] mb-5 min-h-[48px]">Businesses preparing for Cyber Essentials Plus before technical testing.</p>
-              <ul className="space-y-2 mb-6">
-                {["CE Plus preparation checklist", "Evidence collection guidance", "Device and system readiness review", "Remediation planning", "Internal preparation summary", "Priority support"].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-[#475569]">
-                    <Check className="h-3.5 w-3.5 text-[#059669] shrink-0 mt-0.5" strokeWidth={2} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto">
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/pricing">Prepare for CE Plus</Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* MSP */}
-            <div className="flex flex-col rounded-[16px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)]" id="msp-partner">
-              <p className="text-xs font-semibold text-[#475569] uppercase tracking-wider mb-2 mt-1">MSP Partner</p>
-              <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="font-display text-4xl font-bold text-[#0F2044] tabular-nums">£299</span>
-                <span className="text-xs text-[#64748B]">/month</span>
-              </div>
-              <p className="text-xs text-[#475569] mb-5 min-h-[48px]">MSPs supporting multiple UK SME clients with Cyber Essentials preparation.</p>
-              <ul className="space-y-2 mb-6">
-                {["Multi-client dashboard", "Client assessment tracking", "Readiness reports", "Partner workflow tools", "Client remediation visibility", "MSP-focused reporting"].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-[#475569]">
-                    <Check className="h-3.5 w-3.5 text-[#059669] shrink-0 mt-0.5" strokeWidth={2} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto">
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/pricing#msp">Become a Partner</Link>
-                </Button>
-              </div>
+            {/* Upgrade tiers — full detail lives on /pricing */}
+            <div className="lg:pt-2">
+              {[
+                {
+                  id: "monitor",
+                  name: "Monitor",
+                  price: "£99",
+                  cadence: "/month",
+                  bestFor: "Ongoing visibility after your initial readiness report.",
+                  href: "/pricing#monitor",
+                },
+                {
+                  id: "ce-plus",
+                  name: "CE Plus Pack",
+                  price: "£499",
+                  cadence: "one-time",
+                  bestFor: "Preparation for Cyber Essentials Plus before technical testing.",
+                  href: "/pricing",
+                },
+                {
+                  id: "msp-partner",
+                  name: "MSP Partner",
+                  price: "£299",
+                  cadence: "/month",
+                  bestFor: "For MSPs supporting multiple UK SME clients.",
+                  href: "/pricing#msp",
+                },
+              ].map((tier, i) => (
+                <div
+                  key={tier.id}
+                  id={tier.id === "ce-plus" ? undefined : tier.id}
+                  className={`grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 py-5 border-b border-[#EEF1F6] sm:grid-cols-[130px_110px_minmax(0,1fr)_auto] ${i === 0 ? "border-t border-[#E2E8F0]" : ""}`}
+                >
+                  <span className="text-sm font-bold text-[#0F2044]">{tier.name}</span>
+                  <span className="text-sm font-bold tabular-nums text-[#0F2044] text-right sm:text-left">
+                    {tier.price} <span className="text-xs font-normal text-[#64748B]">{tier.cadence}</span>
+                  </span>
+                  <span className="col-span-2 text-[13px] text-[#64748B] sm:col-span-1">{tier.bestFor}</span>
+                  <Link
+                    href={tier.href}
+                    className="bc-focus col-span-2 text-[13px] font-semibold text-[#047857] hover:text-[#065F46] sm:col-span-1 sm:text-right whitespace-nowrap"
+                  >
+                    View pricing →
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -838,12 +680,9 @@ export default async function HomePage() {
       <section className="py-20 md:py-28" aria-labelledby="audience-heading">
         <div className="max-w-6xl mx-auto px-4">
           <Reveal className="max-w-2xl mb-12">
-            <h2 id="audience-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
+            <h2 id="audience-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
               Built for the businesses that need clarity fast
             </h2>
-            <p className="text-[#475569] leading-relaxed">
-              BrightCert is designed for UK SMEs that need to prepare for Cyber Essentials without turning the process into a long, technical project.
-            </p>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
             {[
@@ -884,34 +723,6 @@ export default async function HomePage() {
               BrightCert is careful about what it does, and what it does not do. We help you prepare for Cyber Essentials by assessing your readiness, identifying gaps, and creating a practical report. We do not issue the official Cyber Essentials certificate. Official certification is handled through IASME Certification Bodies.
             </p>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 mb-10">
-            {[
-              {
-                title: "Preparation, not certification",
-                body: "BrightCert helps you understand your readiness before applying. It does not replace the official certification process.",
-              },
-              {
-                title: "Plain-English explanations",
-                body: "Every finding is written to help non-technical business users understand what needs attention.",
-              },
-              {
-                title: "Practical next steps",
-                body: "Your report focuses on action, not fear.",
-              },
-              {
-                title: "UK-specific product",
-                body: "BrightCert is built for UK SMEs preparing for a UK cyber security scheme.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-[#059669] shrink-0 mt-0.5" strokeWidth={1.5} />
-                <div>
-                  <p className="text-base font-semibold text-[#0F2044] mb-1">{item.title}</p>
-                  <p className="text-sm text-[#64748B]">{item.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
           <CertificationDisclaimer />
         </div>
       </section>
