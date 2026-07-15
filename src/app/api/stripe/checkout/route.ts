@@ -32,6 +32,9 @@ export async function POST(request: NextRequest) {
       metadata: {
         assessmentId,
       },
+      // Founding-customer offer: promo codes (e.g. FOUNDING10) created in the
+      // Stripe dashboard can be entered at checkout.
+      allow_promotion_codes: true,
       success_url: `${appUrl}/assessment/${assessmentId}/report?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/assessment/${assessmentId}/results`,
       payment_method_types: ["card"],
