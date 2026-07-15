@@ -295,9 +295,15 @@ function VerdictBand({
             aria-hidden
           />
         </div>
-        <div className="mt-1.5 flex max-w-2xl justify-between text-[10.5px] text-[#A9B8D6]">
+        <div className="relative mt-1.5 flex max-w-2xl justify-between text-[10.5px] text-[#A9B8D6]">
           <span>0</span>
-          <span>Target {TARGET_SCORE}%</span>
+          {/* Label sits under the tick it describes, not at the meter's centre */}
+          <span
+            className="absolute -translate-x-1/2 whitespace-nowrap"
+            style={{ left: `${TARGET_SCORE}%` }}
+          >
+            Target {TARGET_SCORE}%
+          </span>
           <span>100</span>
         </div>
       </div>

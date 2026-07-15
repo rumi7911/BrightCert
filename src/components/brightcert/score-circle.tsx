@@ -32,6 +32,13 @@ export function ScoreCircle({ score, size = "md" }: ScoreCircleProps) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Already in view on mount (above the fold): start at once instead of
+    // waiting for the observer — otherwise the circle briefly shows 0%.
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
     if (typeof IntersectionObserver === "undefined") {
       const frame = requestAnimationFrame(() => setVisible(true));
       return () => cancelAnimationFrame(frame);

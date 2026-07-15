@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -42,6 +42,40 @@ export default function QuestionPage({
     const timer = setTimeout(() => router.push(sectionDone.target), 2600);
     return () => clearTimeout(timer);
   }, [sectionDone, router]);
+
+  // Enter advances — 60 questions is a keyboard journey. The ref always
+  // points at the latest handler so the listener can be mounted once.
+  const enterActionRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.key !== "Enter" || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+      const el = event.target as HTMLElement | null;
+      if (el) {
+        if (el.isContentEditable) return;
+        const tag = el.tagName;
+        // Let buttons, links, and disclosures keep their native Enter behaviour;
+        // a focused radio is exactly the case Enter should advance from.
+        if (/^(TEXTAREA|SELECT|BUTTON|A|SUMMARY)$/.test(tag)) return;
+        if (tag === "INPUT" && (el as HTMLInputElement).type !== "radio") return;
+      }
+      event.preventDefault();
+      enterActionRef.current();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Keep the Enter action current: on the interstitial it skips the wait,
+  // otherwise it presses Continue (whose disabled state guards double-saves).
+  useEffect(() => {
+    enterActionRef.current = () => {
+      if (sectionDone) {
+        router.push(sectionDone.target);
+        return;
+      }
+      document.getElementById("bc-continue")?.click();
+    };
+  });
 
   const questionKey = question?.key;
 
@@ -333,9 +367,17 @@ export default function QuestionPage({
         )}
       </div>
 
-      <Button onClick={handleContinue} size="lg" className="min-w-[140px]" disabled={saving}>
-        {saving ? "Saving…" : isLast && sectionId === 5 ? "Check your answers" : "Continue"}
-      </Button>
+      <div className="flex items-baseline gap-3">
+        <Button id="bc-continue" onClick={handleContinue} size="lg" className="min-w-[140px]" disabled={saving}>
+          {saving ? "Saving…" : isLast && sectionId === 5 ? "Check your answers" : "Continue"}
+        </Button>
+        <p className="hidden text-xs text-[#64748B] sm:block" aria-hidden>
+          or press{" "}
+          <kbd className="rounded-[4px] border border-[#E2E8F0] bg-[#F8FAFC] px-1.5 py-0.5 font-sans text-[11px] text-[#475569]">
+            Enter ↵
+          </kbd>
+        </p>
+      </div>
 
       {/* Your answers — GOV.UK-style running summary for this section */}
       {answeredSoFar.length > 0 && (
