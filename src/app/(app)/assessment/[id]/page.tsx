@@ -1,69 +1,53 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, Circle, Clock, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DotStatus, PageHeader, SectionHeader } from "@/components/brightcert/ledger";
 import { SECTIONS, getQuestionsBySection } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Assessment" };
 
-type SectionTaskStatus = "completed" | "in_progress" | "not_started" | "cannot_start";
+type SectionTaskStatus = "completed" | "in_progress" | "not_started";
+
+const STATUS_CONFIG: Record<SectionTaskStatus, { label: string; dot: string }> = {
+  completed: { label: "Completed", dot: "#059669" },
+  in_progress: { label: "In progress", dot: "#D97706" },
+  not_started: { label: "Not started", dot: "#CBD5E1" },
+};
 
 function SectionRow({
   sectionId,
   title,
+  answered,
   questionCount,
   status,
   assessmentId,
 }: {
   sectionId: number;
   title: string;
+  answered: number;
   questionCount: number;
   status: SectionTaskStatus;
   assessmentId: string;
 }) {
-  const statusConfig = {
-    completed: { label: "Completed", color: "#065F46", bg: "#ECFDF5", icon: CheckCircle2 },
-    in_progress: { label: "In progress", color: "#92400E", bg: "#FFFBEB", icon: Clock },
-    not_started: { label: "Not started", color: "#475569", bg: "#F1F5F9", icon: Circle },
-    cannot_start: { label: "Cannot start yet", color: "#94A3B8", bg: "#F8FAFC", icon: Circle },
-  }[status];
-
-  const Icon = statusConfig.icon;
-  const isClickable = status !== "cannot_start";
-
-  const inner = (
-    <div className={`flex items-center justify-between p-4 rounded-[8px] border transition-colors ${
-      isClickable
-        ? "border-[#E2E8F0] bg-white hover:border-[#A7F3D0] hover:bg-[#ECFDF5] cursor-pointer"
-        : "border-[#E2E8F0] bg-[#F8FAFC] cursor-not-allowed opacity-60"
-    }`}>
-      <div className="flex items-center gap-3">
-        <div className="h-8 w-8 rounded-full border-2 border-[#E2E8F0] flex items-center justify-center text-sm font-bold text-[#64748B]">
-          {sectionId}
-        </div>
-        <div>
-          <p className="text-sm font-medium text-[#0F2044]">{title}</p>
-          <p className="text-xs text-[#64748B]">{questionCount} questions</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <span
-          className="text-xs font-medium px-2 py-0.5 rounded-full"
-          style={{ color: statusConfig.color, backgroundColor: statusConfig.bg }}
-        >
-          {statusConfig.label}
-        </span>
-        {isClickable && <ChevronRight className="h-4 w-4 text-[#94A3B8]" />}
-      </div>
-    </div>
-  );
-
-  if (!isClickable) return <div>{inner}</div>;
+  const cfg = STATUS_CONFIG[status];
 
   return (
-    <Link href={`/assessment/${assessmentId}/section/${sectionId}?q=1`}>
-      {inner}
+    <Link
+      href={`/assessment/${assessmentId}/section/${sectionId}?q=1`}
+      className="flex items-center gap-4 border-b border-[#F4F6FA] py-3 transition-colors hover:bg-[#F8FAFC]"
+    >
+      <span className="min-w-0 flex-1 truncate text-[13px] text-[#33405C]">
+        <b className="font-semibold text-[#0F2044]">{sectionId}.</b> {title}
+      </span>
+      <span className="hidden shrink-0 text-xs tabular-nums text-[#99A2B4] sm:inline">
+        {answered}/{questionCount} answered
+      </span>
+      <span className="w-[110px] shrink-0 text-right">
+        <DotStatus label={cfg.label} color={cfg.dot} />
+      </span>
+      <ChevronRight className="h-4 w-4 shrink-0 text-[#99A2B4]" strokeWidth={1.5} />
     </Link>
   );
 }
@@ -104,53 +88,65 @@ export default async function AssessmentTaskListPage({
     getQuestionsBySection(continueSectionId).length
   );
 
+  const completedCount = Object.values(sectionStatuses).filter((s) => s === "completed").length;
+
   return (
     <div className="max-w-2xl">
-      <Link href="/dashboard" className="text-sm text-[#64748B] hover:text-[#0F2044] mb-6 inline-flex items-center gap-1">
+      <Link
+        href="/dashboard"
+        className="mb-5 inline-flex items-center gap-1 text-sm text-[#64748B] hover:text-[#0F2044]"
+      >
         ← Back to dashboard
       </Link>
 
-      <div className="mt-4">
-        <h1 className="text-2xl font-bold text-[#0F2044] mb-1">Cyber Essentials Readiness Assessment</h1>
-        <p className="text-sm text-[#64748B] mb-8">
-          Complete all five sections to receive your readiness score and report.
-        </p>
+      <PageHeader
+        title="Cyber Essentials Readiness Assessment"
+        subtitle="Complete all five sections to receive your readiness score and report."
+      />
 
-        {/* Section task list */}
-        <div className="space-y-3 mb-8">
+      {/* Section task list */}
+      <div className="mb-8">
+        <SectionHeader
+          title="Sections"
+          action={
+            <span className="text-xs tabular-nums text-[#99A2B4]">
+              {completedCount} of {SECTIONS.length} complete
+            </span>
+          }
+        />
+        <div className="border-t border-[#EEF1F6]">
           {SECTIONS.map((section) => (
             <SectionRow
               key={section.id}
               sectionId={section.id}
               title={section.title}
+              answered={answeredBySection[section.id] ?? 0}
               questionCount={getQuestionsBySection(section.id).length}
               status={sectionStatuses[section.id]}
               assessmentId={id}
             />
           ))}
         </div>
+      </div>
 
-        {allCompleted && (
-          <div className="rounded-[12px] border border-[#A7F3D0] bg-[#ECFDF5] p-4 mb-6">
-            <p className="text-sm text-[#065F46] font-medium">
-              All five sections complete. Review your answers before submitting.
-            </p>
-          </div>
+      {allCompleted && (
+        <p className="mb-5 text-[13px] font-medium text-[#065F46]">
+          All five sections complete. Review your answers before submitting.
+        </p>
+      )}
+
+      <div className="flex gap-3">
+        {allCompleted ? (
+          <Button asChild size="lg">
+            <Link href={`/assessment/${id}/check-answers`}>Review and submit</Link>
+          </Button>
+        ) : (
+          <Button asChild size="lg">
+            <Link href={`/assessment/${id}/section/${continueSectionId}?q=${continueQuestion}`}>
+              Continue assessment
+            </Link>
+          </Button>
         )}
-
-        <div className="flex gap-3">
-          {allCompleted ? (
-            <Button asChild size="lg">
-              <Link href={`/assessment/${id}/check-answers`}>Review and submit</Link>
-            </Button>
-          ) : (
-            <Button asChild size="lg">
-              <Link href={`/assessment/${id}/section/${continueSectionId}?q=${continueQuestion}`}>
-                Continue assessment
-              </Link>
-            </Button>
-          )}
-        </div>
       </div>
     </div>
   );

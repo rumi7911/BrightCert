@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Download, FileText, ShieldCheck } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
 import { PdfPoller } from "@/components/brightcert/pdf-poller";
-import { IconTile } from "@/components/brightcert/icon-tile";
+import { PageHeader, SectionHeader } from "@/components/brightcert/ledger";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe/client";
 
@@ -87,31 +87,21 @@ export default async function ReportPage({
       <PdfPoller pdfReady={!!reportUrl} />
 
       {/* Header */}
-      <div className="flex items-start gap-4 mb-8">
-        <IconTile icon={ShieldCheck} size="lg" />
-        <div>
-          <h1 className="text-2xl font-bold text-[#0F2044]">
-            Your Cyber Essentials Readiness Report
-          </h1>
-          <p className="text-sm text-[#64748B] mt-1">
-            {orgName} ·{" "}
-            {new Date().toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Your Cyber Essentials Readiness Report"
+        subtitle={`${orgName} · ${new Date().toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}`}
+      />
 
       {/* Score summary */}
-      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-6 mb-5 flex flex-col sm:flex-row gap-6 items-center">
+      <div className="mb-6 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
         <ScoreCircle score={overallScore} size="lg" />
-        <div>
-          <h2 className="text-base font-semibold text-[#0F2044] mb-1">
-            Overall readiness score
-          </h2>
-          <p className="text-sm text-[#64748B] leading-relaxed">
+        <div className="min-w-0 flex-1 text-center sm:text-left">
+          <h2 className="mb-2 text-[13px] font-semibold text-[#0F2044]">Overall readiness</h2>
+          <p className="text-sm leading-relaxed text-[#47536B]">
             Your full report is ready. It includes your control-area breakdown, gap
             analysis, and prioritised remediation steps.
           </p>
@@ -119,29 +109,30 @@ export default async function ReportPage({
       </div>
 
       {/* PDF download */}
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5 mb-6">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <FileText className="h-5 w-5 text-[#047857]" strokeWidth={1.5} />
-            <div>
-              <p className="text-sm font-semibold text-[#0F2044]">
+      <div className="mb-8">
+        <SectionHeader title="Your report" />
+        <div className="flex items-center justify-between gap-4 border-t border-[#EEF1F6] py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <FileText className="h-4 w-4 shrink-0 text-[#047857]" strokeWidth={1.5} />
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-medium text-[#0F2044]">
                 BrightCert Readiness Report · {orgName}
               </p>
-              <p className="text-xs text-[#64748B]">
+              <p className="text-xs text-[#77829A]">
                 Full report with gap analysis and remediation roadmap
               </p>
             </div>
           </div>
           {reportUrl ? (
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="shrink-0">
               <a href={reportUrl} target="_blank" rel="noopener noreferrer">
                 <Download className="h-4 w-4 mr-1.5" />
                 Download PDF
               </a>
             </Button>
           ) : (
-            <div className="text-sm text-[#64748B] flex items-center gap-2 whitespace-nowrap">
-              <div className="h-4 w-4 border-2 border-[#047857] border-t-transparent rounded-full animate-spin shrink-0" />
+            <div className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[13px] text-[#64748B]">
+              <div className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-[#047857] border-t-transparent" />
               Generating PDF…
             </div>
           )}
@@ -149,23 +140,24 @@ export default async function ReportPage({
       </div>
 
       {/* Certification disclaimer — mandatory */}
-      <div className="mb-6">
+      <div className="mb-8">
         <CertificationDisclaimer />
       </div>
 
       {/* Next steps */}
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-5">
-        <h3 className="text-sm font-semibold text-[#0F2044] mb-3">Next steps</h3>
-        <ol className="space-y-2">
+      <div>
+        <SectionHeader title="Next steps" />
+        <ol className="border-t border-[#EEF1F6]">
           {[
             "Work through the P1 priority actions in your report. These must be resolved before applying.",
             "Share the report PDF with your IT provider or internal team to begin remediation.",
             "Once gaps are addressed, apply for official Cyber Essentials through an IASME Certification Body.",
           ].map((step, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-[#475569]">
-              <span className="h-5 w-5 rounded-full bg-[#ECFDF5] text-[#047857] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                {i + 1}
-              </span>
+            <li
+              key={i}
+              className="flex items-baseline gap-3 border-b border-[#F4F6FA] py-2.5 text-[13px] text-[#33405C]"
+            >
+              <span className="shrink-0 font-bold tabular-nums text-[#047857]">{i + 1}.</span>
               {step}
             </li>
           ))}

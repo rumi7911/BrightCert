@@ -21,14 +21,15 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
   const [state, action, pending] = useActionState(updateOrganisation, null);
 
   return (
-    <form action={action} className="space-y-6">
+    <form action={action} className="space-y-8">
       {/* Organisation details */}
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
-        <div className="px-5 py-3">
-          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide">Organisation</p>
+      <div>
+        <div className="mb-1 flex items-baseline justify-between">
+          <h2 className="text-[13px] font-semibold text-[#0F2044]">Organisation</h2>
         </div>
+        <div className="border-t border-[#EEF1F6]" />
 
-        <div className="px-5 py-4">
+        <div className="pt-4 pb-1">
           <label htmlFor="name" className="block text-sm font-medium text-[#0F2044] mb-1.5">
             Organisation name <span className="text-red-500">*</span>
           </label>
@@ -43,7 +44,7 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
           />
         </div>
 
-        <div className="px-5 py-4">
+        <div className="pt-4 pb-1">
           <label htmlFor="size" className="block text-sm font-medium text-[#0F2044] mb-1.5">
             Organisation size
           </label>
@@ -60,7 +61,7 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
           </select>
         </div>
 
-        <div className="px-5 py-4">
+        <div className="pt-4 pb-1">
           <label htmlFor="sector" className="block text-sm font-medium text-[#0F2044] mb-1.5">
             Sector
           </label>
@@ -76,11 +77,12 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
       </div>
 
       {/* Account details — read-only */}
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
-        <div className="px-5 py-3">
-          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide">Account</p>
+      <div>
+        <div className="mb-1 flex items-baseline justify-between">
+          <h2 className="text-[13px] font-semibold text-[#0F2044]">Account</h2>
         </div>
-        <div className="px-5 py-4">
+        <div className="border-t border-[#EEF1F6]" />
+        <div className="pt-4 pb-1">
           <label className="block text-sm font-medium text-[#0F2044] mb-1.5">Email address</label>
           <div className="h-10 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] px-3 flex items-center">
             <span className="text-sm text-[#64748B]">{email}</span>

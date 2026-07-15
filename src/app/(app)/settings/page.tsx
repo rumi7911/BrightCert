@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/brightcert/ledger";
 import { createClient } from "@/lib/supabase/server";
 import { SettingsForm } from "./settings-form";
 
@@ -26,8 +27,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold text-[#0F2044] mb-1">Settings</h1>
-      <p className="text-sm text-[#64748B] mb-8">Manage your account and organisation</p>
+      <PageHeader title="Settings" subtitle="Manage your account and organisation" />
 
       <SettingsForm
         orgName={org?.name ?? ""}

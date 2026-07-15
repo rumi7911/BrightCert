@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { IconTile } from "@/components/brightcert/icon-tile";
 import { Card } from "@/components/brightcert/card";
+import { DotStatus, SectionHeader } from "@/components/brightcert/ledger";
 import { SECTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
@@ -304,16 +305,6 @@ function VerdictBand({
   );
 }
 
-// Ledger-style section header: title + optional action link on one baseline
-function SectionHeader({ title, action }: { title: string; action?: React.ReactNode }) {
-  return (
-    <div className="mb-1 flex items-baseline justify-between">
-      <h2 className="text-[13px] font-semibold text-[#0F2044]">{title}</h2>
-      {action}
-    </div>
-  );
-}
-
 function MiniMeter({ value, color }: { value: number; color: string }) {
   return (
     <span className="relative inline-block h-[5px] w-[130px] rounded-full bg-[#F0F3F8] align-middle">
@@ -326,16 +317,6 @@ function MiniMeter({ value, color }: { value: number; color: string }) {
         style={{ left: `${TARGET_SCORE}%` }}
         aria-hidden
       />
-    </span>
-  );
-}
-
-function DotStatus({ status }: { status: keyof typeof CONTROL_STATUS }) {
-  const meta = CONTROL_STATUS[status] ?? CONTROL_STATUS.missing;
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#33405C]">
-      <span className="h-[7px] w-[7px] rounded-full" style={{ backgroundColor: meta.dot }} aria-hidden />
-      {meta.label}
     </span>
   );
 }
@@ -390,7 +371,10 @@ function ControlTable({ latest, controls }: { latest: AssessmentRow; controls: C
                     {control ? `${score}%` : "—"}
                   </td>
                   <td className="border-b border-[#F4F6FA] py-2.5 text-right">
-                    <DotStatus status={status} />
+                    <DotStatus
+                      label={(CONTROL_STATUS[status] ?? CONTROL_STATUS.missing).label}
+                      color={(CONTROL_STATUS[status] ?? CONTROL_STATUS.missing).dot}
+                    />
                   </td>
                 </tr>
               );

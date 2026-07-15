@@ -96,55 +96,64 @@ export default function CheckAnswersPage({
         </div>
       )}
 
-      {/* Answers by section */}
+      {/* Answers by section — fixed answer column keeps the values in a scannable line */}
       <div className="space-y-8 mb-10">
         {SECTIONS.map((section) => {
           const sectionQuestions = QUESTIONS.filter((q) => q.sectionId === section.id);
           return (
             <div key={section.id}>
-              <h2 className="text-base font-semibold text-[#0F2044] mb-3">{section.title}</h2>
-              <div className="rounded-[12px] border border-[#E2E8F0] bg-white divide-y divide-[#F1F5F9]">
+              <div className="mb-1 flex items-baseline justify-between">
+                <h2 className="text-[13px] font-semibold text-[#0F2044]">
+                  <b className="font-semibold">{section.id}.</b> {section.title}
+                </h2>
+              </div>
+              <dl className="border-t border-[#EEF1F6]">
                 {sectionQuestions.map((question) => {
                   const answer = answers[question.key];
                   const questionNumber = sectionQuestions.indexOf(question) + 1;
                   return (
-                    <div key={question.key} className="flex items-start justify-between gap-4 px-5 py-4">
-                      <p className="text-sm text-[#475569] flex-1">{question.text}</p>
-                      <div className="flex shrink-0 items-start gap-4 text-right">
-                        {answer ? (
-                          <>
-                            <p className="text-sm font-medium text-[#0F2044]">
-                              {getAnswerLabel(question.key, answer)}
-                            </p>
+                    <div
+                      key={question.key}
+                      className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-1 border-b border-[#F4F6FA] py-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)_auto]"
+                    >
+                      <dt className="text-[13px] leading-snug text-[#33405C]">{question.text}</dt>
+                      {answer ? (
+                        <>
+                          <dd className="col-start-1 m-0 text-[13px] font-medium text-[#0F2044] sm:col-start-2">
+                            {getAnswerLabel(question.key, answer)}
+                          </dd>
+                          <dd className="col-start-2 row-start-1 m-0 text-right sm:col-start-3">
                             <Link
                               href={`/assessment/${assessmentId}/section/${section.id}?q=${questionNumber}&return=check`}
-                              className="text-sm font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
+                              className="text-[13px] font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
                             >
                               Change<span className="sr-only"> answer to: {question.text}</span>
                             </Link>
-                          </>
-                        ) : (
+                          </dd>
+                        </>
+                      ) : (
+                        <dd className="col-start-2 row-start-1 m-0 text-right sm:col-start-3">
                           <Link
                             href={`/assessment/${assessmentId}/section/${section.id}?q=${questionNumber}`}
-                            className="text-sm text-[#DC2626] hover:underline"
+                            className="text-[13px] font-medium text-[#DC2626] hover:underline"
                           >
                             Not answered
                           </Link>
-                        )}
-                      </div>
+                        </dd>
+                      )}
                     </div>
                   );
                 })}
-              </div>
+              </dl>
             </div>
           );
         })}
       </div>
 
       {/* Submit */}
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-6 mb-6">
+      <div className="border-t border-[#EEF1F6] pt-6 mb-6">
         <h3 className="text-base font-semibold text-[#0F2044] mb-2">Submit your assessment</h3>
-        <p className="text-sm text-[#64748B] mb-5">
+        <p className="text-sm text-[#64748B] mb-2">
           By submitting, BrightCert will analyse your responses across the five Cyber Essentials control areas and generate your readiness score.
         </p>
         <p className="text-xs text-[#64748B] mb-5">
