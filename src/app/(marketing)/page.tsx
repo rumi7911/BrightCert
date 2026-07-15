@@ -251,10 +251,10 @@ export default async function HomePage() {
             aria-hidden
           />
           <Image
-            src="/dashboard-demo.png"
-            alt="BrightCert dashboard showing a 67% readiness score, open priority actions, and assessment history"
-            width={2480}
-            height={1550}
+            src="/dashboard-ledger.png"
+            alt="BrightCert dashboard showing a 67% readiness verdict, control area scores, priority actions, and assessment history"
+            width={2720}
+            height={1980}
             priority
             className="relative w-full h-auto rounded-[16px] ring-1 ring-white/15 shadow-[0_48px_120px_-24px_rgba(3,10,28,0.85)]"
           />
