@@ -144,7 +144,7 @@ function DashboardHeader({ subtitle }: { subtitle?: string }) {
     <div className="mb-6 flex flex-col gap-4 border-b border-[#EEF1F6] pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-[#0F2044] sm:text-2xl">Dashboard</h1>
-        <p className="mt-1 text-sm text-[#8A94A8]">{subtitle ?? "Your Cyber Essentials readiness overview"}</p>
+        <p className="mt-1 text-sm text-[#64748B]">{subtitle ?? "Your Cyber Essentials readiness overview"}</p>
       </div>
       <Button asChild size="sm">
         <Link href="/assessment/new">
@@ -272,7 +272,7 @@ function VerdictBand({
               {" · "}
               <Link
                 href={`/assessment/${latest.id}/results`}
-                className="font-semibold text-[#6EE7B7] hover:text-white"
+                className="bc-focus-light font-semibold text-[#6EE7B7] hover:text-white"
               >
                 What does my score mean? →
               </Link>
@@ -295,7 +295,7 @@ function VerdictBand({
             aria-hidden
           />
         </div>
-        <div className="mt-1.5 flex max-w-2xl justify-between text-[10.5px] text-[#8DA0C4]">
+        <div className="mt-1.5 flex max-w-2xl justify-between text-[10.5px] text-[#A9B8D6]">
           <span>0</span>
           <span>Target {TARGET_SCORE}%</span>
           <span>100</span>
@@ -329,7 +329,7 @@ function ControlTable({ latest, controls }: { latest: AssessmentRow; controls: C
         action={
           <Link
             href={`/assessment/${latest.id}/results`}
-            className="text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+            className="bc-focus text-xs font-semibold text-[#047857] hover:text-[#065F46]"
           >
             Full results →
           </Link>
@@ -339,16 +339,16 @@ function ControlTable({ latest, controls }: { latest: AssessmentRow; controls: C
         <table className="w-full border-collapse text-[13px]">
           <thead>
             <tr>
-              <th className="border-b border-[#EEF1F6] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4]">
+              <th className="border-b border-[#EEF1F6] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
                 Control
               </th>
-              <th className="hidden border-b border-[#EEF1F6] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4] sm:table-cell">
+              <th className="hidden border-b border-[#EEF1F6] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B] sm:table-cell">
                 Progress to {TARGET_SCORE}%
               </th>
-              <th className="border-b border-[#EEF1F6] py-2 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4]">
+              <th className="border-b border-[#EEF1F6] py-2 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
                 Score
               </th>
-              <th className="border-b border-[#EEF1F6] py-2 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#99A2B4]">
+              <th className="border-b border-[#EEF1F6] py-2 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
                 Status
               </th>
             </tr>
@@ -405,7 +405,7 @@ function FixFirstList({ latest, controls }: { latest: AssessmentRow; controls: C
           p1Gaps.length > 0 ? (
             <Link
               href={`/assessment/${latest.id}/results#priority-actions`}
-              className="text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+              className="bc-focus text-xs font-semibold text-[#047857] hover:text-[#065F46]"
             >
               All {p1Gaps.length} →
             </Link>
@@ -418,10 +418,10 @@ function FixFirstList({ latest, controls }: { latest: AssessmentRow; controls: C
             <Link
               key={`${gap.issue}-${index}`}
               href={`/assessment/${latest.id}/results#priority-actions`}
-              className="flex items-baseline gap-4 border-b border-[#F4F6FA] py-2.5 transition-colors hover:bg-[#F8FAFC]"
+              className="bc-focus flex items-baseline gap-4 border-b border-[#F4F6FA] py-2.5 transition-colors hover:bg-[#F8FAFC]"
             >
               <span className="min-w-0 flex-1 truncate text-[13px] text-[#33405C]">{gap.issue}</span>
-              <span className="shrink-0 text-xs text-[#8A94A8]">{gap.sectionTitle}</span>
+              <span className="shrink-0 text-xs text-[#64748B]">{gap.sectionTitle}</span>
             </Link>
           ))}
         </div>
@@ -474,10 +474,10 @@ function ReportSection({
           <Link href={`/assessment/${latest.id}/results`}>View results</Link>
         </Button>
       )}
-      <p className="mt-2.5 text-center text-xs text-[#99A2B4]">
+      <p className="mt-2.5 text-center text-xs text-[#64748B]">
         <Link
           href={isPaid ? `/assessment/${latest.id}/report` : `/assessment/${latest.id}/results`}
-          className="hover:text-[#0F2044]"
+          className="bc-focus hover:text-[#0F2044]"
         >
           {isPaid ? "View report online →" : "View free results →"}
         </Link>
@@ -520,14 +520,14 @@ function HistorySection({
                   href={reportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+                  className="bc-focus shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
                 >
                   PDF
                 </a>
               ) : (
                 <Link
                   href={href}
-                  className="shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
+                  className="bc-focus shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
                 >
                   {assessment.status === "draft" ? "Continue" : "View"}
                 </Link>

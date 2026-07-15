@@ -92,7 +92,7 @@ export default function QuestionPage({
     return (
       <div className="mx-auto max-w-2xl">
         <p className="text-sm text-[#64748B]">Question not found.</p>
-        <Link href={`/assessment/${assessmentId}`} className="text-sm text-[#047857] hover:underline mt-2 inline-block">
+        <Link href={`/assessment/${assessmentId}`} className="bc-focus text-sm text-[#047857] hover:underline mt-2 inline-block">
           Back to assessment
         </Link>
       </div>
@@ -236,7 +236,7 @@ export default function QuestionPage({
               {sectionDone.allDone ? "Check your answers" : "Choose your next section"}
             </Link>
           </Button>
-          <p className="mt-4 text-xs text-[#94A3B8]">
+          <p className="mt-4 text-xs text-[#64748B]">
             {sectionDone.allDone
               ? "Taking you to review automatically…"
               : "Taking you back to the section list automatically…"}
@@ -250,7 +250,7 @@ export default function QuestionPage({
     <div className="mx-auto max-w-2xl">
       <button
         onClick={handleBack}
-        className="text-sm text-[#64748B] hover:text-[#0F2044] mb-8 inline-flex items-center gap-1 cursor-pointer"
+        className="bc-focus text-sm text-[#64748B] hover:text-[#0F2044] mb-8 inline-flex items-center gap-1 cursor-pointer"
       >
         ← Back
       </button>
@@ -258,7 +258,7 @@ export default function QuestionPage({
       {/* GOV.UK-style caption above the question */}
       <div className="mb-2 flex items-baseline justify-between gap-4">
         <p className="text-base text-[#64748B]">{section.title}</p>
-        <p className="shrink-0 text-xs text-[#94A3B8]">
+        <p className="shrink-0 text-xs text-[#64748B]">
           Question {currentNumber} of {totalInSection}
         </p>
       </div>
@@ -316,7 +316,7 @@ export default function QuestionPage({
       <div className="mb-8">
         <button
           onClick={() => setWhyOpen(!whyOpen)}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#047857] hover:underline cursor-pointer"
+          className="bc-focus inline-flex items-center gap-1.5 text-sm font-medium text-[#047857] hover:underline cursor-pointer"
           aria-expanded={whyOpen}
         >
           {whyOpen ? (
@@ -351,7 +351,7 @@ export default function QuestionPage({
                 <dd className="m-0 col-start-2 row-start-1 sm:col-start-3 text-right">
                   <Link
                     href={`/assessment/${assessmentId}/section/${sectionId}?q=${index + 1}&return=${sectionId}-${currentNumber}`}
-                    className="text-sm font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
+                    className="bc-focus text-sm font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
                   >
                     Change<span className="sr-only"> answer to: {q.text}</span>
                   </Link>

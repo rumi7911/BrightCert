@@ -40,7 +40,7 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
             required
             defaultValue={orgName}
             placeholder="Acme Ltd"
-            className="w-full h-10 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
+            className="w-full h-10 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
           />
         </div>
 
@@ -71,7 +71,7 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
             type="text"
             defaultValue={orgSector ?? ""}
             placeholder="e.g. Professional services, Healthcare, Retail…"
-            className="w-full h-10 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
+            className="w-full h-10 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
           />
         </div>
       </div>
@@ -87,7 +87,7 @@ export function SettingsForm({ orgName, orgSize, orgSector, email }: Props) {
           <div className="h-10 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] px-3 flex items-center">
             <span className="text-sm text-[#64748B]">{email}</span>
           </div>
-          <p className="text-xs text-[#94A3B8] mt-1.5">Email is used for magic link login and cannot be changed here.</p>
+          <p className="text-xs text-[#64748B] mt-1.5">Email is used for magic link login and cannot be changed here.</p>
         </div>
       </div>
 

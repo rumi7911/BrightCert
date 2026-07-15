@@ -36,12 +36,12 @@ function SectionRow({
   return (
     <Link
       href={`/assessment/${assessmentId}/section/${sectionId}?q=1`}
-      className="flex items-center gap-4 border-b border-[#F4F6FA] py-3 transition-colors hover:bg-[#F8FAFC]"
+      className="bc-focus flex items-center gap-4 border-b border-[#F4F6FA] py-3 transition-colors hover:bg-[#F8FAFC]"
     >
       <span className="min-w-0 flex-1 truncate text-[13px] text-[#33405C]">
         <b className="font-semibold text-[#0F2044]">{sectionId}.</b> {title}
       </span>
-      <span className="hidden shrink-0 text-xs tabular-nums text-[#99A2B4] sm:inline">
+      <span className="hidden shrink-0 text-xs tabular-nums text-[#64748B] sm:inline">
         {answered}/{questionCount} answered
       </span>
       <span className="w-[110px] shrink-0 text-right">
@@ -94,7 +94,7 @@ export default async function AssessmentTaskListPage({
     <div className="max-w-2xl">
       <Link
         href="/dashboard"
-        className="mb-5 inline-flex items-center gap-1 text-sm text-[#64748B] hover:text-[#0F2044]"
+        className="bc-focus mb-5 inline-flex items-center gap-1 text-sm text-[#64748B] hover:text-[#0F2044]"
       >
         ← Back to dashboard
       </Link>
@@ -109,7 +109,7 @@ export default async function AssessmentTaskListPage({
         <SectionHeader
           title="Sections"
           action={
-            <span className="text-xs tabular-nums text-[#99A2B4]">
+            <span className="text-xs tabular-nums text-[#64748B]">
               {completedCount} of {SECTIONS.length} complete
             </span>
           }

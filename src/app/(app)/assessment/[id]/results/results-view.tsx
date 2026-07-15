@@ -55,7 +55,7 @@ function ControlDetailsRow({ control }: { control: ControlScore }) {
 
   return (
     <details className="group border-b border-[#F4F6FA]">
-      <summary className="flex cursor-pointer list-none items-center gap-4 py-2.5 transition-colors hover:bg-[#F8FAFC]">
+      <summary className="bc-focus flex cursor-pointer list-none items-center gap-4 py-2.5 transition-colors hover:bg-[#F8FAFC]">
         <span className="min-w-0 flex-1 truncate text-[13px] text-[#33405C]">
           <b className="font-semibold text-[#0F2044]">{control.sectionId}.</b> {section?.title}
         </span>
@@ -204,7 +204,7 @@ export function ResultsView({
           <h2 className="mb-2 text-[13px] font-semibold text-[#0F2044]">Overall readiness</h2>
           <p className="text-sm leading-relaxed text-[#47536B]">{executiveSummary}</p>
           {!isPaid && (
-            <p className="mt-2 text-xs text-[#99A2B4]">
+            <p className="mt-2 text-xs text-[#64748B]">
               Full executive summary included in your report.
             </p>
           )}
@@ -274,7 +274,7 @@ export function ResultsView({
                 </div>
               </div>
               {lockedP1Count > 0 && (
-                <p className="mt-3 text-center text-xs text-[#99A2B4]">
+                <p className="mt-3 text-center text-xs text-[#64748B]">
                   {lockedP1Count} more P1 {lockedP1Count === 1 ? "issue" : "issues"}, plus all P2 and
                   P3 actions, in your full report.
                 </p>

@@ -29,7 +29,7 @@ export default async function AssessmentFocusLayout({
 
         <Link
           href={`/assessment/${id}`}
-          className="justify-self-end inline-flex h-9 items-center whitespace-nowrap rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-[13px] font-medium text-[#475569] hover:border-[#CBD5E1] hover:text-[#0F2044] transition-colors sm:px-3.5 sm:text-sm"
+          className="bc-focus justify-self-end inline-flex h-9 items-center whitespace-nowrap rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-[13px] font-medium text-[#475569] hover:border-[#CBD5E1] hover:text-[#0F2044] transition-colors sm:px-3.5 sm:text-sm"
         >
           Save and exit
         </Link>

@@ -84,6 +84,17 @@ h1, h2 {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
+/* Visible keyboard focus for custom links, rows, and icon buttons (WCAG 2.4.7).
+   bc-focus-light is the variant for dark surfaces like the verdict band. */
+.bc-focus:focus-visible {
+  outline: 2px solid #047857;
+  outline-offset: 2px;
+}
+.bc-focus-light:focus-visible {
+  outline: 2px solid #6EE7B7;
+  outline-offset: 2px;
+}
+
 /* Scroll-entry reveal (paired with the Reveal client component) */
 .reveal {
   opacity: 0;

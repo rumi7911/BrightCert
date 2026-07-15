@@ -168,7 +168,7 @@ export default async function ReportPage({
             href="https://iasme.co.uk/cyber-essentials/certified-assessors/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#047857] hover:underline"
+            className="bc-focus text-[#047857] hover:underline"
           >
             iasme.co.uk/cyber-essentials/certified-assessors
           </a>

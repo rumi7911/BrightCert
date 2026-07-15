@@ -15,7 +15,7 @@ export function PageHeader({
     <div className="mb-6 flex flex-col gap-4 border-b border-[#EEF1F6] pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-[#0F2044] sm:text-2xl">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-[#8A94A8]">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-sm text-[#64748B]">{subtitle}</p>}
       </div>
       {action}
     </div>

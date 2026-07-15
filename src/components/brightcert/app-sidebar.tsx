@@ -61,7 +61,7 @@ function RailItem({
       title={collapsed ? item.label : undefined}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "relative flex items-center gap-2.5 border-l-2 py-[7px] text-[13px] transition-colors",
+        "bc-focus relative flex items-center gap-2.5 border-l-2 py-[7px] text-[13px] transition-colors",
         collapsed ? "w-11 justify-center rounded-[8px] border-l-2 px-0" : "rounded-r-[8px] pl-3 pr-2.5",
         active
           ? "border-[#047857] bg-gradient-to-r from-[#047857]/[0.07] to-transparent font-semibold text-[#0F2044]"
@@ -74,7 +74,7 @@ function RailItem({
         <span
           className={cn(
             "ml-auto text-[11px] tabular-nums",
-            item.trailing.hot ? "font-bold text-[#B91C1C]" : "text-[#99A2B4]"
+            item.trailing.hot ? "font-bold text-[#B91C1C]" : "text-[#5B6579]"
           )}
         >
           {item.trailing.text}
@@ -190,7 +190,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       title={collapsed ? "Expand sidebar  [" : "Collapse sidebar  ["}
       aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       className={cn(
-        "grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-[6px] text-[#93A0B6] transition-colors hover:bg-white hover:text-[#0F2044]",
+        "bc-focus grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-[6px] text-[#64748B] transition-colors hover:bg-white hover:text-[#0F2044]",
         !collapsed && "ml-auto"
       )}
     >
@@ -207,18 +207,18 @@ export function AppSidebar({ orgName, email, latest }: Props) {
     >
       {/* Org identity + toggle */}
       {collapsed ? (
-        <Link href="/dashboard" title={orgName ?? "Dashboard"} className="mb-3">
+        <Link href="/dashboard" title={orgName ?? "Dashboard"} className="bc-focus mb-3 rounded-[8px]">
           <LogoMark className="h-8 w-8" />
         </Link>
       ) : (
         <div className="mb-3 flex items-center gap-2.5 rounded-[10px] px-2 py-1.5">
-          <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
+          <Link href="/dashboard" className="bc-focus flex min-w-0 items-center gap-2.5 rounded-[8px]">
             <LogoMark className="h-8 w-8 shrink-0" />
             <span className="min-w-0">
               <span className="block truncate text-[13px] font-semibold leading-tight text-[#0F2044]">
                 {orgName ?? "Your organisation"}
               </span>
-              <span className="block truncate whitespace-nowrap text-[11px] text-[#8A94A8]">Cyber Essentials readiness</span>
+              <span className="block truncate whitespace-nowrap text-[11px] text-[#5B6579]">Cyber Essentials readiness</span>
             </span>
           </Link>
           {toggleButton}
@@ -231,14 +231,14 @@ export function AppSidebar({ orgName, email, latest }: Props) {
           <Link
             href={`/assessment/${latest.id}/results`}
             title={`${latest.verdict} · ${latest.score}%`}
-            className="mb-3"
+            className="bc-focus mb-3 rounded-full"
           >
             <ScoreRing score={latest.score} color={latest.scoreColor} size="sm" />
           </Link>
         ) : (
           <Link
             href={`/assessment/${latest.id}/results`}
-            className="mb-3 flex items-center gap-3 rounded-[12px] border border-[#E5EAF2] bg-white p-3 shadow-[0_1px_2px_rgba(15,32,68,0.05)] transition-colors hover:border-[#CBD5E1]"
+            className="bc-focus mb-3 flex items-center gap-3 rounded-[12px] border border-[#E5EAF2] bg-white p-3 shadow-[0_1px_2px_rgba(15,32,68,0.05)] transition-colors hover:border-[#CBD5E1]"
           >
             <ScoreRing score={latest.score} color={latest.scoreColor} size="md" />
             <span className="min-w-0">
@@ -259,7 +259,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       )}
 
       {!collapsed && (
-        <p className="mb-1.5 mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#94A3B8]">
+        <p className="mb-1.5 mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#5B6579]">
           Workspace
         </p>
       )}
@@ -270,7 +270,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       </nav>
 
       {!collapsed && (
-        <p className="mb-1.5 mt-4 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#94A3B8]">
+        <p className="mb-1.5 mt-4 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#5B6579]">
           Account
         </p>
       )}
@@ -289,7 +289,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               title={`${latest.cta.title} — ${latest.cta.label}`}
-              className="mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] transition-colors hover:bg-[#D1FAE5]"
+              className="bc-focus mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] transition-colors hover:bg-[#D1FAE5]"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </a>
@@ -297,7 +297,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
             <Link
               href={latest.cta.href}
               title={`${latest.cta.title} — ${latest.cta.label}`}
-              className="mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] transition-colors hover:bg-[#D1FAE5]"
+              className="bc-focus mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] transition-colors hover:bg-[#D1FAE5]"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </Link>
@@ -311,14 +311,14 @@ export function AppSidebar({ orgName, email, latest }: Props) {
                 href={latest.cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#065F46]"
+                className="bc-focus block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#065F46]"
               >
                 {latest.cta.label}
               </a>
             ) : (
               <Link
                 href={latest.cta.href}
-                className="block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#065F46]"
+                className="bc-focus block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#065F46]"
               >
                 {latest.cta.label}
               </Link>
@@ -343,7 +343,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               type="submit"
               title="Sign out"
               aria-label="Sign out"
-              className="grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#93A0B6] transition-colors hover:bg-white/70 hover:text-[#0F2044]"
+              className="bc-focus grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#64748B] transition-colors hover:bg-white/70 hover:text-[#0F2044]"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
             </button>
@@ -357,14 +357,14 @@ export function AppSidebar({ orgName, email, latest }: Props) {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-xs font-medium text-[#0F2044]">{email ?? "Signed in"}</span>
-            <span className="block text-[11px] text-[#8A94A8]">{orgName ?? "BrightCert"}</span>
+            <span className="block text-[11px] text-[#5B6579]">{orgName ?? "BrightCert"}</span>
           </span>
           <form action="/auth/signout" method="post">
             <button
               type="submit"
               title="Sign out"
               aria-label="Sign out"
-              className="grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#93A0B6] transition-colors hover:bg-white/70 hover:text-[#0F2044]"
+              className="bc-focus grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#64748B] transition-colors hover:bg-white/70 hover:text-[#0F2044]"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
             </button>

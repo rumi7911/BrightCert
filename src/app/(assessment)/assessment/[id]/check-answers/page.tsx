@@ -79,7 +79,7 @@ export default function CheckAnswersPage({
 
   return (
     <div className="max-w-3xl">
-      <Link href={`/assessment/${assessmentId}`} className="text-sm text-[#64748B] hover:text-[#0F2044] mb-6 inline-flex items-center gap-1">
+      <Link href={`/assessment/${assessmentId}`} className="bc-focus text-sm text-[#64748B] hover:text-[#0F2044] mb-6 inline-flex items-center gap-1">
         ← Back to task list
       </Link>
 
@@ -125,7 +125,7 @@ export default function CheckAnswersPage({
                           <dd className="col-start-2 row-start-1 m-0 text-right sm:col-start-3">
                             <Link
                               href={`/assessment/${assessmentId}/section/${section.id}?q=${questionNumber}&return=check`}
-                              className="text-[13px] font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
+                              className="bc-focus text-[13px] font-medium text-[#047857] underline underline-offset-2 hover:no-underline"
                             >
                               Change<span className="sr-only"> answer to: {question.text}</span>
                             </Link>
@@ -135,7 +135,7 @@ export default function CheckAnswersPage({
                         <dd className="col-start-2 row-start-1 m-0 text-right sm:col-start-3">
                           <Link
                             href={`/assessment/${assessmentId}/section/${section.id}?q=${questionNumber}`}
-                            className="text-[13px] font-medium text-[#DC2626] hover:underline"
+                            className="bc-focus text-[13px] font-medium text-[#DC2626] hover:underline"
                           >
                             Not answered
                           </Link>
