@@ -21,7 +21,12 @@ import { Reveal } from "@/components/brightcert/reveal";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { IconTile } from "@/components/brightcert/icon-tile";
-import { SocialProofBadge, getAssessmentCountLabel } from "@/components/brightcert/social-proof-badge";
+import {
+  SOCIAL_PROOF_FALLBACK,
+  SOCIAL_PROOF_THRESHOLD,
+  SocialProofBadge,
+  getAssessmentCountLabel,
+} from "@/components/brightcert/social-proof-badge";
 import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
 import { createAdminClient } from "@/lib/supabase/server";
 
@@ -219,15 +224,19 @@ export default async function HomePage() {
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 text-center">
-          {(assessmentCount ?? 0) >= 1 && (
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-4 py-1.5 mb-6 text-xs font-medium text-white/80">
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-[#6EE7B7] opacity-75 animate-ping" aria-hidden />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6EE7B7]" aria-hidden />
-              </span>
-              {getAssessmentCountLabel(assessmentCount ?? 0)}
-            </span>
-          )}
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-4 py-1.5 mb-6 text-xs font-medium text-white/80">
+            {(assessmentCount ?? 0) >= SOCIAL_PROOF_THRESHOLD ? (
+              <>
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#6EE7B7] opacity-75 animate-ping" aria-hidden />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6EE7B7]" aria-hidden />
+                </span>
+                {getAssessmentCountLabel(assessmentCount ?? 0)}
+              </>
+            ) : (
+              SOCIAL_PROOF_FALLBACK
+            )}
+          </span>
           <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] font-bold leading-[1.05] mb-6 max-w-3xl mx-auto">
             Get Cyber Essentials ready in <span className="text-[#6EE7B7]">2 hours</span>
           </h1>
