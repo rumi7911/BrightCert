@@ -62,6 +62,7 @@ export default function RootLayout({
                 name: "BrightCert",
                 url: "https://brightcert.co.uk",
                 logo: "https://brightcert.co.uk/logo.png",
+                sameAs: ["https://www.linkedin.com/company/brightcert"],
                 description:
                   "BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports. BrightCert does not issue official Cyber Essentials certification.",
                 email: "hello@brightcert.co.uk",
