@@ -243,7 +243,8 @@ function VerdictBand({
 
         <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-baseline sm:gap-8">
           <div className="flex shrink-0 items-baseline gap-1">
-            <span className="font-display text-[68px] font-extrabold leading-none tracking-tight text-white tabular-nums sm:text-[76px]">
+            {/* The one gradient-type moment in the app (approved blend B+C) */}
+            <span className="font-display bg-[linear-gradient(100deg,#fff_30%,#6EE7B7_95%)] bg-clip-text text-[68px] font-extrabold leading-none tracking-tight text-transparent tabular-nums sm:text-[76px]">
               {score}
             </span>
             <span className="text-[26px] font-bold text-[#8DA0C4]">%</span>

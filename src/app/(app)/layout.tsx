@@ -115,7 +115,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <form action="/auth/signout" method="post">
           <button
             type="submit"
-            className="bc-focus-light flex items-center gap-1.5 text-sm text-[#B9C5DC] hover:text-white cursor-pointer"
+            className="bc-focus-light flex items-center gap-1.5 text-sm font-medium text-[#E4EAF4] hover:text-white cursor-pointer"
           >
             <LogOut className="h-4 w-4" strokeWidth={1.5} />
             Sign out

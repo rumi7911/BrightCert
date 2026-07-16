@@ -84,6 +84,19 @@ h1, h2 {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
+/* App rail: emerald-into-navy gradient wash (pairs with .bc-rail-dots overlay) */
+.bc-rail {
+  background: linear-gradient(165deg, #123156 0%, #0f2044 38%, #0c1a38 78%, #0d2438 100%);
+}
+/* Halftone dot texture, fading corner-to-corner. Render as an absolutely
+   positioned first child; content siblings need position:relative to paint above. */
+.bc-rail-dots {
+  background-image: radial-gradient(circle, rgba(110, 231, 183, 0.5) 1px, transparent 1.3px);
+  background-size: 9px 9px;
+  -webkit-mask-image: linear-gradient(160deg, rgba(0, 0, 0, 0.5), transparent 34%, transparent 72%, rgba(0, 0, 0, 0.35));
+  mask-image: linear-gradient(160deg, rgba(0, 0, 0, 0.5), transparent 34%, transparent 72%, rgba(0, 0, 0, 0.35));
+}
+
 /* Visible keyboard focus for custom links, rows, and icon buttons (WCAG 2.4.7).
    bc-focus-light is the variant for dark surfaces like the verdict band. */
 .bc-focus:focus-visible {

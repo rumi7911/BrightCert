@@ -64,17 +64,17 @@ function RailItem({
         "bc-focus-light relative flex items-center gap-2.5 border-l-2 py-[7px] text-[13px] transition-colors",
         collapsed ? "w-11 justify-center rounded-[8px] border-l-2 px-0" : "rounded-r-[8px] pl-3 pr-2.5",
         active
-          ? "border-[#34D399] bg-gradient-to-r from-[#34D399]/[0.14] to-transparent font-semibold text-white"
-          : "border-transparent text-[#B9C5DC] hover:bg-white/[0.08] hover:text-white"
+          ? "border-[#34D399] bg-gradient-to-r from-[#34D399]/[0.22] to-[#34D399]/[0.04] font-bold text-white"
+          : "border-transparent font-medium text-[#E4EAF4] hover:bg-white/[0.08] hover:text-white"
       )}
     >
-      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-[#34D399]" : "text-[#7E90B4]")} strokeWidth={1.5} />
+      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-[#6EE7B7]" : "text-[#AAB8D4]")} strokeWidth={1.5} />
       {!collapsed && <span className="truncate">{item.label}</span>}
       {!collapsed && item.trailing && (
         <span
           className={cn(
             "ml-auto text-[11px] tabular-nums",
-            item.trailing.hot ? "font-bold text-[#F87171]" : "text-[#8DA0C4]"
+            item.trailing.hot ? "font-extrabold text-[#F87171]" : "text-[#AAB8D4]"
           )}
         >
           {item.trailing.text}
@@ -108,7 +108,7 @@ function ScoreRing({
       style={{
         width: outer,
         height: outer,
-        background: `conic-gradient(${color} 0 ${Math.min(Math.max(score, 0), 100)}%, rgba(255,255,255,0.14) ${Math.min(Math.max(score, 0), 100)}% 100%)`,
+        background: `conic-gradient(${color} 0 ${Math.min(Math.max(score, 0), 100)}%, rgba(255,255,255,0.16) ${Math.min(Math.max(score, 0), 100)}% 100%)`,
       }}
       aria-hidden
     >
@@ -190,7 +190,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       title={collapsed ? "Expand sidebar  [" : "Collapse sidebar  ["}
       aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       className={cn(
-        "bc-focus-light grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-[6px] text-[#7E90B4] transition-colors hover:bg-white/10 hover:text-white",
+        "bc-focus-light grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-[6px] text-[#AAB8D4] transition-colors hover:bg-white/10 hover:text-white",
         !collapsed && "ml-auto"
       )}
     >
@@ -201,10 +201,18 @@ export function AppSidebar({ orgName, email, latest }: Props) {
   return (
     <aside
       className={cn(
-        "hidden shrink-0 flex-col py-4 transition-[width] duration-200 motion-reduce:transition-none md:flex",
-        collapsed ? "w-[68px] items-center px-2.5" : "w-60 px-3"
+        "bc-rail relative hidden shrink-0 overflow-hidden transition-[width] duration-200 motion-reduce:transition-none md:block",
+        collapsed ? "w-[68px]" : "w-60"
       )}
     >
+      {/* Halftone brand texture — content wrapper below paints above it */}
+      <div aria-hidden className="bc-rail-dots pointer-events-none absolute inset-0" />
+      <div
+        className={cn(
+          "relative flex h-full flex-col py-4",
+          collapsed ? "items-center px-2.5" : "px-3"
+        )}
+      >
       {/* Org identity + toggle */}
       {collapsed ? (
         <Link href="/dashboard" title={orgName ?? "Dashboard"} className="bc-focus-light mb-3 rounded-[8px]">
@@ -218,7 +226,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               <span className="block truncate text-[13px] font-semibold leading-tight text-white">
                 {orgName ?? "Your organisation"}
               </span>
-              <span className="block truncate whitespace-nowrap text-[11px] text-[#8DA0C4]">Cyber Essentials readiness</span>
+              <span className="block truncate whitespace-nowrap text-[11px] text-[#AAB8D4]">Cyber Essentials readiness</span>
             </span>
           </Link>
           {toggleButton}
@@ -238,11 +246,11 @@ export function AppSidebar({ orgName, email, latest }: Props) {
         ) : (
           <Link
             href={`/assessment/${latest.id}/results`}
-            className="bc-focus-light mb-3 flex items-center gap-3 rounded-[12px] border border-white/10 bg-white/[0.06] p-3 transition-colors hover:border-white/25"
+            className="bc-focus-light mb-3 flex items-center gap-3 rounded-[12px] border border-white/[0.14] bg-white/[0.08] p-3 transition-colors hover:border-white/30"
           >
             <ScoreRing score={latest.score} color={latest.scoreColor} size="md" />
             <span className="min-w-0">
-              <span className="block truncate text-xs font-semibold leading-tight text-white">
+              <span className="block truncate text-xs font-bold leading-tight text-white">
                 {latest.verdict}
               </span>
               <span className="block text-[10.5px] font-semibold text-[#FCA5A5]">
@@ -259,7 +267,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       )}
 
       {!collapsed && (
-        <p className="mb-1.5 mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#7E90B4]">
+        <p className="mb-1.5 mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] font-bold text-[#8DA0C4]">
           Workspace
         </p>
       )}
@@ -270,7 +278,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       </nav>
 
       {!collapsed && (
-        <p className="mb-1.5 mt-4 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#7E90B4]">
+        <p className="mb-1.5 mt-4 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] font-bold text-[#8DA0C4]">
           Account
         </p>
       )}
@@ -289,7 +297,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               title={`${latest.cta.title} — ${latest.cta.label}`}
-              className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/30 bg-[#059669]/15 text-[#6EE7B7] transition-colors hover:bg-[#059669]/25"
+              className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/40 bg-[#059669]/[0.22] text-[#A7F3D0] transition-colors hover:bg-[#059669]/30"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </a>
@@ -297,28 +305,28 @@ export function AppSidebar({ orgName, email, latest }: Props) {
             <Link
               href={latest.cta.href}
               title={`${latest.cta.title} — ${latest.cta.label}`}
-              className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/30 bg-[#059669]/15 text-[#6EE7B7] transition-colors hover:bg-[#059669]/25"
+              className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/40 bg-[#059669]/[0.22] text-[#A7F3D0] transition-colors hover:bg-[#059669]/30"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </Link>
           )
         ) : (
-          <div className="mt-3 rounded-[12px] border border-[#34D399]/25 bg-[#059669]/15 p-3">
-            <p className="text-[11.5px] font-bold text-[#6EE7B7]">{latest.cta.title}</p>
-            <p className="mt-0.5 mb-2.5 text-[10.5px] leading-snug text-[#A9B8D6]">{latest.cta.body}</p>
+          <div className="mt-3 rounded-[12px] border border-[#34D399]/40 bg-[#059669]/[0.22] p-3">
+            <p className="text-[11.5px] font-bold text-white">{latest.cta.title}</p>
+            <p className="mt-0.5 mb-2.5 text-[10.5px] leading-snug text-[#C9D6EC]">{latest.cta.body}</p>
             {latest.cta.external ? (
               <a
                 href={latest.cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bc-focus-light block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#059669]"
+                className="bc-focus-light block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-extrabold text-white transition-colors hover:bg-[#059669]"
               >
                 {latest.cta.label}
               </a>
             ) : (
               <Link
                 href={latest.cta.href}
-                className="bc-focus-light block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#059669]"
+                className="bc-focus-light block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-extrabold text-white transition-colors hover:bg-[#059669]"
               >
                 {latest.cta.label}
               </Link>
@@ -331,10 +339,10 @@ export function AppSidebar({ orgName, email, latest }: Props) {
 
       {/* User card */}
       {collapsed ? (
-        <div className="flex flex-col items-center gap-2 border-t border-white/10 pt-3">
+        <div className="flex flex-col items-center gap-2 border-t border-white/[0.14] pt-3">
           <span
             title={email ?? "Signed in"}
-            className="grid h-8 w-8 place-items-center rounded-full bg-[#34D399]/[0.18] text-[11px] font-bold text-[#6EE7B7]"
+            className="grid h-8 w-8 place-items-center rounded-full bg-[#34D399]/[0.28] text-[11px] font-bold text-[#A7F3D0]"
           >
             {initials}
           </span>
@@ -343,7 +351,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               type="submit"
               title="Sign out"
               aria-label="Sign out"
-              className="bc-focus-light grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#7E90B4] transition-colors hover:bg-white/10 hover:text-white"
+              className="bc-focus-light grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#AAB8D4] transition-colors hover:bg-white/10 hover:text-white"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
             </button>
@@ -351,26 +359,27 @@ export function AppSidebar({ orgName, email, latest }: Props) {
           {toggleButton}
         </div>
       ) : (
-        <div className="flex items-center gap-2.5 border-t border-white/10 px-2 pt-3 pb-1">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#34D399]/[0.18] text-[11px] font-bold text-[#6EE7B7]">
+        <div className="flex items-center gap-2.5 border-t border-white/[0.14] px-2 pt-3 pb-1">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#34D399]/[0.28] text-[11px] font-bold text-[#A7F3D0]">
             {initials}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-xs font-medium text-white">{email ?? "Signed in"}</span>
-            <span className="block text-[11px] text-[#8DA0C4]">{orgName ?? "BrightCert"}</span>
+            <span className="block truncate text-xs font-semibold text-white">{email ?? "Signed in"}</span>
+            <span className="block text-[11px] text-[#AAB8D4]">{orgName ?? "BrightCert"}</span>
           </span>
           <form action="/auth/signout" method="post">
             <button
               type="submit"
               title="Sign out"
               aria-label="Sign out"
-              className="bc-focus-light grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#7E90B4] transition-colors hover:bg-white/10 hover:text-white"
+              className="bc-focus-light grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#AAB8D4] transition-colors hover:bg-white/10 hover:text-white"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
             </button>
           </form>
         </div>
       )}
+      </div>
     </aside>
   );
 }

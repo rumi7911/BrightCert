@@ -260,7 +260,7 @@ export default async function HomePage() {
             aria-hidden
           />
           <Image
-            src="/dashboard-console.png"
+            src="/dashboard-vivid.png"
             alt="BrightCert dashboard showing a 67% readiness verdict, control area scores, priority actions, and assessment history"
             width={2720}
             height={1980}
