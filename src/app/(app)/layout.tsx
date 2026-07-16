@@ -106,16 +106,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-[#EEF2F7] flex flex-col">
+    <div className="min-h-screen bg-[#0F2044] flex flex-col">
       {/* Mobile top bar — the rail is hidden below md */}
-      <header className="md:hidden sticky top-0 z-40 h-14 bg-white border-b border-[#E5EAF2] flex items-center justify-between px-4">
+      <header className="md:hidden sticky top-0 z-40 h-14 bg-[#0F2044] border-b border-white/10 flex items-center justify-between px-4">
         <Link href="/dashboard" aria-label="BrightCert dashboard">
-          <Logo markClassName="h-7 w-7" textClassName="text-lg" />
+          <Logo light markClassName="h-7 w-7" textClassName="text-lg" />
         </Link>
         <form action="/auth/signout" method="post">
           <button
             type="submit"
-            className="bc-focus flex items-center gap-1.5 text-sm text-[#64748B] hover:text-[#0F2044] cursor-pointer"
+            className="bc-focus-light flex items-center gap-1.5 text-sm text-[#B9C5DC] hover:text-white cursor-pointer"
           >
             <LogOut className="h-4 w-4" strokeWidth={1.5} />
             Sign out

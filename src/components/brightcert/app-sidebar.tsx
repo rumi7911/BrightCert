@@ -61,20 +61,20 @@ function RailItem({
       title={collapsed ? item.label : undefined}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "bc-focus relative flex items-center gap-2.5 border-l-2 py-[7px] text-[13px] transition-colors",
+        "bc-focus-light relative flex items-center gap-2.5 border-l-2 py-[7px] text-[13px] transition-colors",
         collapsed ? "w-11 justify-center rounded-[8px] border-l-2 px-0" : "rounded-r-[8px] pl-3 pr-2.5",
         active
-          ? "border-[#047857] bg-gradient-to-r from-[#047857]/[0.07] to-transparent font-semibold text-[#0F2044]"
-          : "border-transparent text-[#5B6579] hover:bg-white/60 hover:text-[#0F2044]"
+          ? "border-[#34D399] bg-gradient-to-r from-[#34D399]/[0.14] to-transparent font-semibold text-white"
+          : "border-transparent text-[#B9C5DC] hover:bg-white/[0.08] hover:text-white"
       )}
     >
-      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-[#047857]" : "text-[#93A0B6]")} strokeWidth={1.5} />
+      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-[#34D399]" : "text-[#7E90B4]")} strokeWidth={1.5} />
       {!collapsed && <span className="truncate">{item.label}</span>}
       {!collapsed && item.trailing && (
         <span
           className={cn(
             "ml-auto text-[11px] tabular-nums",
-            item.trailing.hot ? "font-bold text-[#B91C1C]" : "text-[#5B6579]"
+            item.trailing.hot ? "font-bold text-[#F87171]" : "text-[#8DA0C4]"
           )}
         >
           {item.trailing.text}
@@ -82,7 +82,7 @@ function RailItem({
       )}
       {collapsed && item.trailing?.hot && (
         <span
-          className="absolute right-1 top-1 h-[7px] w-[7px] rounded-full border-[1.5px] border-[#EEF2F7] bg-[#DC2626]"
+          className="absolute right-1 top-1 h-[7px] w-[7px] rounded-full border-[1.5px] border-[#0F2044] bg-[#F87171]"
           aria-hidden
         />
       )}
@@ -108,7 +108,7 @@ function ScoreRing({
       style={{
         width: outer,
         height: outer,
-        background: `conic-gradient(${color} 0 ${Math.min(Math.max(score, 0), 100)}%, #EEF2F7 ${Math.min(Math.max(score, 0), 100)}% 100%)`,
+        background: `conic-gradient(${color} 0 ${Math.min(Math.max(score, 0), 100)}%, rgba(255,255,255,0.14) ${Math.min(Math.max(score, 0), 100)}% 100%)`,
       }}
       aria-hidden
     >
@@ -190,7 +190,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       title={collapsed ? "Expand sidebar  [" : "Collapse sidebar  ["}
       aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       className={cn(
-        "bc-focus grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-[6px] text-[#64748B] transition-colors hover:bg-white hover:text-[#0F2044]",
+        "bc-focus-light grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-[6px] text-[#7E90B4] transition-colors hover:bg-white/10 hover:text-white",
         !collapsed && "ml-auto"
       )}
     >
@@ -207,18 +207,18 @@ export function AppSidebar({ orgName, email, latest }: Props) {
     >
       {/* Org identity + toggle */}
       {collapsed ? (
-        <Link href="/dashboard" title={orgName ?? "Dashboard"} className="bc-focus mb-3 rounded-[8px]">
-          <LogoMark className="h-8 w-8" />
+        <Link href="/dashboard" title={orgName ?? "Dashboard"} className="bc-focus-light mb-3 rounded-[8px]">
+          <LogoMark className="h-8 w-8" light />
         </Link>
       ) : (
         <div className="mb-3 flex items-center gap-2.5 rounded-[10px] px-2 py-1.5">
-          <Link href="/dashboard" className="bc-focus flex min-w-0 items-center gap-2.5 rounded-[8px]">
-            <LogoMark className="h-8 w-8 shrink-0" />
+          <Link href="/dashboard" className="bc-focus-light flex min-w-0 items-center gap-2.5 rounded-[8px]">
+            <LogoMark className="h-8 w-8 shrink-0" light />
             <span className="min-w-0">
-              <span className="block truncate text-[13px] font-semibold leading-tight text-[#0F2044]">
+              <span className="block truncate text-[13px] font-semibold leading-tight text-white">
                 {orgName ?? "Your organisation"}
               </span>
-              <span className="block truncate whitespace-nowrap text-[11px] text-[#5B6579]">Cyber Essentials readiness</span>
+              <span className="block truncate whitespace-nowrap text-[11px] text-[#8DA0C4]">Cyber Essentials readiness</span>
             </span>
           </Link>
           {toggleButton}
@@ -231,26 +231,26 @@ export function AppSidebar({ orgName, email, latest }: Props) {
           <Link
             href={`/assessment/${latest.id}/results`}
             title={`${latest.verdict} · ${latest.score}%`}
-            className="bc-focus mb-3 rounded-full"
+            className="bc-focus-light mb-3 rounded-full"
           >
             <ScoreRing score={latest.score} color={latest.scoreColor} size="sm" />
           </Link>
         ) : (
           <Link
             href={`/assessment/${latest.id}/results`}
-            className="bc-focus mb-3 flex items-center gap-3 rounded-[12px] border border-[#E5EAF2] bg-white p-3 shadow-[0_1px_2px_rgba(15,32,68,0.05)] transition-colors hover:border-[#CBD5E1]"
+            className="bc-focus-light mb-3 flex items-center gap-3 rounded-[12px] border border-white/10 bg-white/[0.06] p-3 transition-colors hover:border-white/25"
           >
             <ScoreRing score={latest.score} color={latest.scoreColor} size="md" />
             <span className="min-w-0">
-              <span className="block truncate text-xs font-semibold leading-tight text-[#0F2044]">
+              <span className="block truncate text-xs font-semibold leading-tight text-white">
                 {latest.verdict}
               </span>
-              <span className="block text-[10.5px] font-semibold text-[#B91C1C]">
+              <span className="block text-[10.5px] font-semibold text-[#FCA5A5]">
                 {latest.p1Count > 0
                   ? `${latest.p1Count} ${latest.p1Count === 1 ? "issue" : "issues"} to fix`
                   : ""}
                 {latest.p1Count === 0 && (
-                  <span className="text-[#047857]">No critical issues</span>
+                  <span className="text-[#6EE7B7]">No critical issues</span>
                 )}
               </span>
             </span>
@@ -259,7 +259,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       )}
 
       {!collapsed && (
-        <p className="mb-1.5 mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#5B6579]">
+        <p className="mb-1.5 mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#7E90B4]">
           Workspace
         </p>
       )}
@@ -270,7 +270,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       </nav>
 
       {!collapsed && (
-        <p className="mb-1.5 mt-4 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#5B6579]">
+        <p className="mb-1.5 mt-4 px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#7E90B4]">
           Account
         </p>
       )}
@@ -289,7 +289,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               title={`${latest.cta.title} — ${latest.cta.label}`}
-              className="bc-focus mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] transition-colors hover:bg-[#D1FAE5]"
+              className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/30 bg-[#059669]/15 text-[#6EE7B7] transition-colors hover:bg-[#059669]/25"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </a>
@@ -297,28 +297,28 @@ export function AppSidebar({ orgName, email, latest }: Props) {
             <Link
               href={latest.cta.href}
               title={`${latest.cta.title} — ${latest.cta.label}`}
-              className="bc-focus mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] transition-colors hover:bg-[#D1FAE5]"
+              className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/30 bg-[#059669]/15 text-[#6EE7B7] transition-colors hover:bg-[#059669]/25"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </Link>
           )
         ) : (
-          <div className="mt-3 rounded-[12px] border border-[#A7F3D0] bg-[#ECFDF5] p-3">
-            <p className="text-[11.5px] font-bold text-[#065F46]">{latest.cta.title}</p>
-            <p className="mt-0.5 mb-2.5 text-[10.5px] leading-snug text-[#047857]">{latest.cta.body}</p>
+          <div className="mt-3 rounded-[12px] border border-[#34D399]/25 bg-[#059669]/15 p-3">
+            <p className="text-[11.5px] font-bold text-[#6EE7B7]">{latest.cta.title}</p>
+            <p className="mt-0.5 mb-2.5 text-[10.5px] leading-snug text-[#A9B8D6]">{latest.cta.body}</p>
             {latest.cta.external ? (
               <a
                 href={latest.cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bc-focus block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#065F46]"
+                className="bc-focus-light block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#059669]"
               >
                 {latest.cta.label}
               </a>
             ) : (
               <Link
                 href={latest.cta.href}
-                className="bc-focus block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#065F46]"
+                className="bc-focus-light block rounded-[7px] bg-[#047857] py-1.5 text-center text-[11px] font-bold text-white transition-colors hover:bg-[#059669]"
               >
                 {latest.cta.label}
               </Link>
@@ -331,10 +331,10 @@ export function AppSidebar({ orgName, email, latest }: Props) {
 
       {/* User card */}
       {collapsed ? (
-        <div className="flex flex-col items-center gap-2 border-t border-[#DFE5EE] pt-3">
+        <div className="flex flex-col items-center gap-2 border-t border-white/10 pt-3">
           <span
             title={email ?? "Signed in"}
-            className="grid h-8 w-8 place-items-center rounded-full bg-[#ECFDF5] text-[11px] font-bold text-[#047857]"
+            className="grid h-8 w-8 place-items-center rounded-full bg-[#34D399]/[0.18] text-[11px] font-bold text-[#6EE7B7]"
           >
             {initials}
           </span>
@@ -343,7 +343,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               type="submit"
               title="Sign out"
               aria-label="Sign out"
-              className="bc-focus grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#64748B] transition-colors hover:bg-white/70 hover:text-[#0F2044]"
+              className="bc-focus-light grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#7E90B4] transition-colors hover:bg-white/10 hover:text-white"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
             </button>
@@ -351,20 +351,20 @@ export function AppSidebar({ orgName, email, latest }: Props) {
           {toggleButton}
         </div>
       ) : (
-        <div className="flex items-center gap-2.5 border-t border-[#DFE5EE] px-2 pt-3 pb-1">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#ECFDF5] text-[11px] font-bold text-[#047857]">
+        <div className="flex items-center gap-2.5 border-t border-white/10 px-2 pt-3 pb-1">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#34D399]/[0.18] text-[11px] font-bold text-[#6EE7B7]">
             {initials}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-xs font-medium text-[#0F2044]">{email ?? "Signed in"}</span>
-            <span className="block text-[11px] text-[#5B6579]">{orgName ?? "BrightCert"}</span>
+            <span className="block truncate text-xs font-medium text-white">{email ?? "Signed in"}</span>
+            <span className="block text-[11px] text-[#8DA0C4]">{orgName ?? "BrightCert"}</span>
           </span>
           <form action="/auth/signout" method="post">
             <button
               type="submit"
               title="Sign out"
               aria-label="Sign out"
-              className="bc-focus grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#64748B] transition-colors hover:bg-white/70 hover:text-[#0F2044]"
+              className="bc-focus-light grid h-8 w-8 cursor-pointer place-items-center rounded-[8px] text-[#7E90B4] transition-colors hover:bg-white/10 hover:text-white"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
             </button>
