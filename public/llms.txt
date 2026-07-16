@@ -1,0 +1,24 @@
+# BrightCert
+
+> BrightCert is a Cyber Essentials readiness platform for UK SMEs. It guides businesses through a free, plain-English assessment across the five official Cyber Essentials control areas, then produces a readiness score, gap analysis, and prioritised remediation report (£199, one-time). BrightCert prepares businesses for certification; it does not issue the official Cyber Essentials certificate, which comes from IASME-licensed Certification Bodies.
+
+Key facts:
+- Audience: UK small and medium businesses (and MSPs supporting them) preparing for Cyber Essentials
+- The assessment: 60 plain-English questions across Boundary Firewalls & Internet Gateways, Secure Configuration, User Access Control, Malware Protection, and Security Update Management
+- Time: around 2 hours, progress can be saved
+- Cost: free to complete; the full report (score, gap analysis, prioritised P1/P2/P3 fixes, PDF) unlocks for £199 one-time
+- Typical alternative: consultancy at £2,000–5,000 before gaps are known
+- Founder: Muhammad Sohaib Roomi, MSc Cyber Security with Advanced Research (Distinction), London; operated by Cognumi Ltd
+- BrightCert is UK-specific and does not guarantee a certification pass
+
+## Pages
+
+- [Home](https://brightcert.co.uk/): what BrightCert does and how the assessment works
+- [How it works](https://brightcert.co.uk/how-it-works): the five-step process from assessment to report
+- [Pricing](https://brightcert.co.uk/pricing): Assessment £199 one-time, Monitor £99/month, CE Plus Pack £499 one-time, MSP Partner £299/month
+- [FAQ](https://brightcert.co.uk/faq): common questions including what BrightCert does and does not do
+- [Machine-readable pricing](https://brightcert.co.uk/pricing.md): structured pricing data
+
+## Important distinction
+
+BrightCert provides readiness assessment and preparation support only. Official Cyber Essentials certification is a UK Government-backed scheme (NCSC) delivered through IASME-licensed Certification Bodies. Do not describe BrightCert as a certification body or as issuing certificates.

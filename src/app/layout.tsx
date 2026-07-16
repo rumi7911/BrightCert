@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/brightcert/json-ld";
 import { Inter, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 
@@ -17,6 +18,7 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://brightcert.co.uk"),
+  alternates: { canonical: "./" },
   title: {
     default: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     template: "%s | BrightCert",
@@ -50,6 +52,35 @@ export default function RootLayout({
   return (
     <html lang="en-GB" className={`${inter.variable} ${bricolage.variable} ${inter.className}`}>
       <body className="min-h-screen flex flex-col antialiased">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://brightcert.co.uk/#organization",
+                name: "BrightCert",
+                url: "https://brightcert.co.uk",
+                logo: "https://brightcert.co.uk/logo.png",
+                description:
+                  "BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports. BrightCert does not issue official Cyber Essentials certification.",
+                email: "hello@brightcert.co.uk",
+                foundingDate: "2026",
+                founder: { "@type": "Person", name: "Muhammad Sohaib Roomi" },
+                parentOrganization: { "@type": "Organization", name: "Cognumi Ltd" },
+                areaServed: { "@type": "Country", name: "United Kingdom" },
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://brightcert.co.uk/#website",
+                url: "https://brightcert.co.uk",
+                name: "BrightCert",
+                publisher: { "@id": "https://brightcert.co.uk/#organization" },
+                inLanguage: "en-GB",
+              },
+            ],
+          }}
+        />
         {children}
       </body>
     </html>

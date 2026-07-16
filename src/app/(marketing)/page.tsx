@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Check, FileText, ShieldCheck, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
+import { JsonLd } from "@/components/brightcert/json-ld";
 import { Reveal } from "@/components/brightcert/reveal";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
@@ -191,6 +192,24 @@ export default async function HomePage() {
 
   return (
     <div className="bg-[#F8FAFC]">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "BrightCert Cyber Essentials Readiness Assessment",
+          description:
+            "Guided Cyber Essentials readiness assessment for UK SMEs: 60 plain-English questions across the five official control areas, a readiness score, gap analysis, and a prioritised remediation report. Free to complete; the full report unlocks for £199.",
+          brand: { "@id": "https://brightcert.co.uk/#organization" },
+          url: "https://brightcert.co.uk",
+          offers: {
+            "@type": "Offer",
+            price: "199",
+            priceCurrency: "GBP",
+            url: "https://brightcert.co.uk/pricing",
+            availability: "https://schema.org/InStock",
+          },
+        }}
+      />
 
       {/* ── 1. HERO ─────────────────────────────────────────────────────── */}
       <section

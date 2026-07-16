@@ -4,11 +4,51 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
+import { JsonLd } from "@/components/brightcert/json-ld";
 import { Reveal } from "@/components/brightcert/reveal";
 
 export const metadata: Metadata = {
   title: "Pricing",
   description: "Simple pricing for Cyber Essentials readiness. Start free, pay £199 to unlock your full report.",
+  alternates: { canonical: "/pricing" },
+};
+
+const PRICING_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  name: "BrightCert pricing",
+  url: "https://brightcert.co.uk/pricing",
+  itemListElement: [
+    {
+      "@type": "Offer",
+      name: "Assessment",
+      price: "199",
+      priceCurrency: "GBP",
+      description:
+        "Guided Cyber Essentials readiness assessment with AI-assisted scoring, gap analysis, prioritised remediation steps, and a downloadable PDF report. Free to complete; pay to unlock the full report.",
+    },
+    {
+      "@type": "Offer",
+      name: "Monitor",
+      price: "99",
+      priceCurrency: "GBP",
+      description: "Monthly readiness review, remediation tracking, and renewal preparation support.",
+    },
+    {
+      "@type": "Offer",
+      name: "CE Plus Pack",
+      price: "499",
+      priceCurrency: "GBP",
+      description: "Cyber Essentials Plus preparation: checklist, evidence collection guidance, and readiness review before technical testing.",
+    },
+    {
+      "@type": "Offer",
+      name: "MSP Partner",
+      price: "299",
+      priceCurrency: "GBP",
+      description: "Multi-client dashboard and assessment workflow for MSPs supporting UK SME clients (per month).",
+    },
+  ],
 };
 
 const tiers = [
@@ -91,6 +131,7 @@ const tiers = [
 export default function PricingPage() {
   return (
     <div className="bg-[#F8FAFC] py-20 md:py-28">
+      <JsonLd data={PRICING_SCHEMA} />
       <div className="max-w-6xl mx-auto px-4">
         <Reveal className="text-center max-w-2xl mx-auto mb-14">
           <Eyebrow center>Pricing</Eyebrow>

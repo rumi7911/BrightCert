@@ -3,12 +3,50 @@ import Link from "next/link";
 import { Wifi, Settings, Users, Bug, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
+import { JsonLd } from "@/components/brightcert/json-ld";
 import { Eyebrow } from "@/components/brightcert/eyebrow";
 import { Reveal } from "@/components/brightcert/reveal";
 
 export const metadata: Metadata = {
   title: "How It Works",
   description: "Step-by-step guide to using BrightCert for Cyber Essentials readiness assessment.",
+  alternates: { canonical: "/how-it-works" },
+};
+
+const HOW_TO_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to prepare for Cyber Essentials with BrightCert",
+  description:
+    "Assess your Cyber Essentials readiness in around 2 hours: answer plain-English questions across the five control areas, review your readiness score and gaps, and unlock a prioritised remediation report.",
+  totalTime: "PT2H",
+  step: [
+    {
+      "@type": "HowToStep",
+      name: "Create your assessment",
+      text: "Enter basic information about your organisation, including business size, sector, and the systems you use.",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Answer questions across five control areas",
+      text: "Work through plain-English questions covering Boundary Firewalls & Internet Gateways, Secure Configuration, User Access Control, Malware Protection, and Security Update Management.",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Review your readiness score",
+      text: "BrightCert analyses your answers and gives you an overall readiness score, with pass, warning, or fail status for each control area.",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Understand your gaps",
+      text: "Each gap is explained in practical language: what the issue is, why it matters, and what to do next.",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Unlock your full report",
+      text: "Get a structured action plan as a PDF to share internally, review with your IT provider, or use before applying through an IASME-licensed Certification Body.",
+    },
+  ],
 };
 
 const controlAreas = [
@@ -22,6 +60,7 @@ const controlAreas = [
 export default function HowItWorksPage() {
   return (
     <div className="bg-[#F8FAFC] py-20 md:py-28">
+      <JsonLd data={HOW_TO_SCHEMA} />
       <div className="max-w-4xl mx-auto px-4">
         <Reveal className="max-w-2xl mb-16">
           <Eyebrow>How It Works</Eyebrow>
