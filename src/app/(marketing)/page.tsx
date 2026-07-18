@@ -13,7 +13,7 @@ import { ScanCard } from "@/components/brightcert/home/scan-card";
 import { HowItWorksRail, type RailStep } from "@/components/brightcert/how-it-works-rail";
 import { ControlAccordion } from "@/components/brightcert/home/control-accordion";
 import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-card";
-import { FaqAccordion } from "@/components/brightcert/home/faq-accordion";
+import { FaqAccordion, type FaqItem } from "@/components/brightcert/faq-accordion";
 import { MagneticLink } from "@/components/brightcert/magnetic-link";
 import { BTN_INK, BTN_EMERALD, BTN_GHOST, Tag, SectionTitle } from "@/components/brightcert/signal-primitives";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -21,6 +21,33 @@ import { createAdminClient } from "@/lib/supabase/server";
 // Live count is a light server read — cache for 5 minutes rather than
 // hitting Supabase on every landing page visit.
 export const revalidate = 300;
+
+const HOME_FAQS: FaqItem[] = [
+  {
+    q: "Does BrightCert issue the official Cyber Essentials certificate?",
+    a: "No. BrightCert provides readiness assessment and preparation support. Official Cyber Essentials certification must be completed through an IASME-licensed Certification Body.",
+  },
+  {
+    q: "Do I need to pay before starting the assessment?",
+    a: "No. You can complete the full assessment first. Payment of £199 is required only when you want to unlock your full readiness report and PDF download.",
+  },
+  {
+    q: "How long does the assessment take?",
+    a: "Most businesses complete the assessment in around 2 hours. You can save your progress and return at any time.",
+  },
+  {
+    q: "Is BrightCert suitable for non-technical users?",
+    a: "Yes. BrightCert explains Cyber Essentials preparation in plain English. You do not need to be a cyber security expert to complete the assessment.",
+  },
+  {
+    q: "Do you store my answers securely?",
+    a: "Yes. Your assessment responses are stored securely and used only to generate your readiness report. We never share your data with third parties.",
+  },
+  {
+    q: "What is the difference between Cyber Essentials and Cyber Essentials Plus?",
+    a: "Cyber Essentials is a self-assessed questionnaire reviewed by a Certification Body. Cyber Essentials Plus adds external technical verification. BrightCert supports preparation for both, with specific CE Plus guidance in the CE Plus Pack.",
+  },
+];
 
 const HOME_HOW_STEPS: RailStep[] = [
   {
@@ -713,7 +740,7 @@ export default async function HomePage() {
             </div>
 
             <Reveal delay={100}>
-              <FaqAccordion />
+              <FaqAccordion items={HOME_FAQS} />
             </Reveal>
           </div>
         </section>

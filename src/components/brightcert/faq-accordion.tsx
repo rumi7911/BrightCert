@@ -2,39 +2,16 @@
 
 import { useState } from "react";
 
-const FAQS = [
-  {
-    q: "Does BrightCert issue the official Cyber Essentials certificate?",
-    a: "No. BrightCert provides readiness assessment and preparation support. Official Cyber Essentials certification must be completed through an IASME-licensed Certification Body.",
-  },
-  {
-    q: "Do I need to pay before starting the assessment?",
-    a: "No. You can complete the full assessment first. Payment of £199 is required only when you want to unlock your full readiness report and PDF download.",
-  },
-  {
-    q: "How long does the assessment take?",
-    a: "Most businesses complete the assessment in around 2 hours. You can save your progress and return at any time.",
-  },
-  {
-    q: "Is BrightCert suitable for non-technical users?",
-    a: "Yes. BrightCert explains Cyber Essentials preparation in plain English. You do not need to be a cyber security expert to complete the assessment.",
-  },
-  {
-    q: "Do you store my answers securely?",
-    a: "Yes. Your assessment responses are stored securely and used only to generate your readiness report. We never share your data with third parties.",
-  },
-  {
-    q: "What is the difference between Cyber Essentials and Cyber Essentials Plus?",
-    a: "Cyber Essentials is a self-assessed questionnaire reviewed by a Certification Body. Cyber Essentials Plus adds external technical verification. BrightCert supports preparation for both, with specific CE Plus guidance in the CE Plus Pack.",
-  },
-];
+export type FaqItem = { q: string; a: string };
 
-export function FaqAccordion() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+// Single-open accordion. Shared between the homepage's 6-item FAQ teaser and
+// the dedicated /faq page's full list.
+export function FaqAccordion({ items, defaultOpenIndex = 0 }: { items: FaqItem[]; defaultOpenIndex?: number | null }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(defaultOpenIndex);
 
   return (
     <div className="border-t border-[#0F2044]/[0.12]">
-      {FAQS.map((item, i) => {
+      {items.map((item, i) => {
         const isOpen = openIndex === i;
         return (
           <article key={item.q} className="border-b border-[#0F2044]/[0.12]">
