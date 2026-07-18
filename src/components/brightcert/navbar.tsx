@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/#what-we-check", label: "What we check" },
   { href: "/pricing", label: "Pricing" },
   { href: "/#msp-partner", label: "For MSPs" },
+  { href: "/blog", label: "Articles" },
 ];
 
 export function Navbar() {
