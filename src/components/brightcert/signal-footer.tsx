@@ -13,12 +13,17 @@ const PRODUCT_LINKS: FooterLink[] = [
   { label: "Pricing", href: "/pricing" },
 ];
 
-const COMPANY_LINKS: FooterLink[] = [
+const RESOURCES_LINKS: FooterLink[] = [
   { label: "Founder's note", anchor: "founder" },
   { label: "Who it's for", anchor: "who" },
   { label: "FAQs", href: "/faq" },
   { label: "Articles", href: "/blog" },
   { label: "Start assessment", href: "/assessment/new" },
+];
+
+const COMPANY_LINKS: FooterLink[] = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
 ];
 
 export function SignalFooter() {
@@ -29,8 +34,8 @@ export function SignalFooter() {
   return (
     <footer className="bg-gradient-to-b from-[#0F2044] to-[#0A1730] text-white pt-20 pb-9">
       <div className="max-w-[1180px] mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-[1.6fr_0.8fr_0.8fr_1.2fr] gap-10 md:gap-14 pb-12 border-b border-white/10">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.3fr_0.7fr_0.7fr_0.6fr_1fr] gap-x-8 gap-y-10 md:gap-14 pb-12 border-b border-white/10">
+          <div className="sm:col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center" aria-label="BrightCert home">
               <Logo light markClassName="h-8 w-8" textClassName="text-lg" />
             </Link>
@@ -48,7 +53,16 @@ export function SignalFooter() {
             ))}
           </nav>
 
-          <nav className="flex flex-col gap-3" aria-label="Company">
+          <nav className="flex flex-col gap-3" aria-label="Resources">
+            <strong className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/45">Resources</strong>
+            {RESOURCES_LINKS.map((l) => (
+              <a key={l.label} href={resolve(l)} className="w-fit text-[14.5px] text-white/65 transition-all hover:text-[#6EE7B7] hover:translate-x-0.5">
+                {l.label}
+              </a>
+            ))}
+          </nav>
+
+          <nav className="flex flex-col gap-3 sm:col-span-2 md:col-span-1" aria-label="Company">
             <strong className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/45">Company</strong>
             {COMPANY_LINKS.map((l) => (
               <a key={l.label} href={resolve(l)} className="w-fit text-[14.5px] text-white/65 transition-all hover:text-[#6EE7B7] hover:translate-x-0.5">
@@ -57,7 +71,7 @@ export function SignalFooter() {
             ))}
           </nav>
 
-          <div>
+          <div className="sm:col-span-2 md:col-span-1">
             <strong className="block text-[11px] font-bold uppercase tracking-[0.18em] text-white/45 mb-3">Honest by design</strong>
             <p className="text-[12.5px] leading-relaxed text-white/45">
               BrightCert provides readiness assessment and preparation support. We do not issue official Cyber Essentials certification: official certification is provided through IASME Certification Bodies.
