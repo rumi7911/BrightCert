@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/brightcert/json-ld";
-import { Inter, Bricolage_Grotesque } from "next/font/google";
+import { Inter, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -14,6 +14,16 @@ const bricolage = Bricolage_Grotesque({
   display: "swap",
   variable: "--font-bricolage",
   weight: ["500", "600", "700", "800"],
+});
+
+// Homepage-only mono texture (eyebrows, badges, quiz meta) — loaded globally
+// since fonts must be registered at the root, but only referenced via
+// `font-mono` on the homepage today.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -50,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-GB" className={`${inter.variable} ${bricolage.variable} ${inter.className}`}>
+    <html lang="en-GB" className={`${inter.variable} ${bricolage.variable} ${jetbrainsMono.variable} ${inter.className}`}>
       <body className="min-h-screen flex flex-col antialiased">
         <JsonLd
           data={{

@@ -1,197 +1,132 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Check, FileText, ShieldCheck, XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
+import { ArrowRight, Check, ClipboardList, Code2, Home as HomeIcon, HelpCircle, ListChecks, PoundSterling, ShieldCheck, Terminal, TrendingUp } from "lucide-react";
 import { JsonLd } from "@/components/brightcert/json-ld";
 import { Reveal } from "@/components/brightcert/reveal";
-import { Eyebrow } from "@/components/brightcert/eyebrow";
-import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
-import { IconTile } from "@/components/brightcert/icon-tile";
-import {
-  SOCIAL_PROOF_FALLBACK,
-  SOCIAL_PROOF_THRESHOLD,
-  SocialProofBadge,
-  getAssessmentCountLabel,
-} from "@/components/brightcert/social-proof-badge";
 import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
-import { getQuestionsBySection } from "@/lib/questions";
+import { SOCIAL_PROOF_THRESHOLD, SOCIAL_PROOF_FALLBACK, getAssessmentCountLabel } from "@/components/brightcert/social-proof-badge";
+import { HomeNav } from "@/components/brightcert/home/home-nav";
+import { HomeFooter } from "@/components/brightcert/home/home-footer";
+import { Preloader } from "@/components/brightcert/home/preloader";
+import { ScrollProgress } from "@/components/brightcert/home/scroll-progress";
+import { HeroTitle } from "@/components/brightcert/home/hero-title";
+import { HeroQuiz } from "@/components/brightcert/home/hero-quiz";
+import { ScanCard } from "@/components/brightcert/home/scan-card";
+import { HowItWorksRail } from "@/components/brightcert/home/how-it-works-rail";
+import { ControlAccordion } from "@/components/brightcert/home/control-accordion";
+import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-card";
+import { FaqAccordion } from "@/components/brightcert/home/faq-accordion";
+import { MagneticLink } from "@/components/brightcert/home/magnetic-link";
 import { createAdminClient } from "@/lib/supabase/server";
 
 // Live count is a light server read — cache for 5 minutes rather than
 // hitting Supabase on every landing page visit.
 export const revalidate = 300;
 
-// ─── What-we-check table rows (one-line summaries from COPY.md) ──────────────
-const CONTROL_AREA_ROWS = [
+const BTN_INK =
+  "group inline-flex items-center gap-2.5 rounded-full bg-[#0F2044] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(15,32,68,0.45)] transition-all duration-300 hover:bg-[#152a54] hover:-translate-y-0.5 hover:shadow-[0_20px_38px_-12px_rgba(15,32,68,0.5)]";
+const BTN_EMERALD =
+  "group inline-flex items-center gap-2.5 rounded-full bg-[#047857] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(4,120,87,0.55)] transition-all duration-300 hover:bg-[#065F46] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-12px_rgba(4,120,87,0.6)]";
+const BTN_GHOST =
+  "inline-flex items-center gap-2.5 rounded-full border border-[#0F2044]/[0.14] px-7 py-4 font-display text-[15.5px] font-semibold text-[#0F2044] transition-all duration-300 hover:bg-[#0F2044] hover:text-white hover:border-[#0F2044] hover:-translate-y-0.5";
+
+function Tag({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return (
+    <p
+      className={`flex items-center gap-3 font-mono text-[11.5px] font-medium uppercase tracking-[0.22em] mb-[22px] ${
+        light ? "text-white/55" : "text-[#64748B]"
+      }`}
+    >
+      <span className={`h-0.5 w-7 rounded-full ${light ? "bg-[#6EE7B7]" : "bg-[#059669]"}`} aria-hidden />
+      {children}
+    </p>
+  );
+}
+
+function SectionTitle({
+  children,
+  light = false,
+  className = "",
+}: {
+  children: React.ReactNode;
+  light?: boolean;
+  className?: string;
+}) {
+  return (
+    <h2
+      className={`font-display font-semibold text-[clamp(2rem,4.4vw,3.35rem)] leading-[1.04] tracking-[-0.025em] max-w-[16ch] ${
+        light ? "text-white" : "text-[#0F2044]"
+      } ${className}`}
+    >
+      {children}
+    </h2>
+  );
+}
+
+const PAIN_CARDS = [
   {
-    id: 1,
-    title: "Boundary Firewalls & Internet Gateways",
-    summary: "Whether your business has suitable protections between your internal systems and the internet.",
+    icon: HelpCircle,
+    title: "You're not sure where you stand",
+    body: "You know Cyber Essentials matters, but you don't have a clear view of how close your business is to being ready.",
   },
   {
-    id: 2,
-    title: "Secure Configuration",
-    summary: "Whether devices, systems, and software are configured securely before they are used.",
+    icon: Terminal,
+    title: "The language feels technical",
+    body: "Firewalls, secure configuration, access control, patching: important, but rarely explained in a way SMEs can act on quickly.",
   },
   {
-    id: 3,
-    title: "User Access Control",
-    summary: "Who has access to your systems and whether permissions are appropriate.",
+    icon: PoundSterling,
+    title: "Consultants can be expensive",
+    body: "Many businesses only find out what needs fixing after paying for external help. You deserve the picture first.",
   },
   {
-    id: 4,
-    title: "Malware Protection",
-    summary: "Whether your devices are protected from malware and unsafe applications.",
-  },
-  {
-    id: 5,
-    title: "Security Update Management",
-    summary: "Whether software and devices are kept updated against known vulnerabilities.",
+    icon: ListChecks,
+    title: "Your team needs next steps",
+    body: "A score alone is not enough. You need a practical list of what to fix, why it matters, and what to do next.",
   },
 ];
 
-// ─── How-it-works step mockups (decorative) ───────────────────────────────────
-function MockQuestionCard() {
-  return (
-    <div aria-hidden className="rounded-[12px] border border-[#E2E8F0] bg-white p-6 shadow-[0_16px_40px_-16px_rgba(15,32,68,0.18)] max-w-sm w-full">
-      <p className="text-[11px] font-semibold text-[#047857] uppercase tracking-wider mb-2">User Access Control</p>
-      <p className="text-base font-semibold text-[#0F2044] mb-4 leading-snug">
-        Do all users have their own individual login accounts?
-      </p>
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2.5 rounded-[8px] border-2 border-[#047857] bg-[#ECFDF5] px-3.5 py-2.5">
-          <span className="h-4 w-4 rounded-full border-[5px] border-[#047857] bg-white shrink-0" />
-          <span className="text-sm text-[#0F2044] font-medium">Yes, everyone has their own account</span>
-        </div>
-        <div className="flex items-center gap-2.5 rounded-[8px] border border-[#E2E8F0] px-3.5 py-2.5">
-          <span className="h-4 w-4 rounded-full border border-[#CBD5E1] shrink-0" />
-          <span className="text-sm text-[#475569]">Some accounts are shared</span>
-        </div>
-        <div className="flex items-center gap-2.5 rounded-[8px] border border-[#E2E8F0] px-3.5 py-2.5">
-          <span className="h-4 w-4 rounded-full border border-[#CBD5E1] shrink-0" />
-          <span className="text-sm text-[#475569]">Not sure</span>
-        </div>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="inline-flex items-center rounded-[8px] bg-[#047857] px-4 py-2 text-sm font-semibold text-white">Continue</span>
-        <span className="text-xs text-[#94A3B8]">Question 4 of 12</span>
-      </div>
-    </div>
-  );
-}
+const AUDIENCE_CARDS = [
+  {
+    icon: HomeIcon,
+    title: "Small business owners",
+    body: "Show customers, suppliers and partners you take cyber security seriously, without a large internal IT team.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Operations managers",
+    body: "You've been asked to prepare for Cyber Essentials and need a structured way to collect answers, spot gaps and organise next steps.",
+  },
+  {
+    icon: Code2,
+    title: "IT providers",
+    body: "You support clients who need Cyber Essentials preparation and want a repeatable way to assess readiness before formal application.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Growing suppliers",
+    body: "You're bidding for work where Cyber Essentials is expected or required, and need to know whether your business is ready.",
+  },
+];
 
-function MockScoreCard() {
-  return (
-    <div aria-hidden className="rounded-[12px] border border-[#E2E8F0] bg-white p-6 shadow-[0_16px_40px_-16px_rgba(15,32,68,0.18)] max-w-sm w-full">
-      <div className="flex items-center gap-5 mb-5">
-        <div className="relative h-20 w-20 shrink-0">
-          <svg className="h-20 w-20 -rotate-90" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="34" fill="none" stroke="#F1F5F9" strokeWidth="8" />
-            <circle
-              cx="40" cy="40" r="34" fill="none"
-              stroke="#D97706" strokeWidth="8"
-              strokeDasharray={`${Math.PI * 68 * 0.67} ${Math.PI * 68}`}
-              strokeLinecap="round"
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-[#0F2044] tabular-nums">67%</span>
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-[#0F2044] mb-1">Overall readiness</p>
-          <span className="inline-flex text-xs bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A] px-2 py-0.5 rounded-full font-medium">Nearly ready</span>
-        </div>
-      </div>
-      <div className="space-y-2.5">
-        {[
-          { area: "Firewalls", score: 85, color: "#059669" },
-          { area: "Configuration", score: 72, color: "#D97706" },
-          { area: "User Access", score: 61, color: "#D97706" },
-          { area: "Malware", score: 88, color: "#059669" },
-          { area: "Updates", score: 54, color: "#DC2626" },
-        ].map((row) => (
-          <div key={row.area} className="flex items-center justify-between gap-3">
-            <span className="text-xs text-[#64748B] w-24 shrink-0">{row.area}</span>
-            <div className="h-1.5 flex-1 rounded-full bg-[#F1F5F9] overflow-hidden">
-              <div className="h-full rounded-full" style={{ width: `${row.score}%`, backgroundColor: row.color }} />
-            </div>
-            <span className="text-xs text-[#64748B] w-8 text-right tabular-nums">{row.score}%</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const COMPARE_ROWS = [
+  ["You may not know where to begin", "Start with a guided assessment"],
+  ["Technical language can slow you down", "Questions written in plain English"],
+  ["You may pay for advice before knowing the gaps", "See your readiness position first"],
+  ["Findings scattered across emails or calls", "Get a structured PDF report"],
+  ["Teams may not know what to fix first", "Receive prioritised remediation steps"],
+  ["Progress can feel unclear", "Track score, status and next actions"],
+];
 
-function MockGapsCard() {
-  return (
-    <div aria-hidden className="rounded-[12px] border border-[#E2E8F0] bg-white p-6 shadow-[0_16px_40px_-16px_rgba(15,32,68,0.18)] max-w-sm w-full">
-      <p className="text-sm font-semibold text-[#0F2044] mb-4">Priority fixes</p>
-      <div className="space-y-3">
-        {[
-          { pill: "P1", pillBg: "#FEF2F2", pillColor: "#B91C1C", pillBorder: "#FECACA", text: "Enable MFA across cloud services", sub: "User Access Control" },
-          { pill: "P1", pillBg: "#FEF2F2", pillColor: "#B91C1C", pillBorder: "#FECACA", text: "Replace unsupported operating systems", sub: "Security Update Management" },
-          { pill: "P2", pillBg: "#FFFBEB", pillColor: "#92400E", pillBorder: "#FDE68A", text: "Review admin user access", sub: "User Access Control" },
-          { pill: "P3", pillBg: "#EFF6FF", pillColor: "#1D4ED8", pillBorder: "#BFDBFE", text: "Document secure setup process", sub: "Secure Configuration" },
-        ].map((gap) => (
-          <div key={gap.text} className="flex items-start gap-3 rounded-[8px] border border-[#F1F5F9] bg-[#F8FAFC] px-3.5 py-3">
-            <span
-              className="text-[11px] font-bold px-1.5 py-0.5 rounded-[4px] border shrink-0 mt-0.5"
-              style={{ backgroundColor: gap.pillBg, color: gap.pillColor, borderColor: gap.pillBorder }}
-            >
-              {gap.pill}
-            </span>
-            <div>
-              <p className="text-sm text-[#0F2044] font-medium leading-snug">{gap.text}</p>
-              <p className="text-xs text-[#94A3B8] mt-0.5">{gap.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MockReportCard() {
-  return (
-    <div aria-hidden className="rounded-[12px] border border-[#E2E8F0] bg-white p-6 shadow-[0_16px_40px_-16px_rgba(15,32,68,0.18)] max-w-sm w-full">
-      <div className="flex items-center gap-3 mb-5">
-        <IconTile icon={FileText} />
-        <div>
-          <p className="text-sm font-semibold text-[#0F2044]">Readiness Report</p>
-          <p className="text-xs text-[#94A3B8]">PDF · Fenwick &amp; Hale Ltd</p>
-        </div>
-      </div>
-      <ul className="space-y-2 mb-5">
-        {[
-          "Executive summary",
-          "Five control area scores",
-          "Gap analysis",
-          "Priority action plan",
-          "Preparation notes",
-        ].map((item) => (
-          <li key={item} className="flex items-center gap-2.5 text-sm text-[#475569]">
-            <Check className="h-3.5 w-3.5 text-[#047857] shrink-0" strokeWidth={2} />
-            {item}
-          </li>
-        ))}
-      </ul>
-      <span className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#047857] px-4 py-2.5 text-sm font-semibold text-white">
-        Download PDF report
-      </span>
-    </div>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 export default async function HomePage() {
   const supabase = createAdminClient();
   const { count: assessmentCount } = await supabase
     .from("assessments")
     .select("id", { count: "exact", head: true });
 
+  const showCount = (assessmentCount ?? 0) >= SOCIAL_PROOF_THRESHOLD;
+  const pillLabel = showCount ? getAssessmentCountLabel(assessmentCount ?? 0) : SOCIAL_PROOF_FALLBACK;
+
   return (
-    <div className="bg-[#F8FAFC]">
+    <div className="bg-[#F3F4EC]">
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -211,657 +146,628 @@ export default async function HomePage() {
         }}
       />
 
-      {/* ── 1. HERO ─────────────────────────────────────────────────────── */}
-      <section
-        className="relative bg-gradient-to-br from-[#0F2044] to-[#142A56] text-white pt-24 md:pt-28"
-        aria-label="Hero"
-      >
-        {/* Ambient glow + grain (clipped to hero) */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <div className="absolute -top-32 right-[-10%] h-[560px] w-[560px] rounded-full bg-[#059669]/[0.14] blur-[120px]" />
-          <div className="absolute bottom-[-20%] left-[-10%] h-[480px] w-[480px] rounded-full bg-[#2563EB]/[0.08] blur-[120px]" />
-          <div className="absolute inset-0 bg-noise opacity-[0.03]" />
-        </div>
+      <Preloader />
+      <ScrollProgress />
+      <HomeNav />
 
-        <div className="relative max-w-6xl mx-auto px-4 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-4 py-1.5 mb-6 text-xs font-medium text-white/80">
-            {(assessmentCount ?? 0) >= SOCIAL_PROOF_THRESHOLD ? (
-              <>
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#6EE7B7] opacity-75 animate-ping" aria-hidden />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6EE7B7]" aria-hidden />
-                </span>
-                {getAssessmentCountLabel(assessmentCount ?? 0)}
-              </>
-            ) : (
-              SOCIAL_PROOF_FALLBACK
-            )}
-          </span>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-[64px] font-bold leading-[1.05] mb-6 max-w-3xl mx-auto">
-            Get Cyber Essentials ready in <span className="text-[#6EE7B7]">2 hours</span>
-          </h1>
-          <p className="text-lg text-white/80 mb-9 leading-relaxed max-w-2xl mx-auto">
-            BrightCert guides UK SMEs through a plain-English Cyber Essentials readiness assessment, highlights what needs attention, and creates a practical report before you apply for certification.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild size="lg">
-              <Link href="/assessment/new">Start Your Assessment</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30 shadow-none">
-              <Link href="/how-it-works">See How It Works</Link>
-            </Button>
+      <main id="top">
+        {/* ── HERO ─────────────────────────────────────────────────────── */}
+        <section className="relative pt-[150px] sm:pt-[170px] lg:pt-[190px] overflow-hidden" aria-label="Hero">
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <div className="absolute inset-0 [background-image:linear-gradient(rgba(15,32,68,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(15,32,68,0.06)_1px,transparent_1px)] [background-size:54px_54px] [mask-image:radial-gradient(ellipse_90%_70%_at_50%_0%,#000_30%,transparent_75%)]" />
+            <div className="absolute -top-[220px] right-[-120px] h-[560px] w-[560px] rounded-full bg-[#059669]/[0.18] blur-[110px]" />
+            <div className="absolute top-[220px] left-[-180px] h-[420px] w-[420px] rounded-full bg-[#0F2044]/[0.08] blur-[110px]" />
           </div>
-        </div>
 
-        {/* Dashboard preview — overlaps into the next section */}
-        <div className="relative max-w-5xl mx-auto px-4 mt-14 md:mt-16 -mb-24 md:-mb-36">
-          <div
-            className="pointer-events-none absolute inset-x-8 top-8 bottom-0 rounded-[24px] bg-[#059669]/[0.25] blur-[80px]"
-            aria-hidden
-          />
-          <Image
-            src="/dashboard-vivid.png"
-            alt="BrightCert dashboard showing a 67% readiness verdict, control area scores, priority actions, and assessment history"
-            width={2720}
-            height={1980}
-            priority
-            className="relative w-full h-auto rounded-[16px] ring-1 ring-white/15 shadow-[0_48px_120px_-24px_rgba(3,10,28,0.85)]"
-          />
-          <SocialProofBadge count={assessmentCount ?? 0} />
-        </div>
-      </section>
+          <div className="relative max-w-[1180px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-[1.06fr_0.94fr] gap-10 lg:gap-16 items-center">
+            <div>
+              <Reveal>
+                <span className="inline-flex items-center gap-2.5 rounded-full border border-[#0F2044]/[0.12] bg-white px-4 py-2.5 mb-7 font-mono text-xs text-[#475569] shadow-[0_4px_14px_-6px_rgba(15,32,68,0.15)]">
+                  <span className="relative flex h-[7px] w-[7px] shrink-0">
+                    {showCount && (
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#059669] opacity-75" aria-hidden />
+                    )}
+                    <span className="relative inline-flex h-[7px] w-[7px] rounded-full bg-[#059669]" aria-hidden />
+                  </span>
+                  {pillLabel}
+                </span>
+              </Reveal>
 
-      {/* ── 2. TRUST STRIP ──────────────────────────────────────────────── */}
-      <section className="bg-white border-b border-[#E2E8F0] pt-40 md:pt-56 pb-12" aria-label="Trust strip">
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-5">Powered by</p>
-          <PoweredByMarquee />
-        </div>
-      </section>
+              <HeroTitle />
 
-      {/* ── 3. PROBLEM ──────────────────────────────────────────────────── */}
-      <section className="relative py-20 md:py-28" aria-labelledby="problem-heading">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <div className="absolute -top-16 right-[-8%] h-[420px] w-[420px] rounded-full bg-[#059669]/[0.05] blur-[130px]" />
-        </div>
-        <div className="relative max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-            <Reveal className="lg:col-span-5">
-              <div className="lg:sticky lg:top-24">
-                <Eyebrow>The Problem</Eyebrow>
-                <h2 id="problem-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-5 leading-tight">
-                  Cyber Essentials can feel harder than it should
-                </h2>
-                <p className="text-[#475569] leading-relaxed">
-                  For many small businesses, Cyber Essentials starts with a simple goal: prove that your organisation takes cyber security seriously. But the preparation process can quickly become confusing. That uncertainty often leads to delays, guesswork, or expensive consultancy before you even understand the gaps.
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[1.02rem] sm:text-[1.1rem] leading-[1.7] max-w-[50ch] mb-9">
+                  BrightCert guides UK SMEs through a plain-English readiness assessment, highlights what needs attention, and creates a practical report before you apply for certification.
                 </p>
+              </Reveal>
+
+              <Reveal delay={280}>
+                <div className="flex flex-wrap gap-3.5 mb-[34px]">
+                  <MagneticLink href="/assessment/new" className={BTN_EMERALD}>
+                    <span>Start your assessment</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
+                  </MagneticLink>
+                  <MagneticLink href="#how" className={BTN_GHOST}>
+                    <span>See how it works</span>
+                  </MagneticLink>
+                </div>
+              </Reveal>
+
+              <Reveal delay={340}>
+                <ul className="flex flex-wrap gap-x-6 gap-y-2.5">
+                  {["No payment to start", "Plain English, no jargon", "Pay only to unlock your report"].map((tick) => (
+                    <li key={tick} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[#475569]">
+                      <Check className="h-3.5 w-3.5 text-[#059669] shrink-0" strokeWidth={2.4} />
+                      {tick}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
+
+            <Reveal delay={180} className="relative">
+              <HeroQuiz />
+
+              <div
+                className="hidden sm:flex absolute -top-[38px] -right-[26px] items-center gap-3 rounded-[16px] border border-[#0F2044]/[0.07] bg-white px-4 py-3 shadow-[0_18px_40px_-16px_rgba(15,32,68,0.25)]"
+                style={{ animation: "bc-float 6s ease-in-out 0.8s infinite" }}
+                aria-hidden
+              >
+                <svg viewBox="0 0 44 44" width="40" height="40">
+                  <circle cx="22" cy="22" r="19" fill="none" stroke="rgba(15,32,68,0.1)" strokeWidth="5" />
+                  <circle
+                    cx="22" cy="22" r="19" fill="none" stroke="#059669" strokeWidth="5" strokeLinecap="round"
+                    strokeDasharray="119.4" strokeDashoffset="38" transform="rotate(-90 22 22)"
+                  />
+                </svg>
+                <div>
+                  <strong className="block font-display text-[15px] text-[#0F2044]">67%</strong>
+                  <span className="block font-mono text-[11px] text-[#64748B]">Nearly ready</span>
+                </div>
+              </div>
+
+              <div
+                className="hidden sm:flex absolute -bottom-[46px] -left-[30px] items-center gap-3 rounded-[16px] border border-[#0F2044]/[0.07] bg-white px-4 py-3 shadow-[0_18px_40px_-16px_rgba(15,32,68,0.25)]"
+                style={{ animation: "bc-float 6s ease-in-out infinite" }}
+                aria-hidden
+              >
+                <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[10px] bg-[#D97706] font-display text-[17px] font-bold text-white">
+                  !
+                </span>
+                <div>
+                  <strong className="block font-display text-[15px] text-[#0F2044]">4 gaps found</strong>
+                  <span className="block font-mono text-[11px] text-[#64748B]">2 quick fixes</span>
+                </div>
               </div>
             </Reveal>
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {[
-                {
-                  title: "You are not sure where you stand",
-                  body: "You know Cyber Essentials matters, but you do not have a clear view of how close your business is to being ready.",
-                },
-                {
-                  title: "The language feels technical",
-                  body: "Firewalls, secure configuration, access control, malware protection, patching: the requirements are important, but they are not always explained in a way SMEs can act on quickly.",
-                },
-                {
-                  title: "Consultants can be expensive",
-                  body: "Many businesses only find out what needs fixing after paying for external help. BrightCert gives you a clear readiness picture first.",
-                },
-                {
-                  title: "Your team needs next steps",
-                  body: "A score alone is not enough. You need a practical list of what to fix, why it matters, and what to do next.",
-                },
-              ].map((card, i) => (
-                <Reveal
-                  key={card.title}
-                  delay={i * 80}
-                  className={`rounded-[12px] border border-[#E2E8F0] bg-white p-6 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(15,32,68,0.15)] hover:-translate-y-0.5 ${i % 2 === 1 ? "sm:mt-8" : ""}`}
-                >
-                  <h3 className="text-base font-semibold text-[#0F2044] mb-2 leading-snug">{card.title}</h3>
-                  <p className="text-sm text-[#64748B] leading-relaxed">{card.body}</p>
+          </div>
+
+          <Reveal delay={400} className="mt-[70px] sm:mt-[90px] lg:mt-[110px] border-y border-[#0F2044]/[0.07] bg-white/40">
+            <div className="max-w-[1180px] mx-auto px-4 flex items-center gap-9 py-5">
+              <p className="shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] text-[#64748B]">Powered by</p>
+              <PoweredByMarquee />
+            </div>
+          </Reveal>
+        </section>
+
+        {/* ── PROBLEM ──────────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)]" id="problem">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <div className="max-w-[760px] mb-[clamp(48px,6vw,76px)]">
+              <Reveal>
+                <Tag>The problem</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  Cyber Essentials can feel <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">harder</span> than it should
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] max-w-[56ch] mt-[22px]">
+                  For many small businesses, Cyber Essentials starts with a simple goal: prove your organisation takes cyber security seriously. But preparation quickly becomes confusing, and that uncertainty leads to delays, guesswork, or expensive consultancy before you even understand the gaps.
+                </p>
+              </Reveal>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[18px]">
+              {PAIN_CARDS.map((card, i) => (
+                <Reveal key={card.title} delay={i * 90}>
+                  <article className="group relative overflow-hidden rounded-[22px] border border-[#0F2044]/[0.07] bg-white px-[26px] pt-[30px] pb-[34px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_26px_50px_-22px_rgba(15,32,68,0.22)]">
+                    <span className="absolute top-[18px] right-[22px] font-mono text-xs font-medium text-[#64748B]/55 transition-colors group-hover:text-[#059669] group-hover:opacity-100">
+                      0{i + 1}
+                    </span>
+                    <div className="mb-[22px] flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EBEDDE] text-[#0F2044] transition-all duration-500 group-hover:-rotate-6 group-hover:scale-105 group-hover:bg-[#A7F3D0]">
+                      <card.icon className="h-[22px] w-[22px]" strokeWidth={1.7} />
+                    </div>
+                    <h3 className="font-display font-semibold text-[19px] tracking-[-0.015em] leading-[1.25] text-[#0F2044] mb-2.5">{card.title}</h3>
+                    <p className="text-[14.5px] leading-[1.65] text-[#475569]">{card.body}</p>
+                    <span className="absolute left-0 bottom-0 h-[3px] w-full origin-left scale-x-0 bg-gradient-to-r from-[#059669] to-[#6EE7B7] transition-transform duration-500 group-hover:scale-x-100" />
+                  </article>
                 </Reveal>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── 4. SOLUTION ─────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="solution-heading">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <Reveal>
-              <h2 id="solution-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-6 leading-tight">
-                A clearer way to prepare for Cyber Essentials
-              </h2>
-              <p className="text-[#475569] leading-relaxed mb-4">
-                BrightCert turns Cyber Essentials preparation into a guided, step-by-step process.
-              </p>
-              <p className="text-[#475569] leading-relaxed mb-9">
-                You answer simple questions about your organisation, devices, users, software, and security controls. BrightCert analyses your responses across the five Cyber Essentials control areas and gives you a readiness score, plain-English gap findings, and prioritised remediation steps.
-              </p>
-              <Button asChild size="lg">
-                <Link href="/assessment/new">Start Your Assessment</Link>
-              </Button>
-            </Reveal>
-            <Reveal delay={120} className="lg:max-w-md lg:justify-self-end w-full">
-              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wider mb-3">
-                Try a 30-second sample
-              </p>
-              <ReadinessTeaser />
+        {/* ── SOLUTION ─────────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)] bg-[#EBEDDE]" id="solution">
+          <div className="max-w-[1180px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-[clamp(48px,6vw,90px)] items-center">
+            <div>
+              <Reveal>
+                <Tag>The solution</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  A clearer way to prepare for <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">Cyber Essentials</span>
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] max-w-[56ch] mt-[22px] mb-8">
+                  BrightCert turns preparation into a guided, step-by-step process. Answer simple questions about your organisation, devices, users, software and security controls: BrightCert analyses your responses across the five control areas and gives you a readiness score, plain-English gap findings, and prioritised remediation steps.
+                </p>
+              </Reveal>
+              <ul className="grid gap-[22px] mb-9">
+                {[
+                  { title: "Plain-English questions", body: "Every requirement translated into language a business owner can answer." },
+                  { title: "AI-assisted analysis", body: "Your answers are scored across all five Cyber Essentials control areas." },
+                  { title: "Prioritised next steps", body: "Know what to fix first, why it matters, and how to evidence it." },
+                ].map((point, i) => (
+                  <Reveal key={point.title} delay={300 + i * 100}>
+                    <li className="flex gap-4 items-start">
+                      <span className="mt-[3px] flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#A7F3D0] text-[#0F2044]">
+                        <Check className="h-3 w-3" strokeWidth={2.6} />
+                      </span>
+                      <div>
+                        <strong className="font-display font-semibold text-[16.5px] tracking-[-0.01em] text-[#0F2044]">{point.title}</strong>
+                        <p className="text-[14.5px] text-[#475569] mt-0.5">{point.body}</p>
+                      </div>
+                    </li>
+                  </Reveal>
+                ))}
+              </ul>
+              <Reveal delay={600}>
+                <MagneticLink href="/assessment/new" className={BTN_INK}>
+                  <span>Start your assessment</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
+                </MagneticLink>
+              </Reveal>
+            </div>
+
+            <Reveal delay={250}>
+              <ScanCard />
             </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── 5. HOW IT WORKS ─────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28" aria-labelledby="how-it-works-heading">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl mb-14">
-            <Eyebrow>How It Works</Eyebrow>
-            <h2 id="how-it-works-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
-              From uncertainty to action in four clear steps
-            </h2>
-          </Reveal>
-          <div className="space-y-16 md:space-y-24">
-            {[
-              {
-                step: "01",
-                title: "Answer simple questions",
-                body: "Complete a guided assessment covering the five Cyber Essentials control areas. Each question is written in plain English, with helpful context where needed.",
-                mockup: <MockQuestionCard />,
-              },
-              {
-                step: "02",
-                title: "Get your readiness score",
-                body: "BrightCert analyses your answers and scores your organisation across the core Cyber Essentials areas.",
-                mockup: <MockScoreCard />,
-              },
-              {
-                step: "03",
-                title: "Review your gaps",
-                body: "Your results show where your business may fall short, with clear explanations and practical next steps.",
-                mockup: <MockGapsCard />,
-              },
-              {
-                step: "04",
-                title: "Unlock your full report",
-                body: "Pay £199 to unlock your full readiness report, including detailed gap analysis, remediation actions, and a preparation summary.",
-                mockup: <MockReportCard />,
-              },
-            ].map((item, i) => (
-              <Reveal key={item.step} className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-                <div className={i % 2 === 1 ? "lg:order-2" : ""}>
-                  <div className="font-display text-5xl font-bold text-transparent mb-5 [-webkit-text-stroke:1.5px_#94A3B8]">{item.step}</div>
-                  <h3 className="text-xl md:text-2xl font-semibold text-[#0F2044] mb-3">{item.title}</h3>
-                  <p className="text-base text-[#475569] leading-relaxed max-w-lg">{item.body}</p>
-                </div>
-                <div className={`flex justify-center ${i % 2 === 1 ? "lg:order-1 lg:justify-start" : "lg:justify-end"}`}>
-                  {item.mockup}
+        {/* ── HOW IT WORKS ─────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)]" id="how">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <div className="max-w-[760px] mb-[clamp(48px,6vw,76px)]">
+              <Reveal>
+                <Tag>How it works</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  From uncertainty to action in <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">four steps</span>
+                </SectionTitle>
+              </Reveal>
+            </div>
+            <HowItWorksRail />
+          </div>
+        </section>
+
+        {/* ── FIVE CONTROL AREAS ───────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)] bg-[#EBEDDE]" id="what-we-check">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-12 items-end mb-[clamp(48px,6vw,76px)]">
+              <div>
+                <Reveal>
+                  <Tag>What we check</Tag>
+                </Reveal>
+                <Reveal delay={100}>
+                  <SectionTitle>
+                    Built around the <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">five control areas</span>
+                  </SectionTitle>
+                </Reveal>
+              </div>
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] pb-1.5">
+                  Cyber Essentials focuses on five technical control areas that protect organisations from common internet-based threats. BrightCert structures your assessment around exactly these five areas: 60 questions in total.
+                </p>
+              </Reveal>
+            </div>
+
+            <Reveal delay={100}>
+              <ControlAccordion />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── REPORT PREVIEW (dark) ────────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#0F2044] to-[#08152e] py-[clamp(84px,9.5vw,136px)]" id="report">
+          <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" aria-hidden />
+          <div className="relative max-w-[1180px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-[clamp(48px,6vw,88px)] items-center">
+            <div>
+              <Reveal>
+                <Tag light>Your report</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle light>
+                  Know what to fix <span className="text-[#6EE7B7]">before</span> you apply
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-white/70 text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] max-w-[56ch] mt-[22px] mb-9">
+                  Your BrightCert report gives you a structured view of your Cyber Essentials readiness: understand your position, share findings with the right people, and work through improvements before applying for official certification.
+                </p>
+              </Reveal>
+
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-7 gap-y-5 mb-9">
+                {[
+                  { n: "01", label: "Executive summary", body: "Your readiness score, strongest areas, and main risks." },
+                  { n: "02", label: "Five control area scores", body: "Performance across each Cyber Essentials control area." },
+                  { n: "03", label: "Gap analysis", body: "Where your current setup may not meet expected requirements." },
+                  { n: "04", label: "Priority action plan", body: "Recommended fixes, ordered by importance." },
+                  { n: "05", label: "Preparation notes", body: "Guidance before working with a Certification Body." },
+                  { n: "06", label: "PDF download", body: "Save it, share it, review it with your team." },
+                ].map((item, i) => (
+                  <Reveal key={item.n} delay={280 + i * 60}>
+                    <li className="flex gap-3.5 items-start">
+                      <span className="pt-[3px] font-mono text-[11px] font-bold text-[#6EE7B7]">{item.n}</span>
+                      <div>
+                        <strong className="block font-display font-semibold text-[15.5px] tracking-[-0.01em] text-white">{item.label}</strong>
+                        <p className="text-[13.5px] text-white/60 mt-[3px] leading-[1.55]">{item.body}</p>
+                      </div>
+                    </li>
+                  </Reveal>
+                ))}
+              </ul>
+
+              <Reveal delay={650}>
+                <div className="flex flex-col items-start gap-4">
+                  <MagneticLink href="/assessment/new" className={BTN_EMERALD}>
+                    <span>Start your assessment</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
+                  </MagneticLink>
+                  <p className="font-mono text-[11.5px] leading-[1.7] text-white/55 max-w-[44ch]">
+                    Complete the assessment first. Pay £199 only when you&apos;re ready to unlock the full report.
+                  </p>
                 </div>
               </Reveal>
-            ))}
+            </div>
+
+            <Reveal delay={300}>
+              <ReportPreviewCard />
+            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── 6. WHAT WE CHECK — ledger table echoing the product's own UI ─── */}
-      <section
-        id="what-we-check"
-        className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]"
-        aria-labelledby="what-we-check-heading"
-      >
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl mb-10">
-            <h2 id="what-we-check-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
-              Built around the Cyber Essentials requirements
-            </h2>
-            <p className="text-[#475569] leading-relaxed">
-              Cyber Essentials focuses on five technical control areas that help protect organisations from common internet-based cyber threats. BrightCert structures your assessment around these same five areas.
-            </p>
-          </Reveal>
-          <Reveal>
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr>
-                  <th className="border-b border-[#E2E8F0] py-2.5 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
-                    Control area
-                  </th>
-                  <th className="hidden border-b border-[#E2E8F0] py-2.5 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B] sm:table-cell">
-                    What we check
-                  </th>
-                  <th className="border-b border-[#E2E8F0] py-2.5 text-right text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
-                    Questions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {CONTROL_AREA_ROWS.map((area) => (
-                  <tr key={area.id}>
-                    <td className="border-b border-[#EEF1F6] py-4 pr-6 align-baseline font-semibold text-[#0F2044] sm:whitespace-nowrap">
-                      <b className="font-semibold">{area.id}.</b> {area.title}
-                    </td>
-                    <td className="hidden border-b border-[#EEF1F6] py-4 pr-6 align-baseline text-[#47536B] sm:table-cell">
-                      {area.summary}
-                    </td>
-                    <td className="border-b border-[#EEF1F6] py-4 text-right align-baseline tabular-nums text-[#64748B]">
-                      {getQuestionsBySection(area.id).length}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── 7. REPORT PREVIEW — the single "what you get" moment ─────────── */}
-      <section className="py-4 md:py-8" aria-labelledby="report-heading">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="relative overflow-hidden rounded-[24px] bg-[#0F2044] text-white px-6 py-16 md:px-14 md:py-20">
-            <div
-              className="pointer-events-none absolute -top-24 left-[10%] h-[420px] w-[420px] rounded-full bg-[#059669]/[0.12] blur-[110px]"
-              aria-hidden
-            />
-            <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.03]" aria-hidden />
-            <div className="relative flex flex-col lg:flex-row gap-12 items-center">
-              <div className="flex-1">
-                <Eyebrow light>Your Report</Eyebrow>
-                <h2 id="report-heading" className="text-3xl md:text-4xl font-bold mb-5 leading-tight">
-                  Know what to fix before you apply
-                </h2>
-                <p className="text-white/70 mb-7 leading-relaxed">
-                  Your BrightCert report gives you a structured view of your Cyber Essentials readiness. It is designed to help you understand your current position, share findings with the right people, and work through improvements before applying for official certification.
+        {/* ── PRICING ──────────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)]" id="pricing">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <div className="max-w-[760px] mb-[clamp(48px,6vw,76px)]">
+              <Reveal>
+                <Tag>Pricing</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  Simple pricing for <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">Cyber Essentials</span> preparation
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] max-w-[56ch] mt-[22px]">
+                  Start with a guided readiness assessment. Upgrade only when you need ongoing monitoring, CE Plus preparation, or partner features.
                 </p>
-                <ul className="space-y-3 mb-9">
-                  {[
-                    { label: "Executive summary", desc: "Your readiness score, strongest areas, and main risks." },
-                    { label: "Five control area scores", desc: "Performance across the five control areas." },
-                    { label: "Gap analysis", desc: "Where your current setup may not meet expected requirements." },
-                    { label: "Priority action plan", desc: "Recommended fixes, ordered by importance." },
-                    { label: "Preparation notes", desc: "Guidance before working with a Certification Body." },
-                    { label: "PDF download", desc: "Save it, share it, review it with your team." },
-                  ].map((item) => (
-                    <li key={item.label} className="flex items-start gap-3">
-                      <Check className="h-4 w-4 text-[#6EE7B7] shrink-0 mt-0.5" strokeWidth={2} />
-                      <span className="text-sm text-white/80">
-                        <strong className="block text-white font-medium">{item.label}</strong>
-                        {item.desc}
+              </Reveal>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1.04fr_0.96fr] gap-[22px] items-stretch">
+              <Reveal delay={100}>
+                <article className="relative h-full overflow-hidden rounded-[26px] bg-gradient-to-br from-[#0F2044] to-[#142A56] text-white px-[38px] pt-10 pb-[34px] shadow-[0_40px_80px_-34px_rgba(15,32,68,0.5)]">
+                  <div className="pointer-events-none absolute -top-[140px] -right-[140px] h-[320px] w-[320px] rounded-full bg-[#6EE7B7]/[0.16] blur-[70px]" aria-hidden />
+                  <span className="relative inline-block rounded-full bg-[#6EE7B7] px-[13px] py-[7px] font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#0F2044] mb-[22px]">
+                    Most popular
+                  </span>
+                  <h3 className="relative font-display font-semibold text-2xl tracking-[-0.02em]">Assessment</h3>
+                  <p className="relative text-sm text-white/70 mt-2 max-w-[40ch]">
+                    Best for UK SMEs preparing for Cyber Essentials who want a clear view before applying.
+                  </p>
+                  <p className="relative flex items-baseline gap-1 my-[26px]">
+                    <sup className="font-display text-2xl font-semibold -translate-y-3.5">£</sup>
+                    <span className="font-display text-[56px] sm:text-[68px] font-bold tracking-[-0.04em] leading-none">199</span>
+                    <em className="not-italic font-mono text-xs uppercase tracking-[0.1em] text-white/60 ml-2.5">one-time</em>
+                  </p>
+                  <ul className="relative grid gap-[13px] mb-[30px]">
+                    {[
+                      "Guided readiness assessment across all five control areas",
+                      "AI-assisted scoring and gap analysis",
+                      "Prioritised remediation steps",
+                      "Downloadable PDF report",
+                    ].map((f) => (
+                      <li key={f} className="flex gap-3 items-start text-[14.5px] leading-[1.5] text-white/85">
+                        <span className="mt-[1px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#6EE7B7] text-[#0F2044]">
+                          <Check className="h-3 w-3" strokeWidth={2.6} />
+                        </span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <MagneticLink href="/assessment/new" className={`${BTN_EMERALD} relative w-full justify-center`}>
+                    <span>Start your assessment</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
+                  </MagneticLink>
+                  <p className="relative mt-3.5 text-center font-mono text-[10.5px] uppercase tracking-[0.08em] text-white/55">
+                    Pay nothing until you unlock your report
+                  </p>
+                </article>
+              </Reveal>
+
+              <div className="grid gap-4 content-stretch">
+                {[
+                  { id: "monitor", name: "Monitor", price: "£99", cadence: "/month", body: "Ongoing visibility after your initial readiness report." },
+                  { id: "ce-plus", name: "CE Plus Pack", price: "£499", cadence: "one-time", body: "Preparation for Cyber Essentials Plus before technical testing." },
+                  { id: "msp-partner", name: "MSP Partner", price: "£299", cadence: "/month", body: "For MSPs supporting multiple UK SME clients." },
+                ].map((tier, i) => (
+                  <Reveal key={tier.id} delay={200 + i * 100}>
+                    <article
+                      id={tier.id}
+                      className="flex flex-col gap-1.5 rounded-[22px] border border-[#0F2044]/[0.07] bg-white px-[26px] py-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(15,32,68,0.22)]"
+                    >
+                      <div className="flex items-center justify-between gap-3.5">
+                        <h3 className="font-display font-semibold text-lg tracking-[-0.015em] text-[#0F2044]">{tier.name}</h3>
+                        <p className="flex items-baseline gap-0.5 text-[#0F2044]">
+                          <sup className="text-[13px] -translate-y-1.5">£</sup>
+                          <span className="font-display text-2xl font-bold tracking-[-0.02em]">{tier.price.replace("£", "")}</span>
+                          <em className="not-italic ml-1.5 text-[#64748B] text-xs">{tier.cadence}</em>
+                        </p>
+                      </div>
+                      <p className="text-[13.5px] text-[#475569]">{tier.body}</p>
+                      <MagneticLink href="/pricing" className="mt-2 inline-flex items-center gap-1.5 font-display text-[13.5px] font-semibold text-[#059669] w-fit group">
+                        View pricing
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2} />
+                      </MagneticLink>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── COMPARISON ───────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)] bg-[#EBEDDE]" id="compare">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <div className="max-w-[760px] mb-[clamp(48px,6vw,76px)]">
+              <Reveal>
+                <Tag>Why BrightCert</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  Understand your gaps <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">before</span> you spend more
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] max-w-[56ch] mt-[22px]">
+                  Traditional consultancy can be valuable for complex organisations. But most SMEs first need an answer to a simpler question:{" "}
+                  <strong className="text-[#0F2044] font-semibold">are we ready, and what do we need to fix?</strong>
+                </p>
+              </Reveal>
+            </div>
+
+            <Reveal delay={200}>
+              <div className="overflow-hidden rounded-[26px] border border-[#0F2044]/[0.07] bg-white shadow-[0_30px_60px_-34px_rgba(15,32,68,0.25)]">
+                <div className="grid grid-cols-2">
+                  <span className="bg-[#F3F4EC] px-[26px] py-4 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-[#64748B]">
+                    Without BrightCert
+                  </span>
+                  <span className="border-l border-[#0F2044]/[0.07] bg-[#A7F3D0] px-[26px] py-4 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-[#0F2044]">
+                    With BrightCert
+                  </span>
+                </div>
+                {COMPARE_ROWS.map(([without, withUs], i) => (
+                  <div key={without} className={`grid grid-cols-2 ${i > 0 ? "border-t border-[#0F2044]/[0.07]" : ""}`}>
+                    <p className="flex items-center gap-3.5 px-[26px] py-[19px] text-[14.5px] text-[#64748B]">
+                      <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#DC2626]/[0.12] text-[#DC2626] text-[11px]">
+                        ✕
                       </span>
+                      {without}
+                    </p>
+                    <p className="flex items-center gap-3.5 border-l border-[#0F2044]/[0.07] bg-gradient-to-r from-[#A7F3D0]/[0.25] to-transparent px-[26px] py-[19px] text-[14.5px] font-medium text-[#0F2044]">
+                      <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#A7F3D0] text-[#0F2044]">
+                        <Check className="h-3 w-3" strokeWidth={2.6} />
+                      </span>
+                      {withUs}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── AUDIENCES ────────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)]" id="who">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <div className="max-w-[760px] mb-[clamp(48px,6vw,76px)]">
+              <Reveal>
+                <Tag>Who it&apos;s for</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  Built for the businesses that need <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">clarity fast</span>
+                </SectionTitle>
+              </Reveal>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[18px]">
+              {AUDIENCE_CARDS.map((card, i) => (
+                <Reveal key={card.title} delay={i * 90}>
+                  <article className="group rounded-[22px] border border-[#0F2044]/[0.07] bg-white px-6 pt-7 pb-[30px] transition-all duration-500 hover:-translate-y-2 hover:border-[#059669]/[0.35] hover:shadow-[0_26px_50px_-22px_rgba(15,32,68,0.22)]">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#A7F3D0] text-[#0F2044] transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                      <card.icon className="h-[22px] w-[22px]" strokeWidth={1.7} />
+                    </div>
+                    <h3 className="font-display font-semibold text-[18px] tracking-[-0.015em] leading-[1.3] text-[#0F2044] mb-[9px]">{card.title}</h3>
+                    <p className="text-sm leading-[1.65] text-[#475569]">{card.body}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── HONESTY STRIP (dark) ─────────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#0F2044] to-[#08152e] py-[clamp(70px,8vw,110px)]">
+          <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" aria-hidden />
+          <div className="relative max-w-[1180px] mx-auto px-4 grid grid-cols-1 sm:grid-cols-[90px_1fr] gap-[clamp(28px,4vw,54px)] items-start max-w-[920px]">
+            <Reveal>
+              <div className="flex h-[76px] w-[76px] items-center justify-center rounded-[24px] border border-[#6EE7B7]/[0.35] bg-[#6EE7B7]/[0.12] text-[#6EE7B7]" aria-hidden>
+                <ShieldCheck className="h-[30px] w-[30px]" strokeWidth={1.6} />
+              </div>
+            </Reveal>
+            <div>
+              <Reveal delay={100}>
+                <SectionTitle light className="text-[clamp(1.8rem,3.6vw,2.7rem)] max-w-[22ch]">
+                  Clear guidance, <span className="text-[#6EE7B7]">without false promises</span>
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-white/70 text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] mt-[22px]">
+                  BrightCert is careful about what it does, and what it doesn&apos;t do. We help you prepare for Cyber Essentials by assessing readiness, identifying gaps and creating a practical report.{" "}
+                  <strong className="text-white font-semibold">We do not issue the official certificate.</strong> Official certification is handled through IASME-licensed Certification Bodies.
+                </p>
+              </Reveal>
+              <Reveal delay={300}>
+                <p className="inline-flex items-center gap-2.5 mt-7 rounded-full border border-[#6EE7B7]/[0.35] bg-[#6EE7B7]/[0.08] px-[18px] py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[#6EE7B7]">
+                  <span className="h-[7px] w-[7px] rounded-full bg-[#6EE7B7]" style={{ animation: "bc-pulse-dot 2.2s ease-in-out infinite" }} />
+                  Readiness assessment, not official certification
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FOUNDER ──────────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)]" id="founder">
+          <div className="max-w-[1180px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-[clamp(44px,6vw,90px)] items-center">
+            <Reveal delay={100}>
+              <div className="mx-auto max-w-[440px] rounded-[26px] border border-[#0F2044]/[0.07] bg-white px-[34px] py-10 text-center shadow-[0_30px_60px_-34px_rgba(15,32,68,0.25)]">
+                <div className="relative mx-auto mb-[22px] flex h-[108px] w-[108px] items-center justify-center">
+                  <span className="flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#0F2044] font-display text-[27px] font-bold tracking-[0.02em] text-[#6EE7B7]">
+                    MSR
+                  </span>
+                  <span
+                    className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-[#059669]/50"
+                    style={{ animation: "bc-spin 16s linear infinite" }}
+                  />
+                </div>
+                <strong className="block font-display text-[19px] tracking-[-0.015em] text-[#0F2044]">Muhammad Sohaib Roomi</strong>
+                <p className="text-[13.5px] text-[#64748B] mt-1 mb-[22px]">Founder, BrightCert · Cognumi Ltd</p>
+                <ul className="flex flex-wrap justify-center gap-2">
+                  {["MSc Cyber Security (Distinction)", "EC-Council Certified", "Fortinet Certified", "Founder, Cognumi"].map((chip) => (
+                    <li
+                      key={chip}
+                      className="rounded-full border border-[#0F2044]/[0.15] px-3 py-[7px] font-mono text-[10.5px] tracking-[0.04em] text-[#475569] transition-colors hover:bg-[#A7F3D0] hover:border-[#A7F3D0] hover:text-[#0F2044]"
+                    >
+                      {chip}
                     </li>
                   ))}
                 </ul>
-                <Button asChild size="lg" className="bg-white text-[#0F2044] hover:bg-white/90 shadow-none">
-                  <Link href="/assessment/new">Start Your Assessment</Link>
-                </Button>
-                <p className="mt-3 text-xs text-white/55">
-                  Complete the assessment first. Pay £199 only when you are ready to unlock the full report.
-                </p>
               </div>
-              {/* Mock report card */}
-              <div className="rounded-[16px] border border-white/10 bg-white/[0.06] backdrop-blur-md p-6 max-w-xs w-full shadow-[0_24px_60px_-16px_rgba(3,10,28,0.6)]">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-[#059669]" strokeWidth={1.5} />
-                    <span className="font-semibold text-sm">BrightCert Report</span>
-                  </div>
-                  <span className="text-xs text-white/40">PDF</span>
-                </div>
-                <div className="space-y-2 mb-4">
-                  {[
-                    { area: "Firewalls", score: 85, status: "pass" },
-                    { area: "Configuration", score: 72, status: "warning" },
-                    { area: "User Access", score: 61, status: "warning" },
-                    { area: "Malware", score: 88, status: "pass" },
-                    { area: "Updates", score: 54, status: "fail" },
-                  ].map((row) => (
-                    <div key={row.area} className="flex items-center justify-between">
-                      <span className="text-xs text-white/60">{row.area}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-20 rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${row.score}%`,
-                              backgroundColor: row.status === "pass" ? "#059669" : row.status === "warning" ? "#D97706" : "#DC2626",
-                            }}
-                          />
-                        </div>
-                        <span className="text-xs text-white/60 w-8 text-right tabular-nums">{row.score}%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-white/10 pt-3 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-[#059669]" strokeWidth={1.5} />
-                  <span className="text-xs text-white/60">Download PDF report</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </Reveal>
 
-      {/* ── 9. PRICING ──────────────────────────────────────────────────── */}
-      <section className="relative py-20 md:py-28" aria-labelledby="pricing-heading">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <div className="absolute -top-16 left-1/2 -translate-x-1/2 h-[460px] w-[720px] rounded-full bg-[#059669]/[0.05] blur-[130px]" />
-        </div>
-        <div className="relative max-w-6xl mx-auto px-4">
-          <Reveal className="text-center max-w-2xl mx-auto mb-12">
-            <Eyebrow center>Pricing</Eyebrow>
-            <h2 id="pricing-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
-              Simple pricing for Cyber Essentials preparation
-            </h2>
-            <p className="text-[#475569]">
-              Start with a guided readiness assessment. Upgrade only when you need ongoing monitoring, CE Plus preparation, or partner features.
-            </p>
-          </Reveal>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-10 items-start">
-            {/* Featured: Assessment */}
-            <div className="relative flex flex-col rounded-[16px] border-2 border-[#047857] bg-white p-6 shadow-[0_16px_40px_-12px_rgba(4,120,87,0.25)]">
-              <div className="absolute -top-3 left-6">
-                <span className="bg-[#047857] text-white text-[11px] font-semibold px-2.5 py-1 rounded-[4px] uppercase tracking-wide">Most Popular</span>
-              </div>
-              <p className="text-xs font-semibold text-[#047857] uppercase tracking-wider mb-2 mt-1">Assessment</p>
-              <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="font-display text-4xl font-bold text-[#0F2044] tabular-nums">£199</span>
-                <span className="text-xs text-[#64748B]">one-time</span>
-              </div>
-              <p className="text-xs text-[#475569] mb-5">Best for UK SMEs preparing for Cyber Essentials and wanting a clear view before applying.</p>
-              <ul className="space-y-2 mb-6">
-                {[
-                  "Guided readiness assessment across all five control areas",
-                  "AI-assisted scoring and gap analysis",
-                  "Prioritised remediation steps",
-                  "Downloadable PDF report",
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] text-[#475569]">
-                    <Check className="h-3.5 w-3.5 text-[#047857] shrink-0 mt-0.5" strokeWidth={2} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto">
-                <Button asChild className="w-full">
-                  <Link href="/assessment/new">Start Your Assessment</Link>
-                </Button>
-                <p className="text-xs text-[#64748B] text-center mt-2">Complete first. Pay when you&apos;re ready to unlock.</p>
-              </div>
-            </div>
-
-            {/* Upgrade tiers — full detail lives on /pricing */}
-            <div className="lg:pt-2">
-              {[
-                {
-                  id: "monitor",
-                  name: "Monitor",
-                  price: "£99",
-                  cadence: "/month",
-                  bestFor: "Ongoing visibility after your initial readiness report.",
-                  href: "/pricing#monitor",
-                },
-                {
-                  id: "ce-plus",
-                  name: "CE Plus Pack",
-                  price: "£499",
-                  cadence: "one-time",
-                  bestFor: "Preparation for Cyber Essentials Plus before technical testing.",
-                  href: "/pricing",
-                },
-                {
-                  id: "msp-partner",
-                  name: "MSP Partner",
-                  price: "£299",
-                  cadence: "/month",
-                  bestFor: "For MSPs supporting multiple UK SME clients.",
-                  href: "/pricing#msp",
-                },
-              ].map((tier, i) => (
-                <div
-                  key={tier.id}
-                  id={tier.id === "ce-plus" ? undefined : tier.id}
-                  className={`grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 py-5 border-b border-[#EEF1F6] sm:grid-cols-[130px_110px_minmax(0,1fr)_auto] ${i === 0 ? "border-t border-[#E2E8F0]" : ""}`}
-                >
-                  <span className="text-sm font-bold text-[#0F2044]">{tier.name}</span>
-                  <span className="text-sm font-bold tabular-nums text-[#0F2044] text-right sm:text-left">
-                    {tier.price} <span className="text-xs font-normal text-[#64748B]">{tier.cadence}</span>
-                  </span>
-                  <span className="col-span-2 text-[13px] text-[#64748B] sm:col-span-1">{tier.bestFor}</span>
-                  <Link
-                    href={tier.href}
-                    className="bc-focus col-span-2 text-[13px] font-semibold text-[#047857] hover:text-[#065F46] sm:col-span-1 sm:text-right whitespace-nowrap"
-                  >
-                    View pricing →
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 10. COMPARISON ──────────────────────────────────────────────── */}
-      <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="comparison-heading">
-        <div className="max-w-4xl mx-auto px-4">
-          <Reveal>
-            <h2 id="comparison-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-4 leading-tight">
-              Understand your gaps before you spend more
-            </h2>
-            <p className="text-[#475569] mb-2">
-              Traditional consultancy can be valuable, especially for complex organisations. But many SMEs first need a clear answer to a simpler question:
-            </p>
-            <p className="font-semibold text-lg text-[#0F2044] mb-10">Are we ready, and what do we need to fix?</p>
-          </Reveal>
-          <div className="overflow-x-auto rounded-[12px] border border-[#E2E8F0]">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[#F8FAFC]">
-                  <th className="text-left py-3.5 px-5 text-[#64748B] font-medium">Without BrightCert</th>
-                  <th className="text-left py-3.5 px-5 text-[#047857] font-semibold">With BrightCert</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F1F5F9]">
-                {[
-                  ["You may not know where to begin", "Start with a guided assessment"],
-                  ["Technical language can slow you down", "Questions are written in plain English"],
-                  ["You may pay for advice before knowing the gaps", "See your readiness position first"],
-                  ["Findings can be scattered across emails or calls", "Get a structured PDF report"],
-                  ["Teams may not know what to fix first", "Receive prioritised remediation steps"],
-                  ["Progress can feel unclear", "Track score, status, and next actions"],
-                ].map(([without, with_], i) => (
-                  <tr key={i}>
-                    <td className="py-3.5 px-5 text-[#64748B]">
-                      <div className="flex items-start gap-2">
-                        <XCircle className="h-4 w-4 text-[#DC2626] shrink-0 mt-0.5" strokeWidth={1.5} />
-                        {without}
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-5 text-[#0F2044] bg-[#ECFDF5]/40">
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-[#047857] shrink-0 mt-0.5" strokeWidth={2} />
-                        {with_}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 11. AUDIENCE ────────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28" aria-labelledby="audience-heading">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl mb-12">
-            <h2 id="audience-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
-              Built for the businesses that need clarity fast
-            </h2>
-          </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
-            {[
-              {
-                title: "Small business owners",
-                body: "You need to show customers, suppliers, or partners that your business takes cyber security seriously, but you do not have a large internal IT team.",
-              },
-              {
-                title: "Operations managers",
-                body: "You have been asked to prepare for Cyber Essentials and need a structured way to collect answers, spot gaps, and organise next steps.",
-              },
-              {
-                title: "IT providers",
-                body: "You support clients who need Cyber Essentials preparation and want a repeatable way to assess readiness before formal application.",
-              },
-              {
-                title: "Growing suppliers",
-                body: "You are bidding for work where Cyber Essentials is expected or required, and you need to understand whether your business is ready.",
-              },
-            ].map((card, i) => (
-              <Reveal key={card.title} delay={i * 80} className="border-t-2 border-[#0F2044] pt-5">
-                <h3 className="text-base font-semibold text-[#0F2044] mb-2">{card.title}</h3>
-                <p className="text-sm text-[#64748B] leading-relaxed">{card.body}</p>
+            <div>
+              <Reveal>
+                <Tag>Founder&apos;s note</Tag>
               </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 12. TRUST ───────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="trust-heading">
-        <div className="max-w-4xl mx-auto px-4">
-          <Reveal className="text-center">
-            <h2 id="trust-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-5 leading-tight">
-              Clear guidance without false promises
-            </h2>
-            <p className="text-[#475569] mb-12 leading-relaxed max-w-2xl mx-auto">
-              BrightCert is careful about what it does, and what it does not do. We help you prepare for Cyber Essentials by assessing your readiness, identifying gaps, and creating a practical report. We do not issue the official Cyber Essentials certificate. Official certification is handled through IASME Certification Bodies.
-            </p>
-          </Reveal>
-          <CertificationDisclaimer />
-        </div>
-      </section>
-
-      {/* ── 13. FOUNDER'S NOTE ──────────────────────────────────────────── */}
-      <section className="bg-white py-20 md:py-28 border-y border-[#E2E8F0]" aria-labelledby="founder-heading">
-        <div className="max-w-4xl mx-auto px-4">
-          <Reveal>
-            <Eyebrow>Founder&apos;s Note</Eyebrow>
-            <h2 id="founder-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] mb-8 leading-tight">
-              Why I built BrightCert
-            </h2>
-          </Reveal>
-          <Reveal
-            delay={80}
-            className="rounded-[16px] border border-[#E2E8F0] bg-[#F8FAFC] p-8 md:p-10 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.1)]"
-          >
-            <div className="space-y-4 text-[#475569] leading-relaxed mb-8">
-              <p>
-                I started BrightCert after watching UK small businesses stall out on Cyber Essentials, not because the technical controls are hard, but because the preparation process is opaque and the language is written for auditors, not business owners.
-              </p>
-              <p>
-                My background is in cybersecurity research. I hold a Master&apos;s degree in Cyber Security with Advanced Research from the University of Hertfordshire, awarded with distinction, and my thesis compared the Nessus and OpenVAS vulnerability scanners on Ubuntu web servers. I also hold certifications in Digital Forensics, Ethical Hacking, and Network Defense from EC-Council, alongside Fortinet&apos;s Cybersecurity Fundamentals and Huawei&apos;s HCIP in Routing and Switching.
-              </p>
-              <p>
-                Outside BrightCert, I run Cognumi, where I build AI-managed operations and security-focused automation for service businesses. BrightCert brings that same approach, plain-English analysis backed by real security research, to Cyber Essentials preparation.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-8">
-              {[
-                "MSc Cyber Security (Distinction)",
-                "EC-Council Certified",
-                "Fortinet Certified",
-                "Founder, Cognumi",
-              ].map((tag) => (
-                <span
-                  key={tag}
-                  className="text-xs font-medium text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="flex items-center gap-3 pt-6 border-t border-[#E2E8F0]">
-              <div className="h-11 w-11 rounded-full bg-[#0F2044] flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                MSR
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-[#0F2044]">Muhammad Sohaib Roomi</p>
-                <p className="text-xs text-[#64748B]">Founder, BrightCert · Cognumi Ltd</p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── 14. FAQ ─────────────────────────────────────────────────────── */}
-      <section id="faq" className="py-20 md:py-28" aria-labelledby="faq-heading">
-        <div className="max-w-5xl mx-auto px-4">
-          <Reveal className="mb-12">
-            <Eyebrow>FAQs</Eyebrow>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-              <h2 id="faq-heading" className="text-3xl md:text-4xl font-bold text-[#0F2044] leading-tight">
-                Common questions
-              </h2>
-              <p className="text-sm text-[#64748B]">
-                Still have questions?{" "}
-                <a href="mailto:hello@brightcert.co.uk" className="font-semibold text-[#047857] hover:underline">
-                  Contact us
-                </a>
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
-            {[
-              { q: "Does BrightCert issue the official Cyber Essentials certificate?", a: "No. BrightCert provides readiness assessment and preparation support. Official Cyber Essentials certification must be completed through an IASME-licensed Certification Body." },
-              { q: "Do I need to pay before starting the assessment?", a: "No. You can complete the full assessment first. Payment of £199 is required only when you want to unlock your full readiness report and PDF download." },
-              { q: "How long does the assessment take?", a: "Most businesses can complete the assessment in around 2 hours. You can save your progress and return at any time." },
-              { q: "Is BrightCert suitable for non-technical users?", a: "Yes. BrightCert is designed to explain Cyber Essentials preparation in plain English. You do not need to be a cyber security expert to complete the assessment." },
-              { q: "Do you store my answers securely?", a: "Yes. Your assessment responses are stored securely and used only to generate your readiness report. We do not share your data with third parties." },
-              { q: "What is the difference between Cyber Essentials and Cyber Essentials Plus?", a: "Cyber Essentials is a self-assessed questionnaire reviewed by a Certification Body. Cyber Essentials Plus also includes an external technical verification. BrightCert currently supports preparation for both, with specific CE Plus guidance in the CE Plus Pack." },
-            ].map((item) => (
-              <div key={item.q}>
-                <p className="text-base font-medium text-[#0F2044] mb-2">{item.q}</p>
-                <p className="text-sm text-[#475569] leading-relaxed">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 15. CTA BANNER ──────────────────────────────────────────────── */}
-      <section className="pb-20 md:pb-28 pt-4" aria-label="Call to action">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0F2044] to-[#142A56] text-white px-6 py-16 md:py-20 text-center">
-            <div
-              className="pointer-events-none absolute -bottom-40 left-1/2 -translate-x-1/2 h-[480px] w-[720px] rounded-full bg-[#059669]/[0.15] blur-[110px]"
-              aria-hidden
-            />
-            <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.03]" aria-hidden />
-            <div className="relative max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-[40px] font-bold mb-5 leading-tight">
-                Find out how ready your business is
-              </h2>
-              <p className="text-white/70 mb-9 leading-relaxed">
-                Complete your Cyber Essentials readiness assessment, review your score, and unlock a practical report showing what to fix next.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button asChild size="lg">
-                  <Link href="/assessment/new">Start Your Assessment</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30 shadow-none">
-                  <Link href="/pricing">View Pricing</Link>
-                </Button>
-              </div>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  Why I built <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">BrightCert</span>
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <blockquote className="border-l-[3px] border-[#A7F3D0] pl-6 my-[26px]">
+                  <p className="font-display font-medium text-[clamp(1.15rem,2vw,1.4rem)] leading-[1.45] tracking-[-0.015em] text-[#0F2044]">
+                    &ldquo;I started BrightCert after watching UK small businesses stall out on Cyber Essentials. Not because the technical controls are hard, but because the preparation process is opaque and the language is written for auditors, not business owners.&rdquo;
+                  </p>
+                </blockquote>
+              </Reveal>
+              <Reveal delay={300}>
+                <p className="text-[#475569] text-[15.5px] leading-[1.75] max-w-[62ch] mt-4">
+                  My background is in cybersecurity research. I hold a Master&apos;s degree in Cyber Security with Advanced Research from the University of Hertfordshire, awarded with distinction. My thesis compared the Nessus and OpenVAS vulnerability scanners on Ubuntu web servers. I also hold certifications in Digital Forensics, Ethical Hacking and Network Defense from EC-Council, alongside Fortinet&apos;s Cybersecurity Fundamentals and Huawei&apos;s HCIP in Routing &amp; Switching.
+                </p>
+              </Reveal>
+              <Reveal delay={400}>
+                <p className="text-[#475569] text-[15.5px] leading-[1.75] max-w-[62ch] mt-4">
+                  Outside BrightCert, I run <strong className="text-[#0F2044]">Cognumi</strong>, building AI-managed operations and security-focused automation for service businesses. BrightCert brings that same approach, plain-English analysis backed by real security research, to Cyber Essentials preparation.
+                </p>
+              </Reveal>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* ── FAQ ──────────────────────────────────────────────────────── */}
+        <section className="py-[clamp(84px,9.5vw,136px)] bg-[#EBEDDE]" id="faq">
+          <div className="max-w-[1180px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-[clamp(44px,6vw,90px)] items-start">
+            <div className="lg:sticky lg:top-[130px]">
+              <Reveal>
+                <Tag>FAQs</Tag>
+              </Reveal>
+              <Reveal delay={100}>
+                <SectionTitle>
+                  Answers, <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">before</span> you ask
+                </SectionTitle>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="text-[#475569] text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] mt-[22px]">
+                  Everything UK SMEs usually want to know before starting their readiness assessment.
+                </p>
+              </Reveal>
+            </div>
+
+            <Reveal delay={100}>
+              <FaqAccordion />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── FINAL CTA ────────────────────────────────────────────────── */}
+        <section className="py-[clamp(60px,8vw,110px)]" id="cta">
+          <div className="max-w-[1180px] mx-auto px-4">
+            <Reveal>
+              <div className="relative overflow-hidden rounded-[34px] bg-gradient-to-br from-[#0F2044] to-[#08152e] px-6 py-[clamp(56px,8vw,104px)] sm:px-[clamp(28px,6vw,90px)] text-center">
+                <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" aria-hidden />
+                <div
+                  className="pointer-events-none absolute left-1/2 -top-[40%] h-[720px] w-[720px] -translate-x-1/2 rounded-full"
+                  style={{ background: "radial-gradient(circle, rgba(110,231,183,0.22), transparent 62%)" }}
+                  aria-hidden
+                />
+                <div className="relative">
+                  <Tag light>Ready when you are</Tag>
+                  <h2 className="font-display font-semibold text-[clamp(2.2rem,5.2vw,4rem)] leading-[1.04] tracking-[-0.03em] text-white mb-[22px]">
+                    Find out how ready
+                    <br />
+                    your business <span className="text-[#6EE7B7]">really</span> is
+                  </h2>
+                  <p className="text-white/70 text-[clamp(1rem,1.5vw,1.14rem)] max-w-[52ch] mx-auto mb-[38px]">
+                    Complete your Cyber Essentials readiness assessment, review your score, and unlock a practical report showing exactly what to fix next.
+                  </p>
+                  <div className="flex flex-col items-center gap-[18px]">
+                    <MagneticLink href="/assessment/new" className={`${BTN_EMERALD} px-9 py-[19px] text-[17px]`}>
+                      <span>Start your assessment</span>
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
+                    </MagneticLink>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/55">
+                      ~2 hours · no payment to start · save &amp; return
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </main>
+
+      <HomeFooter />
     </div>
   );
 }

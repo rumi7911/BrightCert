@@ -51,6 +51,7 @@
   /* Typography */
   --font-sans: var(--font-inter, 'Inter'), system-ui, sans-serif;
   --font-display: var(--font-bricolage), var(--font-inter, 'Inter'), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   /* Border radius */
   --radius-btn: 8px;
@@ -196,5 +197,58 @@ h1, h2 {
   .bc-check {
     animation: none;
     stroke-dashoffset: 0;
+  }
+}
+
+/* Homepage-only entrance/decoration keyframes (preloader, scan-card beam) */
+@keyframes bc-preloader-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes bc-preloader-word {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bc-scan-beam {
+  0% {
+    top: -20%;
+  }
+  55% {
+    top: 105%;
+  }
+  100% {
+    top: 105%;
+  }
+}
+@keyframes bc-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes bc-pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(110, 231, 183, 0);
+  }
+}
+@keyframes bc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
