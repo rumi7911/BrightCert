@@ -5,7 +5,7 @@ import { Reveal } from "@/components/brightcert/reveal";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
-import { MagneticLink } from "@/components/brightcert/magnetic-link";
+import { GlowLink } from "@/components/brightcert/glow-link";
 import { Tag, SectionTitle, Mark, BTN_EMERALD } from "@/components/brightcert/signal-primitives";
 import { FaqAccordion, type FaqItem } from "@/components/brightcert/faq-accordion";
 
@@ -112,10 +112,10 @@ export default function FaqPage() {
           <Reveal className="max-w-[1180px] mx-auto px-4">
             <div className="rounded-[30px] border border-[#0F2044]/[0.07] bg-white px-6 py-12 sm:px-12 sm:py-14 text-center">
               <p className="text-[#475569] text-base mb-7">Ready to see where your business stands?</p>
-              <MagneticLink href="/assessment/new" className={`${BTN_EMERALD} justify-center`}>
+              <GlowLink href="/assessment/new" className={`${BTN_EMERALD} justify-center`}>
                 <span>Start your assessment</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-              </MagneticLink>
+              </GlowLink>
             </div>
           </Reveal>
         </section>

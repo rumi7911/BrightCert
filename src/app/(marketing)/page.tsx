@@ -15,6 +15,7 @@ import { ControlAccordion } from "@/components/brightcert/home/control-accordion
 import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-card";
 import { FaqAccordion, type FaqItem } from "@/components/brightcert/faq-accordion";
 import { MagneticLink } from "@/components/brightcert/magnetic-link";
+import { GlowLink } from "@/components/brightcert/glow-link";
 import { BTN_INK, BTN_EMERALD, BTN_GHOST, Tag, SectionTitle } from "@/components/brightcert/signal-primitives";
 import { createAdminClient } from "@/lib/supabase/server";
 
@@ -198,10 +199,10 @@ export default async function HomePage() {
 
               <Reveal delay={280}>
                 <div className="flex flex-wrap gap-3.5 mb-[34px]">
-                  <MagneticLink href="/assessment/new" className={BTN_EMERALD}>
+                  <GlowLink href="/assessment/new" className={BTN_EMERALD}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                  </MagneticLink>
+                  </GlowLink>
                   <MagneticLink href="#how" className={BTN_GHOST}>
                     <span>See how it works</span>
                   </MagneticLink>
@@ -341,10 +342,10 @@ export default async function HomePage() {
                 ))}
               </ul>
               <Reveal delay={600}>
-                <MagneticLink href="/assessment/new" className={BTN_INK}>
+                <GlowLink href="/assessment/new" className={BTN_INK}>
                   <span>Start your assessment</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                </MagneticLink>
+                </GlowLink>
               </Reveal>
             </div>
 
@@ -440,10 +441,10 @@ export default async function HomePage() {
 
               <Reveal delay={650}>
                 <div className="flex flex-col items-start gap-4">
-                  <MagneticLink href="/assessment/new" className={BTN_EMERALD}>
+                  <GlowLink href="/assessment/new" className={BTN_EMERALD}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                  </MagneticLink>
+                  </GlowLink>
                   <p className="font-mono text-[11.5px] leading-[1.7] text-white/55 max-w-[44ch]">
                     Complete the assessment first. Pay £199 only when you&apos;re ready to unlock the full report.
                   </p>
@@ -507,10 +508,10 @@ export default async function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <MagneticLink href="/assessment/new" className={`${BTN_EMERALD} relative w-full justify-center`}>
+                  <GlowLink href="/assessment/new" className={`${BTN_EMERALD} relative w-full justify-center`}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                  </MagneticLink>
+                  </GlowLink>
                   <p className="relative mt-3.5 text-center font-mono text-[10.5px] uppercase tracking-[0.08em] text-white/55">
                     Pay nothing until you unlock your report
                   </p>
@@ -767,10 +768,10 @@ export default async function HomePage() {
                     Complete your Cyber Essentials readiness assessment, review your score, and unlock a practical report showing exactly what to fix next.
                   </p>
                   <div className="flex flex-col items-center gap-[18px]">
-                    <MagneticLink href="/assessment/new" className={`${BTN_EMERALD} px-9 py-[19px] text-[17px]`}>
+                    <GlowLink href="/assessment/new" className={`${BTN_EMERALD} px-9 py-[19px] text-[17px]`}>
                       <span>Start your assessment</span>
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                    </MagneticLink>
+                    </GlowLink>
                     <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/55">
                       ~2 hours · no payment to start · save &amp; return
                     </span>

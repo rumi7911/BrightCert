@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { MagneticLink } from "@/components/brightcert/magnetic-link";
+import { GlowLink } from "@/components/brightcert/glow-link";
 import { BTN_EMERALD } from "@/components/brightcert/signal-primitives";
 
 // Shared presentational pieces reused across the 4 blog articles. Each
@@ -86,10 +86,10 @@ export function ArticleFinalCta({ prompt }: { prompt: string }) {
     <div className="relative mt-10 overflow-hidden rounded-[30px] bg-gradient-to-br from-[#0F2044] to-[#08152e] px-6 py-12 sm:px-12 sm:py-14 text-center">
       <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" aria-hidden />
       <p className="relative text-white/70 text-base mb-7">{prompt}</p>
-      <MagneticLink href="/assessment/new" className={`relative ${BTN_EMERALD} justify-center`}>
+      <GlowLink href="/assessment/new" className={`relative ${BTN_EMERALD} justify-center`}>
         <span>Start your assessment</span>
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-      </MagneticLink>
+      </GlowLink>
     </div>
   );
 }
