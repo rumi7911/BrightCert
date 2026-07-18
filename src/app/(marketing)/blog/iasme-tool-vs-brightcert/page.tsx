@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 const COMPARE_ROWS: { label: string; iasme: string; brightcert: string }[] = [
   { label: "Cost to complete", iasme: "Free", brightcert: "Free" },
   { label: "Built by", iasme: "IASME (the official Delivery Partner)", brightcert: "BrightCert" },
-  { label: "Numerical score", iasme: "No", brightcert: "Yes — 0–100%, overall + per control area" },
-  { label: "Prioritised fix list", iasme: "No — generic guidance per “no” answer", brightcert: "Yes — P1/P2/P3" },
+  { label: "Numerical score", iasme: "No", brightcert: "Yes: 0–100%, overall + per control area" },
+  { label: "Prioritised fix list", iasme: "No: generic guidance per “no” answer", brightcert: "Yes: P1/P2/P3" },
   { label: "Output format", iasme: "On-screen plan, downloadable/printable", brightcert: "Full PDF report (£199)" },
   { label: "Shareable with a third party", iasme: "Informal notes only", brightcert: "Formal report, built to hand over" },
   { label: "Covers the 5 official control areas", iasme: "Yes", brightcert: "Yes" },
@@ -33,15 +33,15 @@ const FAQS = [
   },
   {
     q: "Do I have to pay for BrightCert's assessment to see my results?",
-    a: "No — the assessment and your overall readiness score are free. The full report with per-gap explanations, the prioritised fix list, and the PDF download cost £199, one time.",
+    a: "No, the assessment and your overall readiness score are free. The full report with per-gap explanations, the prioritised fix list, and the PDF download cost £199, one time.",
   },
   {
     q: "Can I use both tools?",
-    a: "Yes, and it's a reasonable approach — there's no conflict. IASME's tool is general orientation; BrightCert is the scored, prioritised version for when you're closer to actually applying.",
+    a: "Yes, and it's a reasonable approach. There's no conflict. IASME's tool is general orientation; BrightCert is the scored, prioritised version for when you're closer to actually applying.",
   },
   {
     q: "Does BrightCert replace the need for IASME's Readiness Tool?",
-    a: "Not necessarily — if you've already got a clear picture from IASME's tool, you can go straight into a BrightCert assessment. They're not sequential requirements, just two different types of output.",
+    a: "Not necessarily. If you've already got a clear picture from IASME's tool, you can go straight into a BrightCert assessment. They're not sequential requirements, just two different types of output.",
   },
 ];
 
@@ -101,7 +101,7 @@ export default function IasmeVsBrightCertPage() {
             <p className="text-[15px] leading-relaxed text-[#065F46]">
               They solve different parts of the same problem, and plenty of businesses reasonably use both.
               IASME&rsquo;s Readiness Tool is free, official, and gives you a step-by-step action plan based on
-              which questions you answer &ldquo;no&rdquo; to — but it doesn&rsquo;t produce a score, doesn&rsquo;t
+              which questions you answer &ldquo;no&rdquo; to, but it doesn&rsquo;t produce a score, doesn&rsquo;t
               rank what to fix first, and doesn&rsquo;t give you a document you can hand to a director or an IT
               provider. BrightCert adds a scored gap analysis (0–100% across the five control areas) and a
               prioritised, shareable report, for a one-time £199 after a free assessment.
@@ -116,8 +116,8 @@ export default function IasmeVsBrightCertPage() {
 
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">What IASME&rsquo;s Readiness Tool actually is</h2>
             <p>
-              The Cyber Essentials Readiness Tool is built by <strong>IASME</strong> — the NCSC&rsquo;s official
-              Cyber Essentials Delivery Partner — and it&rsquo;s a genuinely good starting point. It&rsquo;s an
+              The Cyber Essentials Readiness Tool is built by <strong>IASME</strong>, the NCSC&rsquo;s official
+              Cyber Essentials Delivery Partner, and it&rsquo;s a genuinely good starting point. It&rsquo;s an
               interactive questionnaire, written in plain English, that assumes no technical knowledge. You work
               through it at your own pace, can save progress and come back later, and at the end you get a
               tailored action plan you can download or print.
@@ -125,7 +125,7 @@ export default function IasmeVsBrightCertPage() {
             <p>
               Where you&rsquo;ve answered &ldquo;no&rdquo; or &ldquo;I don&rsquo;t know&rdquo; to a question, the
               tool tells you what to do about it or points you to guidance. It&rsquo;s completely free, and
-              it&rsquo;s the same organisation that will eventually certify you — so nothing about your prep is
+              it&rsquo;s the same organisation that will eventually certify you, so nothing about your prep is
               off-brand from what the real assessment expects.
             </p>
 
@@ -136,20 +136,20 @@ export default function IasmeVsBrightCertPage() {
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-[#0F2044]">No score.</strong> You finish knowing which questions you
+                <strong className="text-[#0F2044]">No score.</strong>{" "}You finish knowing which questions you
                 answered &ldquo;no&rdquo; to, but not how ready you are overall, or how your Firewalls control
                 compares to your Malware Protection control. There&rsquo;s no single number to track improvement
                 against.
               </li>
               <li>
-                <strong className="text-[#0F2044]">No prioritisation.</strong> If you&rsquo;ve got eight gaps,
+                <strong className="text-[#0F2044]">No prioritisation.</strong>{" "}If you&rsquo;ve got eight gaps,
                 the tool doesn&rsquo;t tell you which one is the biggest risk to fix first. Every &ldquo;no&rdquo;
                 gets the same generic next-step guidance, regardless of how serious it is.
               </li>
               <li>
-                <strong className="text-[#0F2044]">Nothing to hand to someone else.</strong> If a director, an
+                <strong className="text-[#0F2044]">Nothing to hand to someone else.</strong>{" "}If a director, an
                 investor, or an IT provider asks &ldquo;where do we actually stand?&rdquo;, there&rsquo;s no
-                polished output to send them — just your own notes from working through the questionnaire.
+                polished output to send them, just your own notes from working through the questionnaire.
               </li>
             </ul>
             <p>
@@ -159,12 +159,12 @@ export default function IasmeVsBrightCertPage() {
 
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">What BrightCert adds</h2>
             <p>
-              BrightCert covers the same ground — the same five official Cyber Essentials control areas — but
+              BrightCert covers the same ground, the same five official Cyber Essentials control areas, but
               the output is different:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-[#0F2044]">A readiness score</strong> (0–100%) overall and per control
+                <strong className="text-[#0F2044]">A readiness score</strong>{" "}(0–100%) overall and per control
                 area, so you know exactly how close you are and where the weakest area is
               </li>
               <li>
@@ -172,11 +172,11 @@ export default function IasmeVsBrightCertPage() {
                 rather than generic guidance for a &ldquo;no&rdquo;
               </li>
               <li>
-                <strong className="text-[#0F2044]">A prioritised fix list</strong> (P1/P2/P3) so you know what
+                <strong className="text-[#0F2044]">A prioritised fix list</strong>{" "}(P1/P2/P3) so you know what
                 to fix first if you can&rsquo;t fix everything at once
               </li>
               <li>
-                <strong className="text-[#0F2044]">A downloadable PDF report</strong> — something you can
+                <strong className="text-[#0F2044]">A downloadable PDF report</strong>, something you can
                 actually send to a director, a tender panel, or your IT provider
               </li>
             </ul>
@@ -188,7 +188,7 @@ export default function IasmeVsBrightCertPage() {
 
           <div className="mt-10 mb-10">
             <p className="text-sm font-medium text-[#64748B] mb-4 text-center">
-              See the difference for yourself — three quick questions, no signup needed.
+              See the difference for yourself: three quick questions, no signup needed.
             </p>
             <ReadinessTeaser />
           </div>
@@ -223,9 +223,9 @@ export default function IasmeVsBrightCertPage() {
             <p>
               <strong className="text-[#0F2044]">
                 If you just want to understand the Cyber Essentials requirements and get pointed toward what to
-                fix, start with IASME&rsquo;s tool
+                fix, start with IASME&rsquo;s tool.
               </strong>{" "}
-              — it&rsquo;s free, official, and a good use of twenty minutes.
+              It&rsquo;s free, official, and a good use of twenty minutes.
             </p>
             <p>
               <strong className="text-[#0F2044]">
@@ -237,7 +237,7 @@ export default function IasmeVsBrightCertPage() {
               concrete to act on.
             </p>
             <p>
-              Neither tool — free or paid — issues the actual Cyber Essentials certificate. That step always
+              Neither tool, free or paid, issues the actual Cyber Essentials certificate. That step always
               goes through an IASME-licensed Certification Body.
             </p>
           </Prose>
@@ -256,7 +256,7 @@ export default function IasmeVsBrightCertPage() {
             <p className="text-xs leading-relaxed text-[#64748B]">
               BrightCert helps UK businesses prepare for Cyber Essentials by assessing readiness, identifying
               gaps, and producing a practical report. BrightCert does not issue the official Cyber Essentials
-              certificate — that comes from an IASME-licensed Certification Body.
+              certificate. That comes from an IASME-licensed Certification Body.
             </p>
             <p className="mt-3 text-xs text-[#94A3B8]">
               Sources:{" "}
@@ -266,7 +266,7 @@ export default function IasmeVsBrightCertPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                IASME — Introducing the Cyber Essentials Readiness Tool
+                IASME: Introducing the Cyber Essentials Readiness Tool
               </a>{" "}
               ·{" "}
               <a
@@ -275,7 +275,7 @@ export default function IasmeVsBrightCertPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                NCSC — Cyber Essentials help &amp; resources
+                NCSC: Cyber Essentials help &amp; resources
               </a>
               . Verified July 2026.
             </p>

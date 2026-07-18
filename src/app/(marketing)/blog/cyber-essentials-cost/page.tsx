@@ -6,7 +6,7 @@ import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 
 const TITLE = "How Much Does Cyber Essentials Actually Cost in 2026?";
 const DESCRIPTION =
-  "The real cost of Cyber Essentials, broken down: the IASME certification fee, the hidden pre-assessment gap analysis cost, and Cyber Essentials Plus pricing — with sources.";
+  "The real cost of Cyber Essentials, broken down: the IASME certification fee, the hidden pre-assessment gap analysis cost, and Cyber Essentials Plus pricing, with sources.";
 const PUBLISHED = "2026-07-18";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ const FEE_BANDS = [
 const BUDGET_ROWS = [
   { item: "IASME certification fee (micro/small band)", cost: "£330–£400 + VAT" },
   { item: "Pre-assessment gap analysis (consultant)", cost: "£750–£1,500" },
-  { item: "— or: BrightCert readiness report", cost: "£199", highlight: true },
+  { item: "Or: BrightCert readiness report", cost: "£199", highlight: true },
   { item: "Remediation (firewall, MFA, AV licensing, etc.)", cost: "Varies by starting point" },
 ];
 
@@ -36,7 +36,7 @@ const FAQS = [
   },
   {
     q: "Can I do Cyber Essentials completely free?",
-    a: "The certification fee itself (£330+) is unavoidable if you want the actual certificate — it goes to IASME/your Certification Body, not to any preparation tool. What's optional is the preparation cost: you can DIY it with NCSC's published guidance, pay a consultant £750–£1,500, or use a free readiness assessment like BrightCert's to find your gaps before you pay anything.",
+    a: "The certification fee itself (£330+) is unavoidable if you want the actual certificate. It goes to IASME or your Certification Body, not to any preparation tool. What's optional is the preparation cost: you can DIY it with NCSC's published guidance, pay a consultant £750–£1,500, or use a free readiness assessment like BrightCert's to find your gaps before you pay anything.",
   },
   {
     q: "What's the real difference in cost between Cyber Essentials and Cyber Essentials Plus?",
@@ -44,7 +44,7 @@ const FAQS = [
   },
   {
     q: "Does BrightCert issue the Cyber Essentials certificate?",
-    a: "No. BrightCert is a readiness assessment — it scores you against the same five control areas Cyber Essentials checks and tells you what to fix, in plain English. The actual certificate is issued by an IASME-licensed Certification Body after you apply and pass their assessment.",
+    a: "No. BrightCert is a readiness assessment. It scores you against the same five control areas Cyber Essentials checks and tells you what to fix, in plain English. The actual certificate is issued by an IASME-licensed Certification Body after you apply and pass their assessment.",
   },
 ];
 
@@ -103,11 +103,11 @@ export default function CyberEssentialsCostPage() {
           <div className="mt-8 rounded-[12px] border border-[#A7F3D0] bg-[#ECFDF5] p-6">
             <p className="text-sm font-semibold text-[#065F46] mb-2">Short answer</p>
             <p className="text-[15px] leading-relaxed text-[#065F46]">
-              Budget <strong>£330–£500 + VAT</strong> for the Cyber Essentials certification fee itself, set by
-              IASME based on your company size. Most businesses also spend <strong>£750–£1,500</strong> getting
-              ready for it — usually paid to an IT consultant for a gap analysis — before they ever sit the
+              Budget <strong>£330–£500 + VAT</strong>{" "}for the Cyber Essentials certification fee itself, set by
+              IASME based on your company size. Most businesses also spend <strong>£750–£1,500</strong>{" "}getting
+              ready for it, usually paid to an IT consultant for a gap analysis, before they ever sit the
               assessment. Cyber Essentials Plus, which adds an external technical audit, typically costs{" "}
-              <strong>£1,500–£3,000 + VAT</strong> on top of standard Cyber Essentials. Put together, a typical
+              <strong>£1,500–£3,000 + VAT</strong>{" "}on top of standard Cyber Essentials. Put together, a typical
               small business&rsquo;s real first-year spend lands between <strong>£1,800 and £3,500</strong>.
             </p>
           </div>
@@ -124,20 +124,20 @@ export default function CyberEssentialsCostPage() {
             </p>
             <ol className="list-decimal pl-5 space-y-2">
               <li>
-                <strong className="text-[#0F2044]">The certification fee</strong> — what you pay IASME (or one of
+                <strong className="text-[#0F2044]">The certification fee.</strong>{" "}What you pay IASME (or one of
                 its licensed Certification Bodies) to actually review and issue your certificate. This is fixed,
                 published, and non-negotiable.
               </li>
               <li>
-                <strong className="text-[#0F2044]">The preparation cost</strong> — what it costs to find out where
-                your gaps are and get ready before you submit. This part is unregulated — you can pay a
+                <strong className="text-[#0F2044]">The preparation cost.</strong>{" "}What it costs to find out where
+                your gaps are and get ready before you submit. This part is unregulated: you can pay a
                 consultant, do it yourself with a checklist, or use a tool. Nobody has to charge you for this
                 step, but almost everyone does.
               </li>
               <li>
-                <strong className="text-[#0F2044]">The remediation cost</strong> — what it actually costs to fix
+                <strong className="text-[#0F2044]">The remediation cost.</strong>{" "}What it actually costs to fix
                 whatever the gap analysis finds (a proper firewall, MFA licensing, endpoint protection, and so
-                on). This varies by business and isn&rsquo;t something any assessment — free or paid — can
+                on). This varies by business and isn&rsquo;t something any assessment, free or paid, can
                 eliminate, only reveal accurately.
               </li>
             </ol>
@@ -186,8 +186,8 @@ export default function CyberEssentialsCostPage() {
 
           <Prose>
             <p className="mt-6">
-              This fee covers the self-assessment questionnaire review, one year of certification, and — for UK
-              organisations with turnover under £20 million — inclusion of Cyber Liability Insurance. It also
+              This fee covers the self-assessment questionnaire review and one year of certification. UK
+              organisations with turnover under £20 million also get Cyber Liability Insurance included. It also
               includes one free resubmission if you don&rsquo;t pass first time; after that, a failed attempt
               means paying the fee again.
             </p>
@@ -198,7 +198,7 @@ export default function CyberEssentialsCostPage() {
 
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">Cyber Essentials Plus costs more, for a real reason</h2>
             <p>
-              Cyber Essentials Plus adds an external technical audit — an assessor actually tests your systems
+              Cyber Essentials Plus adds an external technical audit: an assessor actually tests your systems
               (vulnerability scanning, sampled device checks) rather than relying on your self-reported answers.
               You need standard Cyber Essentials first before you can sit Plus.
             </p>
@@ -211,11 +211,11 @@ export default function CyberEssentialsCostPage() {
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">The hidden cost: getting ready before you apply</h2>
             <p>
               Here&rsquo;s the part that catches most business owners out. IASME&rsquo;s fee only covers the{" "}
-              <em>review</em> — it assumes you already know where you stand. Most businesses don&rsquo;t, so they
+              <em>review</em>. It assumes you already know where you stand. Most businesses don&rsquo;t, so they
               pay someone to find out first.
             </p>
             <p>
-              A typical pre-assessment gap analysis from an IT consultancy costs <strong>£750–£1,500</strong> for
+              A typical pre-assessment gap analysis from an IT consultancy costs <strong>£750–£1,500</strong>{" "}for
               a small business, and can run £500–£2,500+VAT depending on scope. What you&rsquo;re paying for is
               usually:
             </p>
@@ -229,19 +229,19 @@ export default function CyberEssentialsCostPage() {
               <li>Help drafting the policies and evidence the assessment expects</li>
             </ul>
             <p>
-              That&rsquo;s a legitimate service — a good consultant catches things a checklist might not. But
+              That&rsquo;s a legitimate service, and a good consultant catches things a checklist might not. But
               it&rsquo;s also the exact step a well-built tool can do for a fraction of the cost, because the
               five control areas Cyber Essentials assesses are a fixed, published standard, not a moving target
               that needs bespoke consultancy every time.
             </p>
             <p>
               <strong className="text-[#0F2044]">
-                This is the specific cost BrightCert exists to replace
+                This is the specific cost BrightCert exists to replace.
               </strong>{" "}
-              — not the £330–£500 certification fee (BrightCert isn&rsquo;t a Certification Body and doesn&rsquo;t
+              Not the £330–£500 certification fee (BrightCert isn&rsquo;t a Certification Body and doesn&rsquo;t
               issue the certificate), but the £750–£1,500 people spend just finding out where they stand before
               they even apply. BrightCert&rsquo;s readiness assessment is free to complete, and the full scored
-              gap report — the same kind of findings a consultant&rsquo;s gap analysis produces — costs a
+              gap report, the same kind of findings a consultant&rsquo;s gap analysis produces, costs a
               one-time <strong>£199</strong>.
             </p>
 
@@ -293,7 +293,7 @@ export default function CyberEssentialsCostPage() {
 
           <Prose>
             <p className="mt-6">
-              Remediation cost is the same either way — fixing a missing firewall costs what it costs regardless
+              Remediation cost is the same either way. Fixing a missing firewall costs what it costs regardless
               of who found the gap. The difference is entirely in what you pay to find out what needs fixing.
             </p>
           </Prose>
@@ -312,7 +312,7 @@ export default function CyberEssentialsCostPage() {
             <p className="text-xs leading-relaxed text-[#64748B]">
               BrightCert helps UK businesses prepare for Cyber Essentials by assessing readiness, identifying
               gaps, and producing a practical report. BrightCert does not issue the official Cyber Essentials
-              certificate — that comes from an IASME-licensed Certification Body.
+              certificate. That comes from an IASME-licensed Certification Body.
             </p>
             <p className="mt-3 text-xs text-[#94A3B8]">
               Sources:{" "}
@@ -322,7 +322,7 @@ export default function CyberEssentialsCostPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                NCSC — Cyber Essentials overview
+                NCSC: Cyber Essentials overview
               </a>{" "}
               ·{" "}
               <a
@@ -331,7 +331,7 @@ export default function CyberEssentialsCostPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                IASME — Cyber Essentials
+                IASME: Cyber Essentials
               </a>
               . IASME published fee bands and third-party pricing data, verified July 2026.
             </p>

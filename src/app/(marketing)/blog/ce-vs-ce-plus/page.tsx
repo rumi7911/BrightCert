@@ -19,26 +19,26 @@ const COMPARE_ROWS = [
   { label: "Verification method", ce: "Self-assessment questionnaire", plus: "Self-assessment + independent technical audit" },
   { label: "Typical cost (small business)", ce: "£330–£500 + VAT", plus: "£1,500–£3,000 + VAT" },
   { label: "Typical timeline", ce: "Days to ~2 weeks", plus: "4–8 weeks" },
-  { label: "Can apply directly?", ce: "Yes", plus: "No — requires a current standard certificate first" },
+  { label: "Can apply directly?", ce: "Yes", plus: "No: requires a current standard certificate first" },
   { label: "If a non-compliance is found", ce: "Correct and resubmit", plus: "30 days to remediate before you can pass" },
 ];
 
 const FAQS = [
   {
     q: "Can I skip straight to Cyber Essentials Plus?",
-    a: "No. Plus requires a current Cyber Essentials certificate before you can apply — the two are sequential, not alternatives.",
+    a: "No. Plus requires a current Cyber Essentials certificate before you can apply. The two are sequential, not alternatives.",
   },
   {
     q: "Does Cyber Essentials Plus replace the need for standard Cyber Essentials?",
-    a: "No, you need both — Plus is standard Cyber Essentials plus an additional technical audit layer, not a separate scheme.",
+    a: "No, you need both. Plus is standard Cyber Essentials plus an additional technical audit layer, not a separate scheme.",
   },
   {
     q: "How much more does Cyber Essentials Plus cost?",
-    a: "Roughly 4–8x the standard certification fee — typically £1,500–£3,000+VAT versus £330–£500+VAT, because Plus requires real assessor time testing your actual systems rather than a questionnaire review.",
+    a: "Roughly 4–8x the standard certification fee, typically £1,500–£3,000+VAT versus £330–£500+VAT, because Plus requires real assessor time testing your actual systems rather than a questionnaire review.",
   },
   {
     q: "Does BrightCert prepare you for Cyber Essentials Plus?",
-    a: "BrightCert's assessment covers the same five control areas Plus also checks, so it's a strong foundation either way — but the Plus technical audit itself has to be carried out by an accredited assessor, not a preparation tool.",
+    a: "BrightCert's assessment covers the same five control areas Plus also checks, so it's a strong foundation either way. But the Plus technical audit itself has to be carried out by an accredited assessor, not a preparation tool.",
   },
 ];
 
@@ -98,9 +98,9 @@ export default function CeVsCePlusPage() {
             <p className="text-[15px] leading-relaxed text-[#065F46]">
               Both certify the same five technical controls, but Cyber Essentials is a self-assessment
               questionnaire your business fills in and a Certification Body reviews, while Cyber Essentials
-              Plus adds an independent technical audit — an assessor actually scans and tests your systems
-              rather than taking your word for it. Plus costs roughly <strong>4–8x more</strong> (£1,500–£3,000+VAT
-              vs £330–£500+VAT), takes <strong>4–8 weeks</strong> instead of days, and you can&rsquo;t apply for
+              Plus adds an independent technical audit: an assessor actually scans and tests your systems
+              rather than taking your word for it. Plus costs roughly <strong>4–8x more</strong>{" "}(£1,500–£3,000+VAT
+              vs £330–£500+VAT), takes <strong>4–8 weeks</strong>{" "}instead of days, and you can&rsquo;t apply for
               it until you already hold standard Cyber Essentials.
             </p>
           </div>
@@ -115,19 +115,19 @@ export default function CeVsCePlusPage() {
             <p>
               Both certifications assess the same five NCSC-defined control areas: firewalls, secure
               configuration, security update management, user access control, and malware protection. Nothing
-              about <em>what&rsquo;s</em> being checked changes between the two — only <em>how</em>.
+              about <em>what&rsquo;s</em>{" "}being checked changes between the two, only <em>how</em>.
             </p>
             <p>
-              <strong className="text-[#0F2044]">Cyber Essentials (standard):</strong> You complete a
+              <strong className="text-[#0F2044]">Cyber Essentials (standard):</strong>{" "}You complete a
               questionnaire about how each control is implemented across your systems. A Certification Body
               reviews your answers and issues the certificate if they meet the scheme&rsquo;s requirements.
-              It&rsquo;s entirely self-reported — nobody logs into your network to verify it.
+              It&rsquo;s entirely self-reported. Nobody logs into your network to verify it.
             </p>
             <p>
-              <strong className="text-[#0F2044]">Cyber Essentials Plus:</strong> Same five controls, but your
+              <strong className="text-[#0F2044]">Cyber Essentials Plus:</strong>{" "}Same five controls, but your
               self-assessment answers get independently verified. An assessor runs an external vulnerability
               scan against your public IP addresses, tests a representative sample of your actual devices
-              (every operating system type in use has to be included — servers, desktops, laptops, tablets,
+              (every operating system type in use has to be included: servers, desktops, laptops, tablets,
               phones), and observes real users doing everyday tasks on sampled machines to confirm the controls
               are actually operating as described.
             </p>
@@ -162,7 +162,7 @@ export default function CeVsCePlusPage() {
 
           <Prose>
             <p className="mt-6">
-              The price gap isn&rsquo;t arbitrary — it reflects real assessor time. A questionnaire review
+              The price gap isn&rsquo;t arbitrary. It reflects real assessor time. A questionnaire review
               takes hours; scanning your infrastructure and testing a representative device sample takes days,
               and someone has to actually do it.
             </p>
@@ -187,14 +187,14 @@ export default function CeVsCePlusPage() {
               </li>
             </ul>
             <p>
-              If nobody&rsquo;s specifically asked you for Plus, you almost certainly don&rsquo;t need it yet —
-              and since Plus requires a current standard certificate first regardless, getting Cyber Essentials
+              If nobody&rsquo;s specifically asked you for Plus, you almost certainly don&rsquo;t need it yet.
+              Since Plus requires a current standard certificate first regardless, getting Cyber Essentials
               sorted is the right next step either way.
             </p>
 
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">Where BrightCert fits</h2>
             <p>
-              BrightCert prepares you for <strong>standard Cyber Essentials</strong> — a free readiness
+              BrightCert prepares you for <strong>standard Cyber Essentials</strong>, a free readiness
               assessment across the same five control areas, with a scored gap report (£199) that tells you
               what to fix before you apply. It&rsquo;s built for the self-assessment route, not the Plus
               technical audit, since Plus is inherently something only an accredited assessor can carry out on
@@ -202,14 +202,14 @@ export default function CeVsCePlusPage() {
             </p>
             <p>
               If you&rsquo;re aiming for Plus eventually, using BrightCert to get standard Cyber Essentials
-              genuinely solid first is still the right order of operations — Plus builds on the same five
+              genuinely solid first is still the right order of operations. Plus builds on the same five
               controls, so gaps caught early tend to be the same ones an external audit would otherwise flag.
             </p>
           </Prose>
 
           <div className="mt-10 mb-10">
             <p className="text-sm font-medium text-[#64748B] mb-4 text-center">
-              Find out where you stand on the five controls — three quick questions, no signup needed.
+              Find out where you stand on the five controls: three quick questions, no signup needed.
             </p>
             <ReadinessTeaser />
           </div>
@@ -228,7 +228,7 @@ export default function CeVsCePlusPage() {
             <p className="text-xs leading-relaxed text-[#64748B]">
               BrightCert helps UK businesses prepare for Cyber Essentials by assessing readiness, identifying
               gaps, and producing a practical report. BrightCert does not issue the official Cyber Essentials
-              certificate — that comes from an IASME-licensed Certification Body.
+              certificate. That comes from an IASME-licensed Certification Body.
             </p>
             <p className="mt-3 text-xs text-[#94A3B8]">
               Sources:{" "}
@@ -238,7 +238,7 @@ export default function CeVsCePlusPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                IASME — Cyber Essentials and Cyber Essentials Plus, what&rsquo;s the difference?
+                IASME: Cyber Essentials and Cyber Essentials Plus, what&rsquo;s the difference?
               </a>{" "}
               ·{" "}
               <a
@@ -247,7 +247,7 @@ export default function CeVsCePlusPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                NCSC — Cyber Essentials overview
+                NCSC: Cyber Essentials overview
               </a>
               . Verified July 2026.
             </p>

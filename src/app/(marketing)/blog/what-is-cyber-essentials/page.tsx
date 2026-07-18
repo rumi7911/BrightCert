@@ -6,7 +6,7 @@ import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 
 const TITLE = "What Is Cyber Essentials? A Plain-English Guide for UK Businesses";
 const DESCRIPTION =
-  "Cyber Essentials explained without the jargon: what it checks, how certification actually works, what it costs, and how to prepare — with sources.";
+  "Cyber Essentials explained without the jargon: what it checks, how certification actually works, what it costs, and how to prepare, with sources.";
 const PUBLISHED = "2026-07-19";
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ const CONTROLS = [
   {
     n: "02",
     name: "Secure configuration",
-    plain: "Are your devices set up deliberately — unnecessary accounts and software removed — or however they arrived out of the box?",
+    plain: "Are your devices set up deliberately, with unnecessary accounts and software removed, or however they arrived out of the box?",
   },
   {
     n: "03",
@@ -50,7 +50,7 @@ const FAQS = [
   },
   {
     q: "How long does Cyber Essentials take to complete?",
-    a: "The self-assessment questionnaire itself typically takes a business a few hours once you know your answers. Getting from a standing start to certified — including finding your gaps and fixing them — usually takes days to a couple of weeks if your systems are already in reasonable shape.",
+    a: "The self-assessment questionnaire itself typically takes a business a few hours once you know your answers. Getting from a standing start to certified, including finding your gaps and fixing them, usually takes days to a couple of weeks if your systems are already in reasonable shape.",
   },
   {
     q: "Does Cyber Essentials expire?",
@@ -115,9 +115,9 @@ export default function WhatIsCyberEssentialsPage() {
             <p className="text-sm font-semibold text-[#065F46] mb-2">Short answer</p>
             <p className="text-[15px] leading-relaxed text-[#065F46]">
               Cyber Essentials is a UK Government-backed certification scheme, created by the{" "}
-              <strong>National Cyber Security Centre (NCSC)</strong> and delivered through{" "}
+              <strong>National Cyber Security Centre (NCSC)</strong>{" "}and delivered through{" "}
               <strong>IASME</strong>, that checks your business against five basic technical
-              controls — firewalls, secure configuration, patching, user access, and malware
+              controls: firewalls, secure configuration, patching, user access, and malware
               protection. Most businesses complete it as a self-assessment questionnaire reviewed
               by a Certification Body, typically for <strong>£330–£500+VAT</strong>. It&rsquo;s the
               baseline standard UK government contracts and increasingly clients and insurers ask
@@ -127,7 +127,7 @@ export default function WhatIsCyberEssentialsPage() {
 
           <Prose>
             <p className="mt-8 text-[#0F2044] font-medium">
-              Everything below is the plain-English version — no jargon, and links to deeper detail
+              Everything below is the plain-English version, no jargon, and links to deeper detail
               on cost, the free preparation tools, and Cyber Essentials Plus where you want it.
             </p>
 
@@ -141,9 +141,8 @@ export default function WhatIsCyberEssentialsPage() {
                 className="text-[#047857] underline hover:no-underline"
               >
                 NCSC
-              </a>{" "}
-              — the UK Government&rsquo;s National Cyber Security Centre — and describes itself as
-              &ldquo;the minimum standard of cyber security recommended by the Government for
+              </a>, the UK Government&rsquo;s National Cyber Security Centre, and describes itself
+              as &ldquo;the minimum standard of cyber security recommended by the Government for
               organisations of all sizes.&rdquo; Day-to-day delivery is handled by{" "}
               <strong>IASME</strong>, the NCSC&rsquo;s official Cyber Essentials Delivery Partner,
               which licenses a network of Certification Bodies across the UK to carry out
@@ -151,7 +150,7 @@ export default function WhatIsCyberEssentialsPage() {
             </p>
             <p>
               That matters because it means Cyber Essentials isn&rsquo;t a product any one company
-              sells — it&rsquo;s a fixed, published standard. The same five controls, the same
+              sells. It&rsquo;s a fixed, published standard. The same five controls, the same
               requirements, regardless of which Certification Body reviews you.
             </p>
 
@@ -178,7 +177,7 @@ export default function WhatIsCyberEssentialsPage() {
             <p className="mt-6">
               Answer all five with confidence and you&rsquo;re closer than most businesses starting
               out. Answer &ldquo;not sure&rdquo; to a few of them and you&rsquo;re completely
-              normal — the gaps are usually fixable in days, not months.
+              normal. The gaps are usually fixable in days, not months.
             </p>
           </Prose>
 
@@ -196,24 +195,24 @@ export default function WhatIsCyberEssentialsPage() {
             </p>
             <ol className="list-decimal pl-5 space-y-2">
               <li>
-                <strong className="text-[#0F2044]">Find your gaps first.</strong> Most businesses
-                don&rsquo;t know where they stand before they start — a free readiness assessment
+                <strong className="text-[#0F2044]">Find your gaps first.</strong>{" "}Most businesses
+                don&rsquo;t know where they stand before they start. A free readiness assessment
                 (IASME&rsquo;s own tool, or BrightCert&rsquo;s scored version) tells you what to fix
                 before you pay anything.
               </li>
               <li>
-                <strong className="text-[#0F2044]">Fix what&rsquo;s missing.</strong> This is the actual
-                security work — a proper firewall, MFA, current antivirus, and so on. What it costs
+                <strong className="text-[#0F2044]">Fix what&rsquo;s missing.</strong>{" "}This is the actual
+                security work: a proper firewall, MFA, current antivirus, and so on. What it costs
                 depends entirely on your starting point.
               </li>
               <li>
-                <strong className="text-[#0F2044]">Complete the self-assessment</strong> and pay the
-                IASME certification fee — £330–£500+VAT depending on company size. A Certification
+                <strong className="text-[#0F2044]">Complete the self-assessment</strong>{" "}and pay the
+                IASME certification fee: £330–£500+VAT depending on company size. A Certification
                 Body reviews your answers and issues the certificate if they meet the requirements.
               </li>
               <li>
-                <strong className="text-[#0F2044]">Optionally, go further with Cyber Essentials Plus</strong> —
-                an independent technical audit on top of standard certification, usually only
+                <strong className="text-[#0F2044]">Optionally, go further with Cyber Essentials Plus.</strong>{" "}
+                An independent technical audit on top of standard certification, usually only
                 needed if a specific contract or insurer asks for it by name.
               </li>
             </ol>
@@ -224,30 +223,28 @@ export default function WhatIsCyberEssentialsPage() {
               <li>
                 <Link href="/blog/cyber-essentials-cost" className="text-[#047857] underline hover:no-underline">
                   How much Cyber Essentials actually costs
-                </Link>{" "}
-                — the certification fee, the hidden preparation cost, and a realistic first-year budget
+                </Link>: the certification fee, the hidden preparation cost, and a realistic first-year
+                budget
               </li>
               <li>
                 <Link href="/blog/iasme-tool-vs-brightcert" className="text-[#047857] underline hover:no-underline">
                   IASME&rsquo;s free Readiness Tool vs BrightCert
-                </Link>{" "}
-                — an honest comparison of the two free ways to find your gaps
+                </Link>: an honest comparison of the two free ways to find your gaps
               </li>
               <li>
                 <Link href="/blog/ce-vs-ce-plus" className="text-[#047857] underline hover:no-underline">
                   Cyber Essentials vs Cyber Essentials Plus
-                </Link>{" "}
-                — what the technical audit actually involves, and whether you need it
+                </Link>: what the technical audit actually involves, and whether you need it
               </li>
             </ul>
 
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">Where BrightCert fits</h2>
             <p>
-              BrightCert is a free readiness assessment built around these same five control areas —
+              BrightCert is a free readiness assessment built around these same five control areas:
               60 plain-English questions, roughly two hours, and a readiness score you see before
               paying anything. The full scored report, with a prioritised fix list and a downloadable
               PDF, is a one-time £199. BrightCert doesn&rsquo;t issue the Cyber Essentials
-              certificate — that always comes from an IASME-licensed Certification Body — it exists
+              certificate (that always comes from an IASME-licensed Certification Body); it exists
               to make sure you walk into that step already knowing exactly where you stand.
             </p>
           </Prose>
@@ -266,7 +263,7 @@ export default function WhatIsCyberEssentialsPage() {
             <p className="text-xs leading-relaxed text-[#64748B]">
               BrightCert helps UK businesses prepare for Cyber Essentials by assessing readiness,
               identifying gaps, and producing a practical report. BrightCert does not issue the
-              official Cyber Essentials certificate — that comes from an IASME-licensed
+              official Cyber Essentials certificate. That comes from an IASME-licensed
               Certification Body.
             </p>
             <p className="mt-3 text-xs text-[#94A3B8]">
@@ -277,7 +274,7 @@ export default function WhatIsCyberEssentialsPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                NCSC — Cyber Essentials overview
+                NCSC: Cyber Essentials overview
               </a>{" "}
               ·{" "}
               <a
@@ -286,7 +283,7 @@ export default function WhatIsCyberEssentialsPage() {
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                IASME — Cyber Essentials
+                IASME: Cyber Essentials
               </a>
               . Verified July 2026.
             </p>
