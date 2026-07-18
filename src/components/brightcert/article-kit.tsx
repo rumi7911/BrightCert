@@ -83,9 +83,10 @@ export function ArticleDisclaimer({ children }: { children: React.ReactNode }) {
 
 export function ArticleFinalCta({ prompt }: { prompt: string }) {
   return (
-    <div className="mt-10 rounded-[30px] border border-[#0F2044]/[0.07] bg-white px-6 py-12 sm:px-12 sm:py-14 text-center">
-      <p className="text-[#475569] text-base mb-7">{prompt}</p>
-      <MagneticLink href="/assessment/new" className={`${BTN_EMERALD} justify-center`}>
+    <div className="relative mt-10 overflow-hidden rounded-[30px] bg-gradient-to-br from-[#0F2044] to-[#08152e] px-6 py-12 sm:px-12 sm:py-14 text-center">
+      <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" aria-hidden />
+      <p className="relative text-white/70 text-base mb-7">{prompt}</p>
+      <MagneticLink href="/assessment/new" className={`relative ${BTN_EMERALD} justify-center`}>
         <span>Start your assessment</span>
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
       </MagneticLink>

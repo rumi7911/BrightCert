@@ -51,7 +51,9 @@ export function SectionTitle({
 }
 
 // Inline highlight marker matching the hero's "harder"/"Cyber Essentials"
-// emphasis treatment.
-export function Mark({ children }: { children: React.ReactNode }) {
-  return <span className="rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone">{children}</span>;
+// emphasis treatment. Text color is inherited by default (right for navy
+// text on a light page); pass className="text-[#0F2044]" when using it
+// inside a dark section, since the mint pill needs dark text for contrast.
+export function Mark({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <span className={`rounded-[0.16em] bg-[#A7F3D0] px-[0.12em] box-decoration-clone ${className}`}>{children}</span>;
 }
