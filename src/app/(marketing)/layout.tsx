@@ -4,16 +4,20 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/brightcert/navbar";
 import { Footer } from "@/components/brightcert/footer";
 
-// The homepage supplies its own bespoke nav + footer (see home/home-nav.tsx,
-// home/home-footer.tsx) to match its distinct "Signal & Paper" design.
-// Every other marketing route keeps the shared chrome unchanged.
+// Routes already migrated to the "Signal & Paper" design supply their own
+// SignalNav/SignalFooter (see components/brightcert/signal-nav.tsx,
+// signal-footer.tsx) and skip the old shared chrome here. Add a route to
+// this list as each page gets migrated; once every route is covered, this
+// whole pathname check — and the old Navbar/Footer — can be retired.
+const SIGNAL_ROUTES = ["/", "/pricing"];
+
 export default function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  if (pathname === "/") return <>{children}</>;
+  if (SIGNAL_ROUTES.includes(pathname)) return <>{children}</>;
 
   return (
     <>

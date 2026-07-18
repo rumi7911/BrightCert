@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FileText } from "lucide-react";
 import { LogoMark } from "@/components/brightcert/logo";
-import { useTilt } from "./motion-hooks";
+import { useTilt } from "@/components/brightcert/motion-hooks";
 
 const BARS = [
   { label: "Firewalls", value: 85, tone: "good" as const },

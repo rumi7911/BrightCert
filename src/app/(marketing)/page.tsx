@@ -3,10 +3,10 @@ import { JsonLd } from "@/components/brightcert/json-ld";
 import { Reveal } from "@/components/brightcert/reveal";
 import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
 import { SOCIAL_PROOF_THRESHOLD, SOCIAL_PROOF_FALLBACK, getAssessmentCountLabel } from "@/components/brightcert/social-proof-badge";
-import { HomeNav } from "@/components/brightcert/home/home-nav";
-import { HomeFooter } from "@/components/brightcert/home/home-footer";
+import { SignalNav } from "@/components/brightcert/signal-nav";
+import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { Preloader } from "@/components/brightcert/home/preloader";
-import { ScrollProgress } from "@/components/brightcert/home/scroll-progress";
+import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { HeroTitle } from "@/components/brightcert/home/hero-title";
 import { HeroQuiz } from "@/components/brightcert/home/hero-quiz";
 import { ScanCard } from "@/components/brightcert/home/scan-card";
@@ -14,52 +14,13 @@ import { HowItWorksRail } from "@/components/brightcert/home/how-it-works-rail";
 import { ControlAccordion } from "@/components/brightcert/home/control-accordion";
 import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-card";
 import { FaqAccordion } from "@/components/brightcert/home/faq-accordion";
-import { MagneticLink } from "@/components/brightcert/home/magnetic-link";
+import { MagneticLink } from "@/components/brightcert/magnetic-link";
+import { BTN_INK, BTN_EMERALD, BTN_GHOST, Tag, SectionTitle } from "@/components/brightcert/signal-primitives";
 import { createAdminClient } from "@/lib/supabase/server";
 
 // Live count is a light server read — cache for 5 minutes rather than
 // hitting Supabase on every landing page visit.
 export const revalidate = 300;
-
-const BTN_INK =
-  "group inline-flex items-center gap-2.5 rounded-full bg-[#0F2044] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(15,32,68,0.45)] transition-all duration-300 hover:bg-[#152a54] hover:-translate-y-0.5 hover:shadow-[0_20px_38px_-12px_rgba(15,32,68,0.5)]";
-const BTN_EMERALD =
-  "group inline-flex items-center gap-2.5 rounded-full bg-[#047857] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(4,120,87,0.55)] transition-all duration-300 hover:bg-[#065F46] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-12px_rgba(4,120,87,0.6)]";
-const BTN_GHOST =
-  "inline-flex items-center gap-2.5 rounded-full border border-[#0F2044]/[0.14] px-7 py-4 font-display text-[15.5px] font-semibold text-[#0F2044] transition-all duration-300 hover:bg-[#0F2044] hover:text-white hover:border-[#0F2044] hover:-translate-y-0.5";
-
-function Tag({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
-  return (
-    <p
-      className={`flex items-center gap-3 font-mono text-[11.5px] font-medium uppercase tracking-[0.22em] mb-[22px] ${
-        light ? "text-white/55" : "text-[#64748B]"
-      }`}
-    >
-      <span className={`h-0.5 w-7 rounded-full ${light ? "bg-[#6EE7B7]" : "bg-[#059669]"}`} aria-hidden />
-      {children}
-    </p>
-  );
-}
-
-function SectionTitle({
-  children,
-  light = false,
-  className = "",
-}: {
-  children: React.ReactNode;
-  light?: boolean;
-  className?: string;
-}) {
-  return (
-    <h2
-      className={`font-display font-semibold text-[clamp(2rem,4.4vw,3.35rem)] leading-[1.04] tracking-[-0.025em] max-w-[16ch] ${
-        light ? "text-white" : "text-[#0F2044]"
-      } ${className}`}
-    >
-      {children}
-    </h2>
-  );
-}
 
 const PAIN_CARDS = [
   {
@@ -148,7 +109,7 @@ export default async function HomePage() {
 
       <Preloader />
       <ScrollProgress />
-      <HomeNav />
+      <SignalNav />
 
       <main id="top">
         {/* ── HERO ─────────────────────────────────────────────────────── */}
@@ -767,7 +728,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <HomeFooter />
+      <SignalFooter />
     </div>
   );
 }

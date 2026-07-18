@@ -1,18 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/brightcert/logo";
-import { useMagnetic } from "./motion-hooks";
+import { useMagnetic } from "@/components/brightcert/motion-hooks";
 
-const NAV_LINKS = [
-  { href: "#how", label: "How it works" },
-  { href: "#what-we-check", label: "What we check" },
-  { href: "#report", label: "Report" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#faq", label: "FAQ" },
+type NavLink = { label: string; href: string } | { label: string; anchor: string };
+
+// Real dedicated pages always link to themselves. Content that only exists
+// as a homepage section falls back to a route-aware anchor (`#x` on the
+// homepage itself, `/#x` from anywhere else).
+const NAV_LINKS: NavLink[] = [
+  { label: "How it works", href: "/how-it-works" },
+  { label: "What we check", anchor: "what-we-check" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "FAQ", href: "/faq" },
 ];
+
+function resolveHref(link: NavLink, isHome: boolean) {
+  if ("href" in link) return link.href;
+  return isHome ? `#${link.anchor}` : `/#${link.anchor}`;
+}
 
 function MagneticCta({ className, children }: { className?: string; children: React.ReactNode }) {
   const ref = useMagnetic<HTMLAnchorElement>();
@@ -23,11 +33,16 @@ function MagneticCta({ className, children }: { className?: string; children: Re
   );
 }
 
-export function HomeNav() {
+// Shared "Signal & Paper" nav: floating pill, hides on scroll-down / shows on
+// scroll-up. On the homepage, the active link tracks whichever section is in
+// view; on other pages, it's just a plain pathname match.
+export function SignalNav() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeHref, setActiveHref] = useState("");
+  const [activeAnchor, setActiveAnchor] = useState("");
   const lastY = useRef(0);
 
   useEffect(() => {
@@ -44,23 +59,25 @@ export function HomeNav() {
   }, []);
 
   useEffect(() => {
-    const targets = NAV_LINKS.map((l) => ({ href: l.href, el: document.querySelector(l.href) })).filter(
-      (t): t is { href: string; el: Element } => !!t.el
-    );
+    if (!isHome) return;
+    const anchors = NAV_LINKS.filter((l): l is Extract<NavLink, { anchor: string }> => "anchor" in l);
+    const targets = anchors
+      .map((l) => ({ anchor: l.anchor, el: document.getElementById(l.anchor) }))
+      .filter((t): t is { anchor: string; el: HTMLElement } => !!t.el);
     if (targets.length === 0) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const match = targets.find((t) => t.el === entry.target);
-          if (match) setActiveHref(match.href);
+          if (match) setActiveAnchor(match.anchor);
         });
       },
       { rootMargin: "-38% 0px -55% 0px" }
     );
     targets.forEach((t) => observer.observe(t.el));
     return () => observer.disconnect();
-  }, []);
+  }, [isHome]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -68,6 +85,9 @@ export function HomeNav() {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  const isActive = (link: NavLink) =>
+    "href" in link ? pathname === link.href : isHome && activeAnchor === link.anchor;
 
   return (
     <>
@@ -82,28 +102,31 @@ export function HomeNav() {
                 : "bg-[#F3F4EC]/70 border-[#0F2044]/10 shadow-[0_6px_24px_-12px_rgba(15,32,68,0.18)]"
             }`}
           >
-            <a href="#top" className="flex items-center gap-2.5 group" aria-label="BrightCert home">
+            <Link href="/" className="flex items-center gap-2.5 group" aria-label="BrightCert home">
               <Logo
                 markClassName="h-8 w-8 transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105"
                 textClassName="text-lg"
               />
-            </a>
+            </Link>
 
             <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
-                    activeHref === link.href ? "text-[#0F2044]" : "text-[#475569] hover:text-[#0F2044] hover:bg-[#0F2044]/[0.05]"
-                  }`}
-                >
-                  {link.label}
-                  {activeHref === link.href && (
-                    <span className="absolute left-1/2 bottom-1 h-1 w-1 -translate-x-1/2 rounded-full bg-[#059669]" aria-hidden />
-                  )}
-                </a>
-              ))}
+              {NAV_LINKS.map((link) => {
+                const active = isActive(link);
+                return (
+                  <a
+                    key={link.label}
+                    href={resolveHref(link, isHome)}
+                    className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                      active ? "text-[#0F2044]" : "text-[#475569] hover:text-[#0F2044] hover:bg-[#0F2044]/[0.05]"
+                    }`}
+                  >
+                    {link.label}
+                    {active && (
+                      <span className="absolute left-1/2 bottom-1 h-1 w-1 -translate-x-1/2 rounded-full bg-[#059669]" aria-hidden />
+                    )}
+                  </a>
+                );
+              })}
             </nav>
 
             <div className="hidden md:flex items-center gap-3.5">
@@ -138,8 +161,8 @@ export function HomeNav() {
         <nav className="flex flex-col gap-1 mb-10" aria-label="Mobile">
           {NAV_LINKS.map((link) => (
             <a
-              key={link.href}
-              href={link.href}
+              key={link.label}
+              href={resolveHref(link, isHome)}
               onClick={() => setMobileOpen(false)}
               className="font-display text-4xl font-semibold tracking-tight text-[#0F2044] py-2 transition-colors hover:text-[#059669]"
             >

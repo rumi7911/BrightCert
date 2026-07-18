@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useTilt } from "./motion-hooks";
+import { useTilt } from "@/components/brightcert/motion-hooks";
 
 const QUESTIONS = [
   {
