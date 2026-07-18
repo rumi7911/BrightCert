@@ -17,6 +17,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "What we check", anchor: "what-we-check" },
   { label: "Pricing", href: "/pricing" },
   { label: "FAQ", href: "/faq" },
+  { label: "Articles", href: "/blog" },
 ];
 
 function resolveHref(link: NavLink, isHome: boolean) {

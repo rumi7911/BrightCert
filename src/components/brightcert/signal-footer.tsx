@@ -17,6 +17,7 @@ const COMPANY_LINKS: FooterLink[] = [
   { label: "Founder's note", anchor: "founder" },
   { label: "Who it's for", anchor: "who" },
   { label: "FAQs", href: "/faq" },
+  { label: "Articles", href: "/blog" },
   { label: "Start assessment", href: "/assessment/new" },
 ];
 
