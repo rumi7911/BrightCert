@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowRight, Check, ClipboardList, Code2, Home as HomeIcon, HelpCircle, ListChecks, PoundSterling, ShieldCheck, Terminal, TrendingUp } from "lucide-react";
 import { JsonLd } from "@/components/brightcert/json-ld";
 import { Reveal } from "@/components/brightcert/reveal";
@@ -668,9 +669,15 @@ export default async function HomePage() {
             <Reveal delay={100}>
               <div className="mx-auto max-w-[440px] rounded-[26px] border border-[#0F2044]/[0.07] bg-white px-[34px] py-10 text-center shadow-[0_30px_60px_-34px_rgba(15,32,68,0.25)]">
                 <div className="relative mx-auto mb-[22px] flex h-[108px] w-[108px] items-center justify-center">
-                  <span className="flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#0F2044] font-display text-[27px] font-bold tracking-[0.02em] text-[#6EE7B7]">
-                    MSR
-                  </span>
+                  <div className="relative h-[92px] w-[92px] overflow-hidden rounded-full">
+                    <Image
+                      src="/founder-msr.png"
+                      alt="Muhammad Sohaib Roomi, founder of BrightCert"
+                      fill
+                      sizes="92px"
+                      className="object-cover"
+                    />
+                  </div>
                   <span
                     className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-[#059669]/50"
                     style={{ animation: "bc-spin 16s linear infinite" }}
