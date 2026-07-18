@@ -1,7 +1,4 @@
-import Link from "next/link";
-import { LogOut } from "lucide-react";
 import { AppSidebar, type SidebarLatest } from "@/components/brightcert/app-sidebar";
-import { Logo } from "@/components/brightcert/logo";
 import { createClient } from "@/lib/supabase/server";
 import { getOverallStatus, getScoreColor, type Gap, type OverallStatus } from "@/types/assessment";
 
@@ -12,8 +9,9 @@ const SIDEBAR_VERDICTS: Record<OverallStatus, string> = {
   not_ready: "Not ready",
 };
 
-// Inset-canvas app frame: grey shell, collapsible rail, content floats as a
-// white rounded panel. Route protection lives in proxy.ts.
+// Signal & Paper app frame: dark collapsible rail + paper canvas, sections
+// float as their own white cards (no wrapping canvas). Route protection
+// lives in proxy.ts.
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -106,28 +104,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-[#0F2044] flex flex-col">
-      {/* Mobile top bar — the rail is hidden below md */}
-      <header className="md:hidden sticky top-0 z-40 h-14 bg-[#0F2044] border-b border-white/10 flex items-center justify-between px-4">
-        <Link href="/dashboard" aria-label="BrightCert dashboard">
-          <Logo light markClassName="h-7 w-7" textClassName="text-lg" />
-        </Link>
-        <form action="/auth/signout" method="post">
-          <button
-            type="submit"
-            className="bc-focus-light flex items-center gap-1.5 text-sm font-medium text-[#E4EAF4] hover:text-white cursor-pointer"
-          >
-            <LogOut className="h-4 w-4" strokeWidth={1.5} />
-            Sign out
-          </button>
-        </form>
-      </header>
+    <div className="flex min-h-screen flex-col bg-[#F3F4EC] md:flex-row">
+      <AppSidebar orgName={orgName} email={user?.email ?? null} latest={latest} />
 
-      <div className="flex flex-1">
-        <AppSidebar orgName={orgName} email={user?.email ?? null} latest={latest} />
-
-        {/* Content canvas */}
-        <main className="flex-1 min-w-0 m-2 md:my-3 md:mr-3 md:ml-0 rounded-[14px] border border-[#E5EAF2] bg-white shadow-[0_1px_3px_rgba(15,32,68,0.05)] px-4 py-6 md:px-8 md:py-8">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <main className="flex-1 px-4 py-6 md:px-8 md:py-8">
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>
