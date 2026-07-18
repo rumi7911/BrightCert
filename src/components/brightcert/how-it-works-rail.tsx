@@ -2,41 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const STEPS = [
-  {
-    num: "01",
-    title: "Answer simple questions",
-    body: "A guided assessment across the five Cyber Essentials control areas. Every question written in plain English, with helpful context where you need it.",
-    tag: "~2 hours · save & return anytime",
-  },
-  {
-    num: "02",
-    title: "Get your readiness score",
-    body: "BrightCert analyses your answers and scores your organisation across the core Cyber Essentials areas, instantly.",
-    tag: "Scored out of 100",
-  },
-  {
-    num: "03",
-    title: "Review your gaps",
-    body: "See where your business may fall short, with clear explanations and practical next steps: no auditor-speak.",
-    tag: "Plain-English findings",
-  },
-  {
-    num: "04",
-    title: "Unlock your full report",
-    body: "Pay £199 only when you're ready: unlock detailed gap analysis, remediation actions and a preparation summary.",
-    tag: "PDF · shareable with your team",
-  },
-];
+export type RailStep = {
+  num: string;
+  title: string;
+  body: string;
+  tag: string;
+  extra?: React.ReactNode;
+};
 
-// Scroll-driven progress rail alongside four numbered steps: the rail fills
-// as you scroll, and the currently-in-frame step highlights.
-export function HowItWorksRail() {
+// Scroll-driven progress rail alongside numbered steps: the rail fills as
+// you scroll, and the currently-in-frame step highlights. Shared between the
+// homepage's 4-step teaser and the dedicated /how-it-works page's 5 steps.
+export function HowItWorksRail({ steps }: { steps: RailStep[] }) {
   const layoutRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [fillPct, setFillPct] = useState(0);
-  const [activeSteps, setActiveSteps] = useState<boolean[]>(STEPS.map(() => false));
-  const [revealedSteps, setRevealedSteps] = useState<boolean[]>(STEPS.map(() => false));
+  const [activeSteps, setActiveSteps] = useState<boolean[]>(steps.map(() => false));
+  const [revealedSteps, setRevealedSteps] = useState<boolean[]>(steps.map(() => false));
 
   useEffect(() => {
     const update = () => {
@@ -89,7 +71,7 @@ export function HowItWorksRail() {
         />
       </div>
       <ol className="grid gap-6 md:gap-8">
-        {STEPS.map((step, i) => (
+        {steps.map((step, i) => (
           <li
             key={step.num}
             ref={(el) => {
@@ -119,6 +101,7 @@ export function HowItWorksRail() {
               <span className="mt-4 inline-block rounded-full border border-[#059669]/[0.2] bg-[#059669]/[0.08] px-3 py-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-[#059669]">
                 {step.tag}
               </span>
+              {step.extra}
             </div>
           </li>
         ))}

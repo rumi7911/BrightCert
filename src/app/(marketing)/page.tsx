@@ -10,7 +10,7 @@ import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { HeroTitle } from "@/components/brightcert/home/hero-title";
 import { HeroQuiz } from "@/components/brightcert/home/hero-quiz";
 import { ScanCard } from "@/components/brightcert/home/scan-card";
-import { HowItWorksRail } from "@/components/brightcert/home/how-it-works-rail";
+import { HowItWorksRail, type RailStep } from "@/components/brightcert/how-it-works-rail";
 import { ControlAccordion } from "@/components/brightcert/home/control-accordion";
 import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-card";
 import { FaqAccordion } from "@/components/brightcert/home/faq-accordion";
@@ -21,6 +21,33 @@ import { createAdminClient } from "@/lib/supabase/server";
 // Live count is a light server read — cache for 5 minutes rather than
 // hitting Supabase on every landing page visit.
 export const revalidate = 300;
+
+const HOME_HOW_STEPS: RailStep[] = [
+  {
+    num: "01",
+    title: "Answer simple questions",
+    body: "A guided assessment across the five Cyber Essentials control areas. Every question written in plain English, with helpful context where you need it.",
+    tag: "~2 hours · save & return anytime",
+  },
+  {
+    num: "02",
+    title: "Get your readiness score",
+    body: "BrightCert analyses your answers and scores your organisation across the core Cyber Essentials areas, instantly.",
+    tag: "Scored out of 100",
+  },
+  {
+    num: "03",
+    title: "Review your gaps",
+    body: "See where your business may fall short, with clear explanations and practical next steps: no auditor-speak.",
+    tag: "Plain-English findings",
+  },
+  {
+    num: "04",
+    title: "Unlock your full report",
+    body: "Pay £199 only when you're ready: unlock detailed gap analysis, remediation actions and a preparation summary.",
+    tag: "PDF · shareable with your team",
+  },
+];
 
 const PAIN_CARDS = [
   {
@@ -313,7 +340,7 @@ export default async function HomePage() {
                 </SectionTitle>
               </Reveal>
             </div>
-            <HowItWorksRail />
+            <HowItWorksRail steps={HOME_HOW_STEPS} />
           </div>
         </section>
 
