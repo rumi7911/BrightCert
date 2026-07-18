@@ -18,6 +18,7 @@ const footerColumns = [
       { href: "/how-it-works", label: "Cyber Essentials readiness" },
       { href: "/#what-we-check", label: "The five control areas" },
       { href: "/faq", label: "FAQs" },
+      { href: "/blog", label: "Articles" },
     ],
   },
   {
