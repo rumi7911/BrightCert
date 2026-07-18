@@ -47,7 +47,7 @@ export default function SignupPage() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="rounded-[16px] border border-[#E2E8F0] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.12)]">
+      <div className="rounded-[22px] border border-[#0F2044]/[0.07] bg-white p-8 shadow-[0_1px_3px_rgba(15,32,68,0.06),0_16px_48px_-16px_rgba(15,32,68,0.12)]">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4 lg:hidden">
             <LogoMark className="h-14 w-14" />
@@ -70,9 +70,9 @@ export default function SignupPage() {
           <>
             <GoogleButton label="Sign up with Google" />
             <div className="flex items-center gap-3 my-4">
-              <div className="h-px flex-1 bg-[#E2E8F0]" />
+              <div className="h-px flex-1 bg-[#0F2044]/[0.08]" />
               <span className="text-xs text-[#94A3B8]">or</span>
-              <div className="h-px flex-1 bg-[#E2E8F0]" />
+              <div className="h-px flex-1 bg-[#0F2044]/[0.08]" />
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -87,7 +87,7 @@ export default function SignupPage() {
                 value={orgName}
                 onChange={(e) => setOrgName(e.target.value)}
                 placeholder="Fenwick &amp; Hale Ltd"
-                className="w-full h-11 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
+                className="w-full h-11 rounded-[8px] border border-[#0F2044]/[0.12] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
               />
             </div>
             <div>
@@ -103,7 +103,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@yourcompany.co.uk"
-                className="w-full h-11 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
+                className="w-full h-11 rounded-[8px] border border-[#0F2044]/[0.12] bg-white px-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#047857] focus:border-transparent"
               />
             </div>
             {error && (

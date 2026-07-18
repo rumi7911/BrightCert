@@ -24,7 +24,7 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
       type="button"
       onClick={handleGoogle}
       disabled={loading}
-      className="w-full h-11 flex items-center justify-center gap-2.5 rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-sm font-medium text-[#334155] hover:bg-[#F8FAFC] transition-colors disabled:opacity-60 cursor-pointer"
+      className="w-full h-11 flex items-center justify-center gap-2.5 rounded-[8px] border border-[#0F2044]/[0.12] bg-white px-3 text-sm font-medium text-[#334155] hover:bg-[#F3F4EC] transition-colors disabled:opacity-60 cursor-pointer"
     >
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
         <path

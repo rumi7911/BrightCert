@@ -64,9 +64,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* Form side */}
-      <div className="flex flex-1 flex-col bg-[#F8FAFC]">
+      <div className="flex flex-1 flex-col bg-[#F3F4EC]">
         {/* Mobile header (brand panel hidden below lg) */}
-        <header className="flex h-16 items-center border-b border-[#E2E8F0] bg-white px-4 lg:hidden">
+        <header className="flex h-16 items-center border-b border-[#0F2044]/[0.08] bg-[#F3F4EC] px-4 lg:hidden">
           <Link href="/" className="flex items-center" aria-label="BrightCert home">
             <Logo markClassName="h-7 w-7" textClassName="text-lg" />
           </Link>
