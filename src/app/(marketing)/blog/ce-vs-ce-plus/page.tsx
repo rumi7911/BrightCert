@@ -86,6 +86,12 @@ export default function CeVsCePlusPage() {
           <p className="mt-4 text-sm text-[#64748B]">
             By Muhammad Sohaib Roomi, founder of BrightCert · Updated July 2026
           </p>
+          <p className="mt-2 text-sm text-[#94A3B8]">
+            Part of our{" "}
+            <Link href="/blog/what-is-cyber-essentials" className="text-[#047857] underline hover:no-underline">
+              plain-English Cyber Essentials guide
+            </Link>
+          </p>
 
           <div className="mt-8 rounded-[12px] border border-[#A7F3D0] bg-[#ECFDF5] p-6">
             <p className="text-sm font-semibold text-[#065F46] mb-2">Short answer</p>

@@ -10,6 +10,12 @@ export const metadata: Metadata = {
 
 const ARTICLES = [
   {
+    href: "/blog/what-is-cyber-essentials",
+    title: "What is Cyber Essentials? A plain-English guide",
+    dek: "The five controls, how certification actually works, and where to go for more detail — the place to start.",
+    date: "July 2026",
+  },
+  {
     href: "/blog/ce-vs-ce-plus",
     title: "Cyber Essentials vs Cyber Essentials Plus: what's actually different?",
     dek: "Verification method, cost, timeline, and which one your business actually needs — with sources.",
