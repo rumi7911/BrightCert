@@ -158,7 +158,7 @@ export default function HowItWorksPage() {
         <section>
           <Reveal className="max-w-[880px] mx-auto px-4">
             <div className="rounded-[16px] border border-[#0F2044]/[0.07] bg-white px-6 py-5 text-[12.5px] leading-relaxed text-[#475569]">
-              <strong className="text-[#0F2044]">BrightCert</strong> provides Cyber Essentials readiness assessment and preparation support. BrightCert does not issue official Cyber Essentials certification: official certification is provided through IASME Certification Bodies.
+              <strong className="text-[#0F2044]">BrightCert</strong>{" "}provides Cyber Essentials readiness assessment and preparation support. BrightCert does not issue official Cyber Essentials certification: official certification is provided through IASME Certification Bodies.
             </div>
           </Reveal>
         </section>

@@ -9,7 +9,17 @@ import { Footer } from "@/components/brightcert/footer";
 // signal-footer.tsx) and skip the old shared chrome here. Add a route to
 // this list as each page gets migrated; once every route is covered, this
 // whole pathname check — and the old Navbar/Footer — can be retired.
-const SIGNAL_ROUTES = ["/", "/pricing", "/how-it-works", "/faq"];
+const SIGNAL_ROUTES = [
+  "/",
+  "/pricing",
+  "/how-it-works",
+  "/faq",
+  "/blog",
+  "/blog/what-is-cyber-essentials",
+  "/blog/ce-vs-ce-plus",
+  "/blog/iasme-tool-vs-brightcert",
+  "/blog/cyber-essentials-cost",
+];
 
 export default function MarketingLayout({
   children,

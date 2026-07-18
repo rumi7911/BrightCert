@@ -648,7 +648,7 @@ export default async function HomePage() {
               <Reveal delay={200}>
                 <p className="text-white/70 text-[clamp(1rem,1.4vw,1.13rem)] leading-[1.7] mt-[22px]">
                   BrightCert is careful about what it does, and what it doesn&apos;t do. We help you prepare for Cyber Essentials by assessing readiness, identifying gaps and creating a practical report.{" "}
-                  <strong className="text-white font-semibold">We do not issue the official certificate.</strong> Official certification is handled through IASME-licensed Certification Bodies.
+                  <strong className="text-white font-semibold">We do not issue the official certificate.</strong>{" "}Official certification is handled through IASME-licensed Certification Bodies.
                 </p>
               </Reveal>
               <Reveal delay={300}>
