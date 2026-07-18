@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/brightcert/json-ld";
+import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 
 const TITLE = "How Much Does Cyber Essentials Actually Cost in 2026?";
 const DESCRIPTION =
@@ -238,6 +239,16 @@ export default function CyberEssentialsCostPage() {
               one-time <strong>£199</strong>.
             </p>
 
+          </Prose>
+
+          <div className="mt-10 mb-10">
+            <p className="text-sm font-medium text-[#64748B] mb-4 text-center">
+              Curious where you&rsquo;d stand? Three quick questions, no signup needed.
+            </p>
+            <ReadinessTeaser />
+          </div>
+
+          <Prose>
             <h2 className="pt-4 text-xl font-bold text-[#0F2044]">What a realistic first-year budget looks like</h2>
             <p>For a typical UK small business going for standard Cyber Essentials (not Plus):</p>
           </Prose>

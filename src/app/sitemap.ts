@@ -10,6 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/faq`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/blog`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/blog/cyber-essentials-cost`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/blog/iasme-tool-vs-brightcert`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/blog/ce-vs-ce-plus`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${BASE}/terms`, changeFrequency: "yearly", priority: 0.2 },
   ];

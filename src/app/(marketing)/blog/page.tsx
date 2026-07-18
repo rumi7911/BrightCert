@@ -10,6 +10,18 @@ export const metadata: Metadata = {
 
 const ARTICLES = [
   {
+    href: "/blog/ce-vs-ce-plus",
+    title: "Cyber Essentials vs Cyber Essentials Plus: what's actually different?",
+    dek: "Verification method, cost, timeline, and which one your business actually needs — with sources.",
+    date: "July 2026",
+  },
+  {
+    href: "/blog/iasme-tool-vs-brightcert",
+    title: "IASME's free Readiness Tool vs BrightCert: what's the difference?",
+    dek: "An honest, side-by-side comparison of the free official tool and BrightCert's scored assessment.",
+    date: "July 2026",
+  },
+  {
     href: "/blog/cyber-essentials-cost",
     title: "How much does Cyber Essentials actually cost in 2026?",
     dek: "The IASME certification fee, the hidden pre-assessment gap-analysis cost, and Cyber Essentials Plus pricing — with sources.",
