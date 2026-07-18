@@ -6,7 +6,7 @@ import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { GlowLink } from "@/components/brightcert/glow-link";
-import { Tag, SectionTitle, Mark, BTN_EMERALD } from "@/components/brightcert/signal-primitives";
+import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signal-primitives";
 import { HowItWorksRail, type RailStep } from "@/components/brightcert/how-it-works-rail";
 
 export const metadata: Metadata = {
@@ -147,7 +147,7 @@ export default function HowItWorksPage() {
         {/* ── CTA ──────────────────────────────────────────────────────── */}
         <section className="pb-20">
           <Reveal className="max-w-[880px] mx-auto px-4 text-center">
-            <GlowLink href="/assessment/new" className={`${BTN_EMERALD} justify-center`}>
+            <GlowLink href="/assessment/new" className={`${BTN_GLOW} justify-center`}>
               <span>Start your Cyber Essentials readiness assessment</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
             </GlowLink>

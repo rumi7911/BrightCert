@@ -7,7 +7,7 @@ import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { MagneticLink } from "@/components/brightcert/magnetic-link";
 import { GlowLink } from "@/components/brightcert/glow-link";
-import { Tag, SectionTitle, Mark } from "@/components/brightcert/signal-primitives";
+import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signal-primitives";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -158,7 +158,7 @@ export default function PricingPage() {
                       </li>
                     ))}
                   </ul>
-                  <GlowLink href="/assessment/new" className="group relative w-full justify-center inline-flex items-center gap-2.5 rounded-full bg-[#047857] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(4,120,87,0.55)] transition-all duration-300 hover:bg-[#065F46] hover:-translate-y-0.5">
+                  <GlowLink href="/assessment/new" className={`${BTN_GLOW} relative w-full justify-center`}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                   </GlowLink>

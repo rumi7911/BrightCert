@@ -247,20 +247,38 @@ h1, h2 {
   }
 }
 
-/* Ambient breathing glow behind the "Start your assessment" CTA (GlowLink) */
-@keyframes bc-glow-pulse {
-  0%,
-  100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.08);
+/* "Premium glow button" treatment for the "Start your assessment" CTA
+   (GlowLink) — an infinite, fluid, rotating conic-gradient halo behind a
+   glassmorphic pill button, in the vein of the Framer community
+   "Premium Glow Button" component. Pure CSS: the gradient's rotation is
+   driven by animating a registered custom <angle> property so the browser
+   can interpolate it smoothly (a plain --angle custom property without
+   @property can't be animated). */
+@property --bc-glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes bc-glow-spin {
+  to {
+    --bc-glow-angle: 360deg;
   }
 }
-.bc-glow-pulse {
-  animation: bc-glow-pulse 2.6s ease-in-out infinite;
+.bc-glow-ring {
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: 999px;
+  background: conic-gradient(from var(--bc-glow-angle), #1e3a8a, #2563eb, #38bdf8, #6366f1, #1e3a8a);
+  filter: blur(16px);
+  opacity: 0.75;
+  animation: bc-glow-spin 5s linear infinite;
+  transition: opacity 0.4s, filter 0.4s;
+  pointer-events: none;
+}
+.group:hover .bc-glow-ring {
+  opacity: 1;
+  filter: blur(20px);
 }
 
 @media (prefers-reduced-motion: reduce) {

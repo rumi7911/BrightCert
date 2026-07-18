@@ -1,10 +1,11 @@
 import Link from "next/link";
 
-// Primary "Start your assessment" CTA treatment: a soft ambient blue glow
-// that breathes behind the button and brightens on hover, instead of the
-// magnetic mouse-follow effect used elsewhere. No client-side JS needed —
-// pure CSS (see .bc-glow-pulse in globals.css) — so this can stay a plain
-// server component, unlike MagneticLink.
+// Primary "Start your assessment" CTA treatment, styled after the Framer
+// community "Premium Glow Button": a glassmorphic pill (see BTN_GLOW in
+// signal-primitives.tsx) with an infinite, fluid, rotating conic-gradient
+// halo behind it (.bc-glow-ring in globals.css) that brightens on hover.
+// Pure CSS — no JS — so this stays a plain server component, unlike
+// MagneticLink, which it replaces for this one CTA.
 export function GlowLink({
   href,
   className,
@@ -14,12 +15,7 @@ export function GlowLink({
   className?: string;
   children: React.ReactNode;
 }) {
-  const glow = (
-    <span
-      aria-hidden
-      className="bc-glow-pulse pointer-events-none absolute -inset-3 rounded-full bg-[#2563EB] opacity-40 blur-xl transition-opacity duration-500 ease-out group-hover:opacity-70"
-    />
-  );
+  const glow = <span aria-hidden className="bc-glow-ring" />;
 
   if (href.startsWith("#")) {
     return (

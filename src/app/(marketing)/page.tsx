@@ -16,7 +16,7 @@ import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-c
 import { FaqAccordion, type FaqItem } from "@/components/brightcert/faq-accordion";
 import { MagneticLink } from "@/components/brightcert/magnetic-link";
 import { GlowLink } from "@/components/brightcert/glow-link";
-import { BTN_INK, BTN_EMERALD, BTN_GHOST, Tag, SectionTitle } from "@/components/brightcert/signal-primitives";
+import { BTN_GHOST, BTN_GLOW, Tag, SectionTitle } from "@/components/brightcert/signal-primitives";
 import { createAdminClient } from "@/lib/supabase/server";
 
 // Live count is a light server read — cache for 5 minutes rather than
@@ -199,7 +199,7 @@ export default async function HomePage() {
 
               <Reveal delay={280}>
                 <div className="flex flex-wrap gap-3.5 mb-[34px]">
-                  <GlowLink href="/assessment/new" className={BTN_EMERALD}>
+                  <GlowLink href="/assessment/new" className={BTN_GLOW}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                   </GlowLink>
@@ -342,7 +342,7 @@ export default async function HomePage() {
                 ))}
               </ul>
               <Reveal delay={600}>
-                <GlowLink href="/assessment/new" className={BTN_INK}>
+                <GlowLink href="/assessment/new" className={BTN_GLOW}>
                   <span>Start your assessment</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                 </GlowLink>
@@ -441,7 +441,7 @@ export default async function HomePage() {
 
               <Reveal delay={650}>
                 <div className="flex flex-col items-start gap-4">
-                  <GlowLink href="/assessment/new" className={BTN_EMERALD}>
+                  <GlowLink href="/assessment/new" className={BTN_GLOW}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                   </GlowLink>
@@ -508,7 +508,7 @@ export default async function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <GlowLink href="/assessment/new" className={`${BTN_EMERALD} relative w-full justify-center`}>
+                  <GlowLink href="/assessment/new" className={`${BTN_GLOW} relative w-full justify-center`}>
                     <span>Start your assessment</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                   </GlowLink>
@@ -768,7 +768,7 @@ export default async function HomePage() {
                     Complete your Cyber Essentials readiness assessment, review your score, and unlock a practical report showing exactly what to fix next.
                   </p>
                   <div className="flex flex-col items-center gap-[18px]">
-                    <GlowLink href="/assessment/new" className={`${BTN_EMERALD} px-9 py-[19px] text-[17px]`}>
+                    <GlowLink href="/assessment/new" className={`${BTN_GLOW} px-9 py-[19px] text-[17px]`}>
                       <span>Start your assessment</span>
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                     </GlowLink>

@@ -8,6 +8,11 @@ export const BTN_EMERALD =
   "group inline-flex items-center gap-2.5 rounded-full bg-[#047857] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(4,120,87,0.55)] transition-all duration-300 hover:bg-[#065F46] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-12px_rgba(4,120,87,0.6)]";
 export const BTN_GHOST =
   "inline-flex items-center gap-2.5 rounded-full border border-[#0F2044]/[0.14] px-7 py-4 font-display text-[15.5px] font-semibold text-[#0F2044] transition-all duration-300 hover:bg-[#0F2044] hover:text-white hover:border-[#0F2044] hover:-translate-y-0.5";
+// Glassmorphic pill for GlowLink (see glow-link.tsx): mostly-solid emerald
+// with a touch of translucency + blur, so the rotating gradient halo reads
+// through the edges without sacrificing the brand color's legibility.
+export const BTN_GLOW =
+  "group inline-flex items-center gap-2.5 rounded-full bg-[#047857]/[0.92] backdrop-blur-sm border border-white/[0.15] px-7 py-4 font-display text-[15.5px] font-semibold text-white shadow-[0_8px_28px_-6px_rgba(37,99,235,0.45)] transition-all duration-300 hover:bg-[#065F46] hover:-translate-y-0.5";
 
 export function Tag({
   children,
