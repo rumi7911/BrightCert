@@ -14,8 +14,8 @@ export default async function AssessmentFocusLayout({
   const { id } = await params;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-      <header className="sticky top-0 z-40 h-14 bg-white border-b border-[#E5EAF2] grid grid-cols-[1fr_auto_1fr] items-center px-4 md:px-6">
+    <div className="min-h-screen bg-[#F3F4EC] flex flex-col">
+      <header className="sticky top-0 z-40 h-14 bg-[#F3F4EC]/85 backdrop-blur-md backdrop-saturate-150 border-b border-[#0F2044]/[0.07] grid grid-cols-[1fr_auto_1fr] items-center px-4 md:px-6">
         <Link href="/dashboard" className="justify-self-start" aria-label="BrightCert dashboard">
           <span className="hidden sm:inline-flex">
             <Logo markClassName="h-7 w-7" textClassName="text-lg" />
@@ -29,7 +29,7 @@ export default async function AssessmentFocusLayout({
 
         <Link
           href={`/assessment/${id}`}
-          className="bc-focus justify-self-end inline-flex h-9 items-center whitespace-nowrap rounded-[8px] border border-[#E2E8F0] bg-white px-3 text-[13px] font-medium text-[#475569] hover:border-[#CBD5E1] hover:text-[#0F2044] transition-colors sm:px-3.5 sm:text-sm"
+          className="bc-focus justify-self-end inline-flex h-9 items-center whitespace-nowrap rounded-[8px] border border-[#0F2044]/[0.1] bg-white px-3 text-[13px] font-medium text-[#475569] hover:border-[#0F2044]/20 hover:text-[#0F2044] transition-colors sm:px-3.5 sm:text-sm"
         >
           Save and exit
         </Link>

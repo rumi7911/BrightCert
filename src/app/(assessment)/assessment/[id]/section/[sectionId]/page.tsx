@@ -373,7 +373,7 @@ export default function QuestionPage({
         </Button>
         <p className="hidden text-xs text-[#64748B] sm:block" aria-hidden>
           or press{" "}
-          <kbd className="rounded-[4px] border border-[#E2E8F0] bg-[#F8FAFC] px-1.5 py-0.5 font-sans text-[11px] text-[#475569]">
+          <kbd className="rounded-[4px] border border-[#0F2044]/10 bg-white px-1.5 py-0.5 font-sans text-[11px] text-[#475569]">
             Enter ↵
           </kbd>
         </p>
