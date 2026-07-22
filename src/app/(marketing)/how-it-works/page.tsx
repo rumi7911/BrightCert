@@ -125,7 +125,7 @@ export default function HowItWorksPage() {
               <Tag center>How it works</Tag>
             </Reveal>
             <Reveal delay={100}>
-              <SectionTitle className="mx-auto">
+              <SectionTitle as="h1" className="mx-auto">
                 <Mark>Cyber Essentials</Mark> preparation, step by step
               </SectionTitle>
             </Reveal>

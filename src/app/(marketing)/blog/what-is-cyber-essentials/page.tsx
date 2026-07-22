@@ -7,7 +7,7 @@ import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { ArticleHeader, ArticleProse, ShortAnswer, ArticleFaqList, ArticleDisclaimer, ArticleFinalCta } from "@/components/brightcert/article-kit";
 
-const TITLE = "What Is Cyber Essentials? A Plain-English Guide for UK Businesses";
+const TITLE = "What Is Cyber Essentials? A Plain-English Guide";
 const DESCRIPTION =
   "Cyber Essentials explained without the jargon: what it checks, how certification actually works, what it costs, and how to prepare, with sources.";
 const PUBLISHED = "2026-07-19";

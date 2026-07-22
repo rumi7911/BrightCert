@@ -110,7 +110,7 @@ export default function PricingPage() {
               <Tag center>Pricing</Tag>
             </Reveal>
             <Reveal delay={100}>
-              <SectionTitle className="mx-auto">
+              <SectionTitle as="h1" className="mx-auto">
                 Simple pricing for <Mark>Cyber Essentials</Mark> readiness
               </SectionTitle>
             </Reveal>

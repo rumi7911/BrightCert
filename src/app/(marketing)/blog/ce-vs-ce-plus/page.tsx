@@ -6,7 +6,7 @@ import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { ArticleHeader, ArticleProse, ShortAnswer, ArticleFaqList, ArticleDisclaimer, ArticleFinalCta } from "@/components/brightcert/article-kit";
 
-const TITLE = "Cyber Essentials vs Cyber Essentials Plus: What's Actually Different?";
+const TITLE = "Cyber Essentials vs Cyber Essentials Plus";
 const DESCRIPTION =
   "The real difference between Cyber Essentials and Cyber Essentials Plus: verification method, cost, timeline, and which one your business actually needs.";
 const PUBLISHED = "2026-07-19";

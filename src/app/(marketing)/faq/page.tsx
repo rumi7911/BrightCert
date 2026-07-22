@@ -85,7 +85,7 @@ export default function FaqPage() {
                 <Tag>FAQs</Tag>
               </Reveal>
               <Reveal delay={100}>
-                <SectionTitle>
+                <SectionTitle as="h1">
                   <Mark>Frequently</Mark> asked questions
                 </SectionTitle>
               </Reveal>

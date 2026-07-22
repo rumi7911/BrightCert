@@ -6,7 +6,7 @@ import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { ArticleHeader, ArticleProse, ShortAnswer, ArticleFaqList, ArticleDisclaimer, ArticleFinalCta } from "@/components/brightcert/article-kit";
 
-const TITLE = "IASME's Free Cyber Essentials Readiness Tool vs BrightCert";
+const TITLE = "IASME's Free Readiness Tool vs BrightCert";
 const DESCRIPTION =
   "What's the difference between IASME's free Cyber Essentials Readiness Tool and BrightCert's scored assessment? An honest, side-by-side comparison.";
 const PUBLISHED = "2026-07-19";

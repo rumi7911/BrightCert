@@ -39,19 +39,21 @@ export function SectionTitle({
   children,
   light = false,
   className = "",
+  as: Tag = "h2",
 }: {
   children: React.ReactNode;
   light?: boolean;
   className?: string;
+  as?: "h1" | "h2";
 }) {
   return (
-    <h2
+    <Tag
       className={`font-display font-semibold text-[clamp(2rem,4.4vw,3.35rem)] leading-[1.04] tracking-[-0.025em] max-w-[16ch] ${
         light ? "text-white" : "text-[#0F2044]"
       } ${className}`}
     >
       {children}
-    </h2>
+    </Tag>
   );
 }
 

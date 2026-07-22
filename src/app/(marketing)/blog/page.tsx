@@ -54,7 +54,7 @@ export default function BlogIndexPage() {
               <Tag center>Articles</Tag>
             </Reveal>
             <Reveal delay={100}>
-              <SectionTitle className="mx-auto">
+              <SectionTitle as="h1" className="mx-auto">
                 <Mark>Plain-English</Mark> guides to Cyber Essentials
               </SectionTitle>
             </Reveal>
