@@ -43,7 +43,7 @@ const HOME_FAQS: FaqItem[] = [
   },
   {
     q: "Do you store my answers securely?",
-    a: "Yes. Your assessment responses are stored securely and used only to generate your readiness report. We never share your data with third parties.",
+    a: "Yes. Your assessment responses are stored securely and used only to generate your readiness report. We don't sell your data or use it for marketing. See our Privacy Policy for the specific processors involved, including the Gemini API that powers the analysis.",
   },
   {
     q: "What is the difference between Cyber Essentials and Cyber Essentials Plus?",
@@ -489,10 +489,13 @@ export default async function HomePage() {
                   <p className="relative text-sm text-white/70 mt-2 max-w-[40ch]">
                     Best for UK SMEs preparing for Cyber Essentials who want a clear view before applying.
                   </p>
-                  <p className="relative flex items-baseline gap-1 my-[26px]">
+                  <p className="relative flex items-baseline gap-1 mt-[26px] mb-2">
                     <sup className="font-display text-2xl font-semibold -translate-y-3.5">£</sup>
                     <span className="font-display text-[56px] sm:text-[68px] font-bold tracking-[-0.04em] leading-none">199</span>
                     <em className="not-italic font-mono text-xs uppercase tracking-[0.1em] text-white/60 ml-2.5">one-time</em>
+                  </p>
+                  <p className="relative inline-flex items-center gap-1.5 rounded-full border border-[#6EE7B7]/30 bg-[#6EE7B7]/[0.08] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#6EE7B7] mb-[26px]">
+                    First 10 customers — £99 with code FOUNDING10
                   </p>
                   <ul className="relative grid gap-[13px] mb-[30px]">
                     {[

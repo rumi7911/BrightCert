@@ -134,6 +134,11 @@ export default function PrivacyPage() {
                 We use essential cookies required for authentication and to keep you
                 signed in. These are necessary for the service to function.
               </p>
+              <p className="mt-3">
+                We also use Google Analytics to understand how visitors use the site
+                (e.g. which pages are viewed). This sets analytics cookies and shares
+                usage data with Google. It does not include your assessment responses.
+              </p>
             </Section>
 
             <Section title="9. Changes to this policy">

@@ -13,13 +13,19 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  // Where proxy.ts sent them from (e.g. /assessment/new), carried through
+  // the magic-link round trip via /auth/callback?next=.
+  const [nextPath, setNextPath] = useState("/dashboard");
 
   // Surface auth errors passed back from /auth/callback (e.g. expired link).
   // window.location isn't available during SSR, so this has to run in an effect.
   useEffect(() => {
-    const err = new URLSearchParams(window.location.search).get("error");
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    const next = params.get("next");
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of the URL on mount, not an ongoing sync
     if (err) setError(err);
+    if (next) setNextPath(next);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -33,7 +39,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
         shouldCreateUser: false,
       },
     });
@@ -108,7 +114,10 @@ export default function LoginPage() {
 
         <p className="text-center text-xs text-[#64748B] mt-6">
           No account yet?{" "}
-          <Link href="/signup" className="text-[#047857] hover:underline font-medium">
+          <Link
+            href={`/signup?next=${encodeURIComponent(nextPath)}`}
+            className="text-[#047857] hover:underline font-medium"
+          >
             Create one free
           </Link>
         </p>

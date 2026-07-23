@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,16 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  // Where proxy.ts sent them from (e.g. /assessment/new) — carried through
+  // the magic-link round trip via /auth/callback?next=, and preserved on the
+  // "Sign in" link below in case they already have an account.
+  const [nextPath, setNextPath] = useState("/dashboard");
+
+  useEffect(() => {
+    const next = new URLSearchParams(window.location.search).get("next");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of the URL on mount, not an ongoing sync
+    if (next) setNextPath(next);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,7 +42,7 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
         data: { org_name: orgName },
       },
     });
@@ -118,7 +128,10 @@ export default function SignupPage() {
 
         <p className="text-center text-xs text-[#64748B] mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-[#047857] hover:underline font-medium">
+          <Link
+            href={`/login?next=${encodeURIComponent(nextPath)}`}
+            className="text-[#047857] hover:underline font-medium"
+          >
             Sign in
           </Link>
         </p>

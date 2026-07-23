@@ -33,7 +33,12 @@ export async function proxy(request: NextRequest) {
   const isAuthRoute = AUTH_ROUTES.some((p) => pathname.startsWith(p));
 
   if (isProtected && !user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    // Cold prospects clicking "Start assessment" have no account yet — send
+    // them to signup, not a "sign in" screen, and preserve where they were
+    // headed so they land back on it after the magic-link round trip.
+    const url = new URL("/signup", request.url);
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
   }
 
   if (isAuthRoute && user) {
