@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { sendGAEvent } from "@next/third-parties/google";
 import {
   ClipboardList,
   HelpCircle,
@@ -145,6 +146,8 @@ export function AppSidebar({ orgName, email, latest }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const initials = (email?.slice(0, 2) ?? "??").toUpperCase();
   const orgInitials = getInitials(orgName);
+  const cta = latest?.cta ?? null;
+  const isCheckoutCta = cta?.href.startsWith("/api/stripe/checkout") ?? false;
 
   // Restore the saved rail state after mount (SSR always renders expanded)
   useEffect(() => {
@@ -361,23 +364,26 @@ export function AppSidebar({ orgName, email, latest }: Props) {
       </nav>
 
       {/* C: state-aware report CTA */}
-      {latest?.cta && (
+      {cta && (
         collapsed ? (
-          latest.cta.external ? (
+          cta.external ? (
             <a
-              href={latest.cta.href}
+              href={cta.href}
               target="_blank"
               rel="noopener noreferrer"
-              title={`${latest.cta.title} — ${latest.cta.label}`}
+              title={`${cta.title} — ${cta.label}`}
               className="bc-focus-light mt-3 grid h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/40 bg-[#059669]/[0.22] text-[#A7F3D0] transition-colors hover:bg-[#059669]/30 md:grid hidden"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
             </a>
           ) : (
             <Link
-              href={latest.cta.href}
-              title={`${latest.cta.title} — ${latest.cta.label}`}
-              onClick={() => setMobileOpen(false)}
+              href={cta.href}
+              title={`${cta.title} — ${cta.label}`}
+              onClick={() => {
+                setMobileOpen(false);
+                if (isCheckoutCta) sendGAEvent("event", "checkout_started");
+              }}
               className="bc-focus-light mt-3 hidden h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/40 bg-[#059669]/[0.22] text-[#A7F3D0] transition-colors hover:bg-[#059669]/30 md:grid"
             >
               <Lock className="h-4 w-4" strokeWidth={1.5} />
@@ -385,24 +391,27 @@ export function AppSidebar({ orgName, email, latest }: Props) {
           )
         ) : (
           <div className="mt-3 rounded-[14px] border border-[#34D399]/40 bg-gradient-to-br from-[#059669]/[0.24] to-[#059669]/[0.08] p-3.5">
-            <p className="text-[11.5px] font-bold text-white">{latest.cta.title}</p>
-            <p className="mt-0.5 mb-2.5 text-[10.5px] leading-snug text-[#C9D6EC]">{latest.cta.body}</p>
-            {latest.cta.external ? (
+            <p className="text-[11.5px] font-bold text-white">{cta.title}</p>
+            <p className="mt-0.5 mb-2.5 text-[10.5px] leading-snug text-[#C9D6EC]">{cta.body}</p>
+            {cta.external ? (
               <a
-                href={latest.cta.href}
+                href={cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bc-focus-light block rounded-full bg-[#047857] py-2 text-center text-[11px] font-extrabold text-white transition-colors hover:bg-[#065F46]"
               >
-                {latest.cta.label}
+                {cta.label}
               </a>
             ) : (
               <Link
-                href={latest.cta.href}
-                onClick={() => setMobileOpen(false)}
+                href={cta.href}
+                onClick={() => {
+                  setMobileOpen(false);
+                  if (isCheckoutCta) sendGAEvent("event", "checkout_started");
+                }}
                 className="bc-focus-light block rounded-full bg-[#047857] py-2 text-center text-[11px] font-extrabold text-white transition-colors hover:bg-[#065F46]"
               >
-                {latest.cta.label}
+                {cta.label}
               </Link>
             )}
           </div>

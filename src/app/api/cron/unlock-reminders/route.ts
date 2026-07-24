@@ -18,9 +18,12 @@ export async function GET(request: NextRequest) {
 
   const { data: assessments, error } = await admin
     .from("assessments")
-    .select("id, org_id, overall_score, created_at")
+    // submitted_at (set in analyze/route.ts when status flips to "analysed")
+    // is when the assessment was actually finished — created_at is when the
+    // draft row was first inserted, which can be days earlier.
+    .select("id, org_id, overall_score, submitted_at")
     .eq("status", "analysed")
-    .lt("created_at", cutoff)
+    .lt("submitted_at", cutoff)
     .is("reminder_sent_at", null);
 
   if (error) {
@@ -32,6 +35,10 @@ export async function GET(request: NextRequest) {
   let failed = 0;
 
   for (const assessment of assessments ?? []) {
+    // Resolve the recipient first. A lookup failure here (no owner profile,
+    // no auth user) is permanent — it won't resolve itself on tomorrow's run
+    // — so stamp reminder_sent_at to stop retrying identically forever.
+    let recipient: { email: string; orgName: string } | null = null;
     try {
       const { data: org } = await admin
         .from("organisations")
@@ -53,24 +60,29 @@ export async function GET(request: NextRequest) {
         throw new Error(`No email for profile ${profile.id}: ${userError?.message}`);
       }
 
-      await sendUnlockReminderEmail(
-        userData.user.email,
-        org?.name ?? "Your Organisation",
-        assessment.id,
-        assessment.overall_score ?? 0
-      );
-
-      sent++;
+      recipient = { email: userData.user.email, orgName: org?.name ?? "Your Organisation" };
     } catch (err) {
       failed++;
-      console.error(`unlock-reminders: failed for assessment ${assessment.id}:`, err);
-    } finally {
-      // Mark attempted either way — a permanent failure (e.g. no profile)
-      // would otherwise retry and fail identically every day.
+      console.error(`unlock-reminders: recipient lookup failed for assessment ${assessment.id}, marking as attempted (won't retry):`, err);
       await admin
         .from("assessments")
         .update({ reminder_sent_at: new Date().toISOString() })
         .eq("id", assessment.id);
+      continue;
+    }
+
+    // Sending can fail transiently (Resend hiccup, rate limit) — don't stamp
+    // reminder_sent_at in that case, so it's retried on tomorrow's run.
+    try {
+      await sendUnlockReminderEmail(recipient.email, recipient.orgName, assessment.id, assessment.overall_score ?? 0);
+      sent++;
+      await admin
+        .from("assessments")
+        .update({ reminder_sent_at: new Date().toISOString() })
+        .eq("id", assessment.id);
+    } catch (err) {
+      failed++;
+      console.error(`unlock-reminders: send failed for assessment ${assessment.id}, will retry next run:`, err);
     }
   }
 

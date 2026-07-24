@@ -135,7 +135,9 @@ export async function sendUnlockReminderEmail(
 ): Promise<void> {
   const resend = getResend();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const resultsUrl = `${appUrl}/assessment/${assessmentId}/results`;
+  // ?ref=unlock_reminder lets the results page fire a one-off reminder_clicked
+  // GA4 event, so this channel is measurable separately from organic visits.
+  const resultsUrl = `${appUrl}/assessment/${assessmentId}/results?ref=unlock_reminder`;
 
   const body = `
     <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:${NAVY};">Your gap analysis is waiting</h1>
@@ -148,9 +150,12 @@ export async function sendUnlockReminderEmail(
       <span style="font-size:48px;font-weight:700;color:${EMERALD};">${overallScore}%</span>
       <p style="margin:4px 0 0;font-size:14px;color:${SLATE};">Overall readiness score</p>
     </div>
-    <p style="margin:0 0 20px;font-size:14px;color:${SLATE};line-height:1.6;">
+    <p style="margin:0 0 12px;font-size:14px;color:${SLATE};line-height:1.6;">
       Unlock the full report for £199 to see your prioritised remediation roadmap (P1/P2/P3) and
       step-by-step guidance for each control area.
+    </p>
+    <p style="margin:0 0 20px;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${EMERALD};">
+      First 10 customers: £99 with code FOUNDING10
     </p>
     <a href="${resultsUrl}"
        style="display:inline-block;background:${EMERALD};color:#ffffff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;">

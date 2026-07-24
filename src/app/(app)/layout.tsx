@@ -1,4 +1,5 @@
 import { AppSidebar, type SidebarLatest } from "@/components/brightcert/app-sidebar";
+import { GatedGaEvent } from "@/components/brightcert/ga-event";
 import { createClient } from "@/lib/supabase/server";
 import { getOverallStatus, getScoreColor, type Gap, type OverallStatus } from "@/types/assessment";
 
@@ -61,7 +62,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         if (assessment.status === "analysed") {
           cta = {
             title: "Your report is ready",
-            body: "All findings and the remediation roadmap, as a PDF.",
+            body: "All findings and the remediation roadmap, as a PDF. First 10 customers: £99 with code FOUNDING10.",
             label: "Unlock · £199",
             href: `/api/stripe/checkout?assessmentId=${assessment.id}`,
           };
@@ -105,6 +106,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F3F4EC] md:flex-row">
+      <GatedGaEvent param="signup" event="signup_completed" />
       <AppSidebar orgName={orgName} email={user?.email ?? null} latest={latest} />
 
       <div className="flex min-w-0 flex-1 flex-col">

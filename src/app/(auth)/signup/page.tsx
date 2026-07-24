@@ -8,7 +8,6 @@ import { GoogleButton } from "@/components/brightcert/google-button";
 import { LogoMark } from "@/components/brightcert/logo";
 import { createClient } from "@/lib/supabase/client";
 import { isDisposableEmail } from "@/lib/auth/disposable-domains";
-import { ATTRIBUTION_STORAGE_KEY } from "@/components/brightcert/attribution-capture";
 
 export default function SignupPage() {
   const [orgName, setOrgName] = useState("");
@@ -39,26 +38,15 @@ export default function SignupPage() {
     setLoading(true);
     const supabase = createClient();
 
-    // First-touch UTM data captured by AttributionCapture on landing, if any.
-    let attribution: { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null } = {};
-    try {
-      const stored = localStorage.getItem(ATTRIBUTION_STORAGE_KEY);
-      if (stored) attribution = JSON.parse(stored);
-    } catch {
-      // Malformed/blocked localStorage — proceed without attribution rather than fail signup.
-    }
-
-    // Sign up via magic link — org name + attribution stored in metadata, profile created in callback
+    // Sign up via magic link — org name stored in metadata, profile created in
+    // callback. UTM attribution is read from a cookie set by proxy.ts in the
+    // callback route itself, not passed through here (keeps the email-OTP and
+    // Google-OAuth paths identical instead of duplicating this per auth method).
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-        data: {
-          org_name: orgName,
-          utm_source: attribution.utm_source ?? null,
-          utm_medium: attribution.utm_medium ?? null,
-          utm_campaign: attribution.utm_campaign ?? null,
-        },
+        data: { org_name: orgName },
       },
     });
 
@@ -93,7 +81,7 @@ export default function SignupPage() {
           </div>
         ) : (
           <>
-            <GoogleButton label="Sign up with Google" />
+            <GoogleButton label="Sign up with Google" nextPath={nextPath} />
             <div className="flex items-center gap-3 my-4">
               <div className="h-px flex-1 bg-[#0F2044]/[0.08]" />
               <span className="text-xs text-[#94A3B8]">or</span>

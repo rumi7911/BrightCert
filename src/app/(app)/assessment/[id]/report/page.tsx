@@ -86,7 +86,11 @@ export default async function ReportPage({
     <div className="max-w-3xl">
       {/* Silent poller — refreshes page every 5s until PDF is ready */}
       <PdfPoller pdfReady={!!reportUrl} />
-      <GaEvent event="report_unlocked" params={{ assessment_id: assessmentId }} />
+      {/* Stripe only appends session_id on the immediate post-checkout
+          redirect, never on a later organic visit — so gating on it here
+          (rather than firing unconditionally on every report view) is what
+          makes this a real one-off purchase conversion signal. */}
+      {session_id && <GaEvent event="purchase_completed" params={{ assessment_id: assessmentId }} />}
 
       {/* Header */}
       <PageHeader

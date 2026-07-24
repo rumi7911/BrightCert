@@ -79,7 +79,7 @@ export default function LoginPage() {
           </div>
         ) : (
           <>
-            <GoogleButton label="Sign in with Google" />
+            <GoogleButton label="Sign in with Google" nextPath={nextPath} />
             <div className="flex items-center gap-3 my-4">
               <div className="h-px flex-1 bg-[#0F2044]/[0.08]" />
               <span className="text-xs text-[#94A3B8]">or</span>

@@ -1,7 +1,27 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { sendWelcomeEmail } from "@/lib/resend/emails";
+
+// Set by proxy.ts on first touch, on any request — works identically for
+// email-OTP and Google-OAuth signups, since it's a plain cookie rather than
+// something threaded through signInWithOtp's `data` field (which OAuth has
+// no equivalent of).
+function readAttributionCookie(raw: string | undefined) {
+  const empty = { utm_source: null, utm_medium: null, utm_campaign: null };
+  if (!raw) return empty;
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      utm_source: parsed.utm_source ?? null,
+      utm_medium: parsed.utm_medium ?? null,
+      utm_campaign: parsed.utm_campaign ?? null,
+    };
+  } catch {
+    return empty;
+  }
+}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -58,17 +78,21 @@ export async function GET(request: Request) {
     .eq("id", user.id)
     .maybeSingle();
 
+  let isNewSignup = false;
+
   if (!existingProfile) {
     const orgName =
       (user.user_metadata?.org_name as string) || "My Organisation";
+    const cookieStore = await cookies();
+    const attribution = readAttributionCookie(cookieStore.get("bc_attribution")?.value);
 
     const { data: org, error: orgError } = await admin
       .from("organisations")
       .insert({
         name: orgName,
-        utm_source: (user.user_metadata?.utm_source as string) || null,
-        utm_medium: (user.user_metadata?.utm_medium as string) || null,
-        utm_campaign: (user.user_metadata?.utm_campaign as string) || null,
+        utm_source: attribution.utm_source,
+        utm_medium: attribution.utm_medium,
+        utm_campaign: attribution.utm_campaign,
       })
       .select("id")
       .single();
@@ -83,6 +107,8 @@ export async function GET(request: Request) {
       });
       if (profileError) {
         console.error("Profile creation failed:", profileError);
+      } else {
+        isNewSignup = true;
       }
       // Fire-and-forget — don't block the redirect on email delivery
       sendWelcomeEmail(user.email!, orgName).catch((err) =>
@@ -91,5 +117,10 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}${next}`);
+  const redirectUrl = new URL(next, origin);
+  // Flags a real new-account creation (not every login) so the destination
+  // page can fire a one-off signup_completed GA4 event — see SignupCompletedEvent.
+  if (isNewSignup) redirectUrl.searchParams.set("signup", "1");
+
+  return NextResponse.redirect(redirectUrl);
 }

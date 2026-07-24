@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export function GoogleButton({ label = "Continue with Google" }: { label?: string }) {
+export function GoogleButton({
+  label = "Continue with Google",
+  nextPath,
+}: {
+  label?: string;
+  nextPath?: string;
+}) {
   const [loading, setLoading] = useState(false);
 
   async function handleGoogle() {
@@ -12,7 +18,7 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath ?? "/dashboard")}`,
       },
     });
     // On success the browser is redirected to Google, so we only reach here on error.

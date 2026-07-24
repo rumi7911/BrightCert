@@ -2,6 +2,8 @@ import Link from "next/link";
 import { CheckCircle2, ChevronDown, FileText, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
+import { CheckoutLink } from "@/components/brightcert/checkout-link";
+import { GatedGaEvent } from "@/components/brightcert/ga-event";
 import { DotStatus, PageHeader, SectionHeader } from "@/components/brightcert/ledger";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
 import { SECTIONS } from "@/lib/questions";
@@ -156,12 +158,11 @@ function UnlockCard({ assessmentId }: { assessmentId: string }) {
           </li>
         ))}
       </ul>
+      <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#A7F3D0] bg-[#ECFDF5] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#047857]">
+        First 10 customers — £99 with code FOUNDING10
+      </p>
       <div className="flex flex-col items-center gap-3 sm:flex-row">
-        <Button asChild size="lg" className="w-full sm:w-auto">
-          <Link href={`/api/stripe/checkout?assessmentId=${assessmentId}`}>
-            Unlock Full Report · £199
-          </Link>
-        </Button>
+        <CheckoutLink assessmentId={assessmentId}>Unlock Full Report · £199</CheckoutLink>
         <div className="flex items-center gap-2 text-sm text-[#64748B]">
           <FileText className="h-4 w-4" strokeWidth={1.5} />
           One-time payment. Instant PDF access.
@@ -195,6 +196,7 @@ export function ResultsView({
 
   return (
     <div className="max-w-3xl">
+      <GatedGaEvent param="ref" value="unlock_reminder" event="reminder_clicked" />
       <PageHeader title="Your readiness results" subtitle="Based on your assessment responses" />
 
       {/* Overall score + executive summary */}

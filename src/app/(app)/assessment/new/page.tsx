@@ -12,8 +12,8 @@ import {
   FileText,
   CheckCircle2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { IconTile } from "@/components/brightcert/icon-tile";
-import { StartAssessmentButton } from "@/components/brightcert/start-assessment-button";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Start Assessment" };
@@ -58,7 +58,9 @@ async function createAssessment() {
 
   if (error || !assessment) redirect("/dashboard");
 
-  redirect(`/assessment/${assessment.id}/section/1?q=1`);
+  // started=1 flags a real successful insert (not just a button click) so the
+  // destination page can fire a one-off assessment_started GA4 event.
+  redirect(`/assessment/${assessment.id}/section/1?q=1&started=1`);
 }
 
 export default function AssessmentNewPage() {
@@ -126,7 +128,9 @@ export default function AssessmentNewPage() {
         </div>
 
         <form action={createAssessment}>
-          <StartAssessmentButton />
+          <Button type="submit" size="lg" className="w-full">
+            Begin Assessment
+          </Button>
         </form>
       </div>
     </div>
