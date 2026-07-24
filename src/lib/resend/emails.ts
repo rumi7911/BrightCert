@@ -92,10 +92,15 @@ export async function sendWelcomeEmail(email: string, orgName: string): Promise<
 export async function sendReportReadyEmail(
   email: string,
   orgName: string,
-  reportUrl: string,
+  assessmentId: string,
   overallScore: number,
 ): Promise<void> {
   const resend = getResend();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  // Link to the app page, not a raw GCS signed URL — the app page always
+  // regenerates a fresh signed URL on load, so this link stays valid
+  // indefinitely (as long as the user can log in), not just for 7 days.
+  const reportPageUrl = `${appUrl}/assessment/${assessmentId}/report`;
 
   const body = `
     <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:${NAVY};">Your report is ready</h1>
@@ -111,12 +116,12 @@ export async function sendReportReadyEmail(
       Your report includes a full gap analysis, prioritised remediation roadmap (P1/P2/P3), and step-by-step
       guidance for each Cyber Essentials control area.
     </p>
-    <a href="${reportUrl}"
+    <a href="${reportPageUrl}"
        style="display:inline-block;background:${EMERALD};color:#ffffff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;margin-bottom:16px;">
       View &amp; download your report →
     </a>
     <p style="margin:16px 0 0;font-size:12px;color:#94A3B8;">
-      This link expires in 7 days. Log in to brightcert.co.uk to regenerate it at any time.
+      Log in to brightcert.co.uk to view or download this at any time.
     </p>`;
 
   await resend.emails.send({

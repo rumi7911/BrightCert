@@ -162,7 +162,9 @@ function UnlockCard({ assessmentId }: { assessmentId: string }) {
         First 10 customers — £99 with code FOUNDING10
       </p>
       <div className="flex flex-col items-center gap-3 sm:flex-row">
-        <CheckoutLink assessmentId={assessmentId}>Unlock Full Report · £199</CheckoutLink>
+        <Button asChild size="lg" className="w-full sm:w-auto">
+          <CheckoutLink assessmentId={assessmentId}>Unlock Full Report · £199</CheckoutLink>
+        </Button>
         <div className="flex items-center gap-2 text-sm text-[#64748B]">
           <FileText className="h-4 w-4" strokeWidth={1.5} />
           One-time payment. Instant PDF access.

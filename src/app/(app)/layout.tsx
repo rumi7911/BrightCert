@@ -106,7 +106,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F3F4EC] md:flex-row">
-      <GatedGaEvent param="signup" event="signup_completed" />
+      <GatedGaEvent param="signup" event="sign_up" />
       <AppSidebar orgName={orgName} email={user?.email ?? null} latest={latest} />
 
       <div className="flex min-w-0 flex-1 flex-col">

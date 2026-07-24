@@ -17,11 +17,12 @@ function withAttributionCookie(request: NextRequest, response: NextResponse) {
   const utm_source = searchParams.get("utm_source");
   const utm_medium = searchParams.get("utm_medium");
   const utm_campaign = searchParams.get("utm_campaign");
-  if (!utm_source && !utm_medium && !utm_campaign) return response;
+  const utm_content = searchParams.get("utm_content");
+  if (!utm_source && !utm_medium && !utm_campaign && !utm_content) return response;
 
   response.cookies.set(
     ATTRIBUTION_COOKIE,
-    JSON.stringify({ utm_source, utm_medium, utm_campaign }),
+    JSON.stringify({ utm_source, utm_medium, utm_campaign, utm_content }),
     { path: "/", sameSite: "lax", maxAge: 60 * 60 * 24 * 30 }
   );
   return response;

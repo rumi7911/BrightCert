@@ -5,7 +5,6 @@ import { Reveal } from "@/components/brightcert/reveal";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
-import { MagneticLink } from "@/components/brightcert/magnetic-link";
 import { GlowLink } from "@/components/brightcert/glow-link";
 import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signal-primitives";
 
@@ -35,6 +34,7 @@ const PRICING_SCHEMA = {
       price: "99",
       priceCurrency: "GBP",
       description: "Monthly readiness review, remediation tracking, and renewal preparation support.",
+      availability: "https://schema.org/PreOrder",
     },
     {
       "@type": "Offer",
@@ -42,6 +42,7 @@ const PRICING_SCHEMA = {
       price: "499",
       priceCurrency: "GBP",
       description: "Cyber Essentials Plus preparation: checklist, evidence collection guidance, and readiness review before technical testing.",
+      availability: "https://schema.org/PreOrder",
     },
     {
       "@type": "Offer",
@@ -49,10 +50,14 @@ const PRICING_SCHEMA = {
       price: "299",
       priceCurrency: "GBP",
       description: "Multi-client dashboard and assessment workflow for MSPs supporting UK SME clients (per month).",
+      availability: "https://schema.org/PreOrder",
     },
   ],
 };
 
+// Not yet purchasable — only the £199 Assessment has a live checkout path.
+// Cards are shown for roadmap visibility with an inert "Coming soon" label
+// instead of a real CTA (see PRICING_SCHEMA's availability: PreOrder above).
 const MINI_TIERS = [
   {
     id: undefined,
@@ -60,7 +65,6 @@ const MINI_TIERS = [
     price: "£99",
     cadence: "/mo",
     desc: "Ongoing visibility after your initial readiness report.",
-    cta: { label: "Join Monitor", href: "/signup" },
   },
   {
     id: undefined,
@@ -68,7 +72,6 @@ const MINI_TIERS = [
     price: "£499",
     cadence: "one-time",
     desc: "Preparation for Cyber Essentials Plus before technical testing.",
-    cta: { label: "Prepare for CE Plus", href: "/signup" },
   },
   {
     id: "msp",
@@ -76,7 +79,6 @@ const MINI_TIERS = [
     price: "£299",
     cadence: "/mo",
     desc: "For MSPs supporting multiple UK SME clients.",
-    cta: { label: "Become a Partner", href: "mailto:hello@brightcert.co.uk?subject=MSP%20Partner" },
   },
 ];
 
@@ -187,10 +189,9 @@ export default function PricingPage() {
                         </p>
                       </div>
                       <p className="text-[13.5px] text-[#475569]">{tier.desc}</p>
-                      <MagneticLink href={tier.cta.href} className="mt-2 inline-flex items-center gap-1.5 font-display text-[13.5px] font-semibold text-[#059669] w-fit group">
-                        {tier.cta.label}
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                      </MagneticLink>
+                      <span className="mt-2 inline-flex w-fit items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+                        Coming soon
+                      </span>
                     </article>
                   </Reveal>
                 ))}

@@ -9,7 +9,7 @@ import { sendWelcomeEmail } from "@/lib/resend/emails";
 // something threaded through signInWithOtp's `data` field (which OAuth has
 // no equivalent of).
 function readAttributionCookie(raw: string | undefined) {
-  const empty = { utm_source: null, utm_medium: null, utm_campaign: null };
+  const empty = { utm_source: null, utm_medium: null, utm_campaign: null, utm_content: null };
   if (!raw) return empty;
   try {
     const parsed = JSON.parse(raw);
@@ -17,6 +17,7 @@ function readAttributionCookie(raw: string | undefined) {
       utm_source: parsed.utm_source ?? null,
       utm_medium: parsed.utm_medium ?? null,
       utm_campaign: parsed.utm_campaign ?? null,
+      utm_content: parsed.utm_content ?? null,
     };
   } catch {
     return empty;
@@ -93,6 +94,7 @@ export async function GET(request: Request) {
         utm_source: attribution.utm_source,
         utm_medium: attribution.utm_medium,
         utm_campaign: attribution.utm_campaign,
+        utm_content: attribution.utm_content,
       })
       .select("id")
       .single();

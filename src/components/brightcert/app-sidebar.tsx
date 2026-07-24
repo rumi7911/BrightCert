@@ -382,7 +382,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               title={`${cta.title} — ${cta.label}`}
               onClick={() => {
                 setMobileOpen(false);
-                if (isCheckoutCta) sendGAEvent("event", "checkout_started");
+                if (isCheckoutCta) sendGAEvent("event", "begin_checkout");
               }}
               className="bc-focus-light mt-3 hidden h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/40 bg-[#059669]/[0.22] text-[#A7F3D0] transition-colors hover:bg-[#059669]/30 md:grid"
             >
@@ -407,7 +407,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
                 href={cta.href}
                 onClick={() => {
                   setMobileOpen(false);
-                  if (isCheckoutCta) sendGAEvent("event", "checkout_started");
+                  if (isCheckoutCta) sendGAEvent("event", "begin_checkout");
                 }}
                 className="bc-focus-light block rounded-full bg-[#047857] py-2 text-center text-[11px] font-extrabold text-white transition-colors hover:bg-[#065F46]"
               >

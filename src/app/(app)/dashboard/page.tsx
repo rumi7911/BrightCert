@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { IconTile } from "@/components/brightcert/icon-tile";
 import { Card } from "@/components/brightcert/card";
+import { CheckoutLink } from "@/components/brightcert/checkout-link";
 import { DashboardIssues, type DashboardControl } from "@/components/brightcert/dashboard-issues";
 import { SECTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/server";
@@ -118,10 +119,10 @@ function StatusBadge({ status }: { status: string }) {
 // (position: sticky + backdrop-filter), no scroll listener needed.
 function DashboardTopbar({
   subtitle,
-  unlockHref,
+  unlockAssessmentId,
 }: {
   subtitle?: string;
-  unlockHref?: string;
+  unlockAssessmentId?: string;
 }) {
   return (
     <div className="sticky top-14 z-30 -mx-4 mb-6 flex flex-col gap-3 border-b border-[#0F2044]/[0.07] bg-[#F3F4EC]/85 px-4 py-4 backdrop-blur-md backdrop-saturate-150 sm:flex-row sm:items-end sm:justify-between md:top-0 md:-mx-8 md:px-8">
@@ -130,15 +131,15 @@ function DashboardTopbar({
         <p className="mt-1 text-sm text-[#64748B]">{subtitle ?? "Your Cyber Essentials readiness overview"}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2.5">
-        {unlockHref && (
+        {unlockAssessmentId && (
           <Button asChild size="sm" className="bg-[#047857] hover:bg-[#065F46]">
-            <Link href={unlockHref}>
+            <CheckoutLink assessmentId={unlockAssessmentId}>
               <Lock className="h-4 w-4" />
               Unlock report · £199
-            </Link>
+            </CheckoutLink>
           </Button>
         )}
-        <Button asChild size="sm" variant={unlockHref ? "outline" : "cta"}>
+        <Button asChild size="sm" variant={unlockAssessmentId ? "outline" : "cta"}>
           <Link href="/assessment/new">
             <Plus className="h-4 w-4" />
             New Assessment
@@ -402,10 +403,10 @@ function ReportSection({
         </Button>
       ) : isAnalysed ? (
         <Button asChild size="sm" className="w-full">
-          <Link href={`/api/stripe/checkout?assessmentId=${latest.id}`}>
+          <CheckoutLink assessmentId={latest.id}>
             <Lock className="h-4 w-4" />
             Unlock report · £199
-          </Link>
+          </CheckoutLink>
         </Button>
       ) : (
         <Button asChild variant="outline" size="sm" className="w-full">
@@ -595,7 +596,7 @@ export default async function DashboardPage() {
     <div>
       <DashboardTopbar
         subtitle={`Your Cyber Essentials readiness · ${daysAgo(lastActivity) ?? "overview"}`}
-        unlockHref={latest.status === "analysed" ? `/api/stripe/checkout?assessmentId=${latest.id}` : undefined}
+        unlockAssessmentId={latest.status === "analysed" ? latest.id : undefined}
       />
 
       <VerdictBand

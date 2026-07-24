@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import { uploadReport } from "@/lib/gcs/upload";
+import { uploadReport, getReportSignedUrl } from "@/lib/gcs/upload";
 import { sendReportReadyEmail } from "@/lib/resend/emails";
+import { verifyAssessmentOwnership } from "@/lib/auth/assessment-ownership";
 
 export const maxDuration = 60; // PDF generation can take up to 60 seconds
 
@@ -11,6 +12,20 @@ export async function POST(request: NextRequest) {
 
     if (!assessmentId || typeof assessmentId !== "string") {
       return NextResponse.json({ error: "assessmentId is required" }, { status: 400 });
+    }
+
+    // Two trusted server-to-server callers (Stripe webhook, and the report
+    // page's own fire-and-forget trigger) have no user session to check —
+    // they authenticate via a shared secret instead. Anything else falls
+    // back to a real ownership check.
+    const internalSecret = process.env.INTERNAL_API_SECRET;
+    const isInternalCaller = !!internalSecret && request.headers.get("x-internal-secret") === internalSecret;
+
+    if (!isInternalCaller) {
+      const ownership = await verifyAssessmentOwnership(assessmentId);
+      if (!ownership.authorized) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: ownership.status });
+      }
     }
 
     const supabase = createAdminClient();
@@ -32,16 +47,18 @@ export async function POST(request: NextRequest) {
 
     // Check if a report already exists — tolerate duplicates (pick newest) so a
     // second concurrent trigger short-circuits instead of generating again.
+    // The stored gcs_url is a 7-day signed URL that goes stale, so regenerate
+    // a fresh one from the (deterministic) object path rather than reusing it.
     const { data: existingReport } = await supabase
       .from("reports")
-      .select("gcs_url")
+      .select("id")
       .eq("assessment_id", assessmentId)
       .order("generated_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (existingReport) {
-      return NextResponse.json({ url: existingReport.gcs_url });
+      return NextResponse.json({ url: await getReportSignedUrl(assessmentId) });
     }
 
     // Fetch control scores for PDF content
@@ -99,7 +116,7 @@ export async function POST(request: NextRequest) {
         sendReportReadyEmail(
           authUser.user.email,
           orgName,
-          gcsUrl,
+          assessmentId,
           assessment.overall_score ?? 0,
         ).catch((err) => console.error("Report-ready email failed:", err));
       }

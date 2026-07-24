@@ -31,10 +31,17 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Mark assessment as paid
+    // Mark assessment as paid, and record the actual payment so `paid`
+    // status can be backed by a verified Stripe transaction, not just a flag.
     const { error } = await supabase
       .from("assessments")
-      .update({ status: "paid" })
+      .update({
+        status: "paid",
+        stripe_session_id: session.id,
+        amount_paid: session.amount_total,
+        currency: session.currency,
+        paid_at: new Date().toISOString(),
+      })
       .eq("id", assessmentId);
 
     if (error) {
@@ -42,11 +49,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Database update failed" }, { status: 500 });
     }
 
-    // Trigger PDF generation (async, fire-and-forget)
+    // Trigger PDF generation (async, fire-and-forget). Internal secret marks
+    // this as a trusted server-to-server call — see /api/reports/generate.
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     fetch(`${appUrl}/api/reports/generate`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+      },
       body: JSON.stringify({ assessmentId }),
     }).catch((err) => console.error("PDF generation trigger failed:", err));
   }

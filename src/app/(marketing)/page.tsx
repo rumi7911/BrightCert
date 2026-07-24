@@ -542,10 +542,9 @@ export default async function HomePage() {
                         </p>
                       </div>
                       <p className="text-[13.5px] text-[#475569]">{tier.body}</p>
-                      <MagneticLink href="/pricing" className="mt-2 inline-flex items-center gap-1.5 font-display text-[13.5px] font-semibold text-[#059669] w-fit group">
-                        View pricing
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2} />
-                      </MagneticLink>
+                      <span className="mt-2 inline-flex w-fit items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+                        Coming soon
+                      </span>
                     </article>
                   </Reveal>
                 ))}

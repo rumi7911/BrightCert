@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeAssessment } from "@/lib/gemini/analyze";
 import { createAdminClient } from "@/lib/supabase/server";
+import { verifyAssessmentOwnership } from "@/lib/auth/assessment-ownership";
 import { getOverallStatus } from "@/types/assessment";
 
 export async function POST(request: NextRequest) {
@@ -9,6 +10,11 @@ export async function POST(request: NextRequest) {
 
     if (!assessmentId || typeof assessmentId !== "string") {
       return NextResponse.json({ error: "assessmentId is required" }, { status: 400 });
+    }
+
+    const ownership = await verifyAssessmentOwnership(assessmentId);
+    if (!ownership.authorized) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: ownership.status });
     }
 
     const supabase = createAdminClient();

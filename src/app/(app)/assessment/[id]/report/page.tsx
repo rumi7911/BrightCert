@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
 import { PdfPoller } from "@/components/brightcert/pdf-poller";
-import { GaEvent } from "@/components/brightcert/ga-event";
+import { GatedGaEvent } from "@/components/brightcert/ga-event";
 import { PageHeader, SectionHeader } from "@/components/brightcert/ledger";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe/client";
+import { getReportSignedUrl } from "@/lib/gcs/upload";
 
 export const metadata: Metadata = { title: "Your Report" };
 
@@ -27,7 +28,7 @@ export default async function ReportPage({
   // Fetch assessment + org name
   const { data: assessment } = await supabase
     .from("assessments")
-    .select("id, status, overall_score, overall_status, organisations(name)")
+    .select("id, status, overall_score, overall_status, stripe_session_id, amount_paid, currency, organisations(name)")
     .eq("id", assessmentId)
     .single();
 
@@ -45,9 +46,18 @@ export default async function ReportPage({
       ) {
         await supabase
           .from("assessments")
-          .update({ status: "paid" })
+          .update({
+            status: "paid",
+            stripe_session_id: session.id,
+            amount_paid: session.amount_total,
+            currency: session.currency,
+            paid_at: new Date().toISOString(),
+          })
           .eq("id", assessmentId);
         assessment.status = "paid";
+        assessment.stripe_session_id = session.id;
+        assessment.amount_paid = session.amount_total;
+        assessment.currency = session.currency;
       }
     } catch {
       // Stripe verification failed — fall through to redirect below
@@ -58,21 +68,29 @@ export default async function ReportPage({
     redirect(`/assessment/${assessmentId}/results`);
   }
 
-  // Fetch report URL
+  // A report row existing just means the PDF was generated at some point —
+  // the stored gcs_url is a 7-day signed URL that goes stale, so it's never
+  // read directly. A fresh one is generated below on every load instead.
   const { data: report } = await supabase
     .from("reports")
-    .select("gcs_url")
+    .select("id")
     .eq("assessment_id", assessmentId)
     .order("generated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  // If no report yet, kick off generation (idempotent — route checks for existing report)
+  // If no report yet, kick off generation (idempotent — route checks for existing report).
+  // Internal secret marks this as a trusted server-to-server call — this is a
+  // server-side fetch with no forwarded session cookie, so without it
+  // /api/reports/generate's ownership check would reject it.
   if (!report) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     fetch(`${appUrl}/api/reports/generate`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+      },
       body: JSON.stringify({ assessmentId }),
     }).catch(() => {});
   }
@@ -80,17 +98,25 @@ export default async function ReportPage({
   const orgData = assessment.organisations as unknown as { name: string } | null;
   const orgName = orgData?.name ?? "Your Organisation";
   const overallScore = assessment.overall_score ?? 0;
-  const reportUrl = report?.gcs_url ?? null;
+  const reportUrl = report ? await getReportSignedUrl(assessmentId).catch(() => null) : null;
 
   return (
     <div className="max-w-3xl">
       {/* Silent poller — refreshes page every 5s until PDF is ready */}
       <PdfPoller pdfReady={!!reportUrl} />
       {/* Stripe only appends session_id on the immediate post-checkout
-          redirect, never on a later organic visit — so gating on it here
-          (rather than firing unconditionally on every report view) is what
-          makes this a real one-off purchase conversion signal. */}
-      {session_id && <GaEvent event="purchase_completed" params={{ assessment_id: assessmentId }} />}
+          redirect, never on a later organic visit — GatedGaEvent fires once
+          then strips the param, and transaction_id gives GA4 itself a
+          second, independent way to dedupe an accidental repeat hit. */}
+      <GatedGaEvent
+        param="session_id"
+        event="purchase"
+        params={{
+          transaction_id: assessment.stripe_session_id ?? "",
+          value: (assessment.amount_paid ?? 0) / 100,
+          currency: assessment.currency ?? "GBP",
+        }}
+      />
 
       {/* Header */}
       <PageHeader
