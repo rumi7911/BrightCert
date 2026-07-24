@@ -64,7 +64,12 @@ export async function GET(request: Request) {
 
     const { data: org, error: orgError } = await admin
       .from("organisations")
-      .insert({ name: orgName })
+      .insert({
+        name: orgName,
+        utm_source: (user.user_metadata?.utm_source as string) || null,
+        utm_medium: (user.user_metadata?.utm_medium as string) || null,
+        utm_campaign: (user.user_metadata?.utm_campaign as string) || null,
+      })
       .select("id")
       .single();
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CertificationDisclaimer } from "@/components/brightcert/certification-disclaimer";
 import { ScoreCircle } from "@/components/brightcert/score-circle";
 import { PdfPoller } from "@/components/brightcert/pdf-poller";
+import { GaEvent } from "@/components/brightcert/ga-event";
 import { PageHeader, SectionHeader } from "@/components/brightcert/ledger";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe/client";
@@ -85,6 +86,7 @@ export default async function ReportPage({
     <div className="max-w-3xl">
       {/* Silent poller — refreshes page every 5s until PDF is ready */}
       <PdfPoller pdfReady={!!reportUrl} />
+      <GaEvent event="report_unlocked" params={{ assessment_id: assessmentId }} />
 
       {/* Header */}
       <PageHeader

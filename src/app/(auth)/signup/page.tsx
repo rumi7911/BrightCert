@@ -8,6 +8,7 @@ import { GoogleButton } from "@/components/brightcert/google-button";
 import { LogoMark } from "@/components/brightcert/logo";
 import { createClient } from "@/lib/supabase/client";
 import { isDisposableEmail } from "@/lib/auth/disposable-domains";
+import { ATTRIBUTION_STORAGE_KEY } from "@/components/brightcert/attribution-capture";
 
 export default function SignupPage() {
   const [orgName, setOrgName] = useState("");
@@ -38,12 +39,26 @@ export default function SignupPage() {
     setLoading(true);
     const supabase = createClient();
 
-    // Sign up via magic link — org name stored in metadata, profile created in callback
+    // First-touch UTM data captured by AttributionCapture on landing, if any.
+    let attribution: { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null } = {};
+    try {
+      const stored = localStorage.getItem(ATTRIBUTION_STORAGE_KEY);
+      if (stored) attribution = JSON.parse(stored);
+    } catch {
+      // Malformed/blocked localStorage — proceed without attribution rather than fail signup.
+    }
+
+    // Sign up via magic link — org name + attribution stored in metadata, profile created in callback
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-        data: { org_name: orgName },
+        data: {
+          org_name: orgName,
+          utm_source: attribution.utm_source ?? null,
+          utm_medium: attribution.utm_medium ?? null,
+          utm_campaign: attribution.utm_campaign ?? null,
+        },
       },
     });
 

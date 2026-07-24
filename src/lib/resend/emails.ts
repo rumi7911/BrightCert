@@ -126,3 +126,41 @@ export async function sendReportReadyEmail(
     html: baseTemplate(body),
   });
 }
+
+export async function sendUnlockReminderEmail(
+  email: string,
+  orgName: string,
+  assessmentId: string,
+  overallScore: number,
+): Promise<void> {
+  const resend = getResend();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const resultsUrl = `${appUrl}/assessment/${assessmentId}/results`;
+
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:${NAVY};">Your gap analysis is waiting</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:${SLATE};line-height:1.6;">
+      Hi${orgName ? ` ${orgName}` : ""},<br><br>
+      You finished your Cyber Essentials readiness assessment, but haven't unlocked your full report yet.
+      Your readiness score is:
+    </p>
+    <div style="background:${BG};border:1px solid ${BORDER};border-radius:12px;padding:24px;text-align:center;margin-bottom:24px;">
+      <span style="font-size:48px;font-weight:700;color:${EMERALD};">${overallScore}%</span>
+      <p style="margin:4px 0 0;font-size:14px;color:${SLATE};">Overall readiness score</p>
+    </div>
+    <p style="margin:0 0 20px;font-size:14px;color:${SLATE};line-height:1.6;">
+      Unlock the full report for £199 to see your prioritised remediation roadmap (P1/P2/P3) and
+      step-by-step guidance for each control area.
+    </p>
+    <a href="${resultsUrl}"
+       style="display:inline-block;background:${EMERALD};color:#ffffff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;">
+      View your results &amp; unlock report →
+    </a>`;
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: `Your Cyber Essentials readiness score: ${overallScore}%`,
+    html: baseTemplate(body),
+  });
+}

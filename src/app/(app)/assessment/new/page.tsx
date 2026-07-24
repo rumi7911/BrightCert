@@ -12,8 +12,8 @@ import {
   FileText,
   CheckCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { IconTile } from "@/components/brightcert/icon-tile";
+import { StartAssessmentButton } from "@/components/brightcert/start-assessment-button";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Start Assessment" };
@@ -126,9 +126,7 @@ export default function AssessmentNewPage() {
         </div>
 
         <form action={createAssessment}>
-          <Button type="submit" size="lg" className="w-full">
-            Begin Assessment
-          </Button>
+          <StartAssessmentButton />
         </form>
       </div>
     </div>
