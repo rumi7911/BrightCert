@@ -4,13 +4,9 @@ import { sendDraftReminderEmail } from "@/lib/resend/emails";
 import { SECTIONS, getQuestionsBySection } from "@/lib/questions";
 
 const HOUR_MS = 60 * 60 * 1000;
+const SPACING_MS = 48 * HOUR_MS;
 
 type Tier = "24h" | "72h";
-
-const TIERS: { tier: Tier; delayMs: number; sentColumn: "draft_reminder_24h_sent_at" | "draft_reminder_72h_sent_at" }[] = [
-  { tier: "24h", delayMs: 24 * HOUR_MS, sentColumn: "draft_reminder_24h_sent_at" },
-  { tier: "72h", delayMs: 72 * HOUR_MS, sentColumn: "draft_reminder_72h_sent_at" },
-];
 
 // Mirrors the section-completion logic in the questionnaire task-list page
 // (src/app/(app)/assessment/[id]/page.tsx) — kept as a separate small copy
@@ -62,6 +58,7 @@ export async function GET(request: NextRequest) {
 
   const dryRun = request.nextUrl.searchParams.get("dryRun") === "true";
   const admin = createAdminClient();
+  const now = Date.now();
 
   let sent = 0;
   let failed = 0;
@@ -75,94 +72,125 @@ export async function GET(request: NextRequest) {
     continueHref: string;
   }> = [];
 
-  for (const { tier, delayMs, sentColumn } of TIERS) {
-    const cutoff = new Date(Date.now() - delayMs).toISOString();
+  // Coarse prefilter only — the real eligibility window (24-72h vs 72h+,
+  // and the 24h/72h sequencing) is decided per-assessment below, based on
+  // actual last-answered-question activity rather than this raw column.
+  const { data: candidates, error } = await admin
+    .from("assessments")
+    .select("id, org_id, created_at, draft_reminder_24h_sent_at, draft_reminder_72h_sent_at")
+    .eq("status", "draft");
 
-    const { data: assessments, error } = await admin
-      .from("assessments")
-      .select("id, org_id, created_at")
-      .eq("status", "draft")
-      .lt("created_at", cutoff)
-      .is(sentColumn, null);
+  if (error) {
+    console.error("draft-reminders: failed to query draft assessments:", error);
+    return NextResponse.json({ error: "Query failed" }, { status: 500 });
+  }
 
-    if (error) {
-      console.error(`draft-reminders: failed to query ${tier} assessments:`, error);
-      continue;
+  for (const assessment of candidates ?? []) {
+    if (assessment.draft_reminder_24h_sent_at && assessment.draft_reminder_72h_sent_at) continue;
+
+    const { data: responses } = await admin
+      .from("responses")
+      .select("section_id, created_at")
+      .eq("assessment_id", assessment.id);
+
+    const lastActivityMs = (responses ?? []).reduce(
+      (latest, r) => Math.max(latest, new Date(r.created_at).getTime()),
+      new Date(assessment.created_at).getTime()
+    );
+    const ageMs = now - lastActivityMs;
+
+    // Exactly one tier can be eligible per run: 24h only inside its own
+    // window (so a draft that ages past 72h without ever getting a 24h
+    // send permanently drops out of that tier, rather than firing late and
+    // colliding with 72h), 72h only once real activity is 72h+ stale AND
+    // either no 24h reminder was ever sent (historical/backlog draft —
+    // gets exactly one message, not zero and not two) or it was sent at
+    // least 48h ago (proper sequencing, never back-to-back).
+    let tier: Tier | null = null;
+    if (
+      !assessment.draft_reminder_24h_sent_at &&
+      ageMs >= 24 * HOUR_MS &&
+      ageMs < 72 * HOUR_MS
+    ) {
+      tier = "24h";
+    } else if (
+      !assessment.draft_reminder_72h_sent_at &&
+      ageMs >= 72 * HOUR_MS &&
+      (!assessment.draft_reminder_24h_sent_at ||
+        now - new Date(assessment.draft_reminder_24h_sent_at).getTime() >= SPACING_MS)
+    ) {
+      tier = "72h";
     }
 
-    processed += assessments?.length ?? 0;
+    if (!tier) continue;
+    processed++;
 
-    for (const assessment of assessments ?? []) {
-      // Resolve the recipient first. A lookup failure here is permanent —
-      // it won't resolve itself on tomorrow's run — so stamp the sent
-      // column to stop retrying identically forever.
-      let recipient: { email: string; orgName: string } | null = null;
-      try {
-        const { data: org } = await admin
-          .from("organisations")
-          .select("name")
-          .eq("id", assessment.org_id)
-          .single();
+    const sentColumn = tier === "24h" ? "draft_reminder_24h_sent_at" : "draft_reminder_72h_sent_at";
 
-        const { data: profile } = await admin
-          .from("profiles")
-          .select("id")
-          .eq("org_id", assessment.org_id)
-          .eq("role", "owner")
-          .single();
+    // Resolve the recipient first. A lookup failure here is permanent —
+    // it won't resolve itself on tomorrow's run — so stamp the sent
+    // column to stop retrying identically forever.
+    let recipient: { email: string; orgName: string } | null = null;
+    try {
+      const { data: org } = await admin
+        .from("organisations")
+        .select("name")
+        .eq("id", assessment.org_id)
+        .single();
 
-        if (!profile) throw new Error(`No owner profile for org ${assessment.org_id}`);
+      const { data: profile } = await admin
+        .from("profiles")
+        .select("id")
+        .eq("org_id", assessment.org_id)
+        .eq("role", "owner")
+        .single();
 
-        const { data: userData, error: userError } = await admin.auth.admin.getUserById(profile.id);
-        if (userError || !userData?.user?.email) {
-          throw new Error(`No email for profile ${profile.id}: ${userError?.message}`);
-        }
+      if (!profile) throw new Error(`No owner profile for org ${assessment.org_id}`);
 
-        recipient = { email: userData.user.email, orgName: org?.name ?? "Your Organisation" };
-      } catch (err) {
-        failed++;
-        console.error(`draft-reminders: recipient lookup failed for assessment ${assessment.id} (${tier}), marking as attempted (won't retry):`, err);
-        if (!dryRun) {
-          await admin
-            .from("assessments")
-            .update({ [sentColumn]: new Date().toISOString() })
-            .eq("id", assessment.id);
-        }
-        continue;
+      const { data: userData, error: userError } = await admin.auth.admin.getUserById(profile.id);
+      if (userError || !userData?.user?.email) {
+        throw new Error(`No email for profile ${profile.id}: ${userError?.message}`);
       }
 
-      const { data: responses } = await admin
-        .from("responses")
-        .select("section_id")
-        .eq("assessment_id", assessment.id);
-
-      const { completedCount, continueHref } = computeProgress(responses ?? [], assessment.id);
-
-      if (dryRun) {
-        dryRunPreview.push({
-          assessmentId: assessment.id,
-          tier,
-          email: recipient.email,
-          orgName: recipient.orgName,
-          completedCount,
-          continueHref,
-        });
-        continue;
-      }
-
-      // Sending can fail transiently (Resend hiccup, rate limit) — don't
-      // stamp the sent column in that case, so it's retried on tomorrow's run.
-      try {
-        await sendDraftReminderEmail(recipient.email, recipient.orgName, assessment.id, tier, completedCount, continueHref);
-        sent++;
+      recipient = { email: userData.user.email, orgName: org?.name ?? "Your Organisation" };
+    } catch (err) {
+      failed++;
+      console.error(`draft-reminders: recipient lookup failed for assessment ${assessment.id} (${tier}), marking as attempted (won't retry):`, err);
+      if (!dryRun) {
         await admin
           .from("assessments")
           .update({ [sentColumn]: new Date().toISOString() })
           .eq("id", assessment.id);
-      } catch (err) {
-        failed++;
-        console.error(`draft-reminders: send failed for assessment ${assessment.id} (${tier}), will retry next run:`, err);
       }
+      continue;
+    }
+
+    const { completedCount, continueHref } = computeProgress(responses ?? [], assessment.id);
+
+    if (dryRun) {
+      dryRunPreview.push({
+        assessmentId: assessment.id,
+        tier,
+        email: recipient.email,
+        orgName: recipient.orgName,
+        completedCount,
+        continueHref,
+      });
+      continue;
+    }
+
+    // Sending can fail transiently (Resend hiccup, rate limit) — don't
+    // stamp the sent column in that case, so it's retried on tomorrow's run.
+    try {
+      await sendDraftReminderEmail(recipient.email, recipient.orgName, assessment.id, tier, completedCount, continueHref);
+      sent++;
+      await admin
+        .from("assessments")
+        .update({ [sentColumn]: new Date().toISOString() })
+        .eq("id", assessment.id);
+    } catch (err) {
+      failed++;
+      console.error(`draft-reminders: send failed for assessment ${assessment.id} (${tier}), will retry next run:`, err);
     }
   }
 

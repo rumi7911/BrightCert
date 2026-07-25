@@ -107,16 +107,21 @@ export default async function ReportPage({
       {/* Stripe only appends session_id on the immediate post-checkout
           redirect, never on a later organic visit — GatedGaEvent fires once
           then strips the param, and transaction_id gives GA4 itself a
-          second, independent way to dedupe an accidental repeat hit. */}
-      <GatedGaEvent
-        param="session_id"
-        event="purchase"
-        params={{
-          transaction_id: assessment.stripe_session_id ?? "",
-          value: (assessment.amount_paid ?? 0) / 100,
-          currency: assessment.currency ?? "GBP",
-        }}
-      />
+          second, independent way to dedupe an accidental repeat hit. Only
+          renders/fires when the URL's session_id matches the assessment's
+          own stored one, so a stale or fabricated param can't fire it. */}
+      {assessment.stripe_session_id && (
+        <GatedGaEvent
+          param="session_id"
+          value={assessment.stripe_session_id}
+          event="purchase"
+          params={{
+            transaction_id: assessment.stripe_session_id,
+            value: (assessment.amount_paid ?? 0) / 100,
+            currency: (assessment.currency ?? "GBP").toUpperCase(),
+          }}
+        />
+      )}
 
       {/* Header */}
       <PageHeader

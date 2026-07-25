@@ -190,7 +190,9 @@ export async function sendDraftReminderEmail(
   const heading = tier === "24h" ? "Continue where you left off" : "Still working on your assessment?";
   const intro =
     tier === "24h"
-      ? "You started your Cyber Essentials readiness assessment — it only takes a few more minutes to finish."
+      ? completedCount === 0
+        ? "You started your Cyber Essentials readiness assessment. Your progress is saved — continue whenever it suits you."
+        : "You started your Cyber Essentials readiness assessment — it only takes a few more minutes to finish."
       : "Your Cyber Essentials readiness assessment is still in progress. Here's where you're at:";
 
   const progressBlock =
