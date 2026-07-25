@@ -6,11 +6,11 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
 import {
   type Consent,
+  captureAttributionIfPresent,
+  enableAnalyticsEvents,
   readConsent,
   writeConsent,
   onReopenConsent,
-  stashPendingAttribution,
-  captureAttributionIfPresent,
 } from "@/lib/analytics/consent";
 
 const GA_ID = "G-YW9BG1DXPC";
@@ -26,11 +26,15 @@ export function AnalyticsConsent() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    const existingConsent = readConsent();
     // One-time reads on mount, not an ongoing sync.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setConsent(readConsent());
+    setConsent(existingConsent);
     setReady(true);
-    stashPendingAttribution();
+    if (existingConsent === "granted") {
+      enableAnalyticsEvents();
+      captureAttributionIfPresent();
+    }
 
     return onReopenConsent(() => setOpen(true));
   }, []);

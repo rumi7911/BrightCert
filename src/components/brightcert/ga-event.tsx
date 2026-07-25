@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { sendGAEvent } from "@next/third-parties/google";
-import { readConsent, onConsentChange, waitForDataLayer } from "@/lib/analytics/consent";
+import { readConsent, onConsentChange, sendConsentedGAEvent, waitForDataLayer } from "@/lib/analytics/consent";
 
 // Fires a GA4 event once when a query param is present on arrival — used for
 // one-off lifecycle events (sign_up, assessment_started, reminder_clicked,
@@ -48,8 +47,7 @@ export function GatedGaEvent({
     }
 
     async function fireAndStrip() {
-      await waitForDataLayer();
-      sendGAEvent("event", event, params ?? {});
+      if (await waitForDataLayer()) sendConsentedGAEvent(event, params ?? {});
       strip();
     }
 

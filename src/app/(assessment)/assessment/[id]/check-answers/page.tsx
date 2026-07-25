@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendConsentedGAEvent } from "@/lib/analytics/consent";
 import { Button } from "@/components/ui/button";
 import { SECTIONS, QUESTIONS } from "@/lib/questions";
 import { createClient } from "@/lib/supabase/client";
@@ -71,7 +71,7 @@ export default function CheckAnswersPage({
         throw new Error(body.error ?? "Analysis failed. Please try again.");
       }
 
-      sendGAEvent("event", "assessment_completed");
+      sendConsentedGAEvent("assessment_completed");
       router.push(`/assessment/${assessmentId}/results`);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong");

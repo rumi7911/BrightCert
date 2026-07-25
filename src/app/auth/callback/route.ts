@@ -3,26 +3,7 @@ import { cookies } from "next/headers";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { sendWelcomeEmail } from "@/lib/resend/emails";
-
-// Set by proxy.ts on first touch, on any request — works identically for
-// email-OTP and Google-OAuth signups, since it's a plain cookie rather than
-// something threaded through signInWithOtp's `data` field (which OAuth has
-// no equivalent of).
-function readAttributionCookie(raw: string | undefined) {
-  const empty = { utm_source: null, utm_medium: null, utm_campaign: null, utm_content: null };
-  if (!raw) return empty;
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      utm_source: parsed.utm_source ?? null,
-      utm_medium: parsed.utm_medium ?? null,
-      utm_campaign: parsed.utm_campaign ?? null,
-      utm_content: parsed.utm_content ?? null,
-    };
-  } catch {
-    return empty;
-  }
-}
+import { readSignupAttribution } from "@/lib/analytics/signup-attribution";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -99,7 +80,7 @@ export async function GET(request: Request) {
     const orgName =
       (user.user_metadata?.org_name as string) || "My Organisation";
     const cookieStore = await cookies();
-    const attribution = readAttributionCookie(cookieStore.get("bc_attribution")?.value);
+    const attribution = readSignupAttribution(cookieStore.get("bc_attribution")?.value);
 
     const { data: org, error: orgError } = await admin
       .from("organisations")
@@ -109,6 +90,14 @@ export async function GET(request: Request) {
         utm_medium: attribution.utm_medium,
         utm_campaign: attribution.utm_campaign,
         utm_content: attribution.utm_content,
+        first_utm_source: attribution.first_utm_source,
+        first_utm_medium: attribution.first_utm_medium,
+        first_utm_campaign: attribution.first_utm_campaign,
+        first_utm_content: attribution.first_utm_content,
+        last_utm_source: attribution.last_utm_source,
+        last_utm_medium: attribution.last_utm_medium,
+        last_utm_campaign: attribution.last_utm_campaign,
+        last_utm_content: attribution.last_utm_content,
       })
       .select("id")
       .single();

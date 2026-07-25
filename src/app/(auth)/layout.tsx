@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/brightcert/logo";
-import { Mark } from "@/components/brightcert/signal-primitives";
 
 const TRUST_POINTS = [
   {
@@ -43,7 +42,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         <div className="relative">
           <h2 className="font-display text-3xl xl:text-[34px] font-bold leading-[1.15] tracking-tight text-white">
-            Get <Mark className="text-[#0F2044]">Cyber Essentials</Mark> ready in 2 hours
+            Find out how ready you are in around 2 hours.
           </h2>
           <p className="mt-3 text-sm text-white/70">
             Built for UK businesses preparing for Cyber Essentials.

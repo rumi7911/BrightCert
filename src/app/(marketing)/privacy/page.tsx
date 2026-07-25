@@ -18,7 +18,7 @@ export default function PrivacyPage() {
       <main className="pt-[150px] pb-24">
         <div className="max-w-3xl mx-auto px-4">
           <h1 className="font-display text-4xl font-bold text-[#0F2044] mb-2">Privacy Policy</h1>
-          <p className="text-sm text-[#64748B] mb-10">Last updated: 2 July 2026</p>
+          <p className="text-sm text-[#64748B] mb-10">Last updated: 25 July 2026</p>
 
           <div className="space-y-8 text-[#475569] leading-relaxed text-[15px]">
             <section>
@@ -57,6 +57,12 @@ export default function PrivacyPage() {
                   <strong>Technical data:</strong>{" "}basic log and device information
                   collected automatically when you use the service.
                 </li>
+                <li>
+                  <strong>Outreach and prospect data:</strong>{" "}business contact details,
+                  job role, company details, public business context, the source and date we
+                  collected it, and records of contact, replies, objections, and suppression.
+                  We use this only for corporate B2B outreach, not personal consumer marketing.
+                </li>
               </ul>
             </Section>
 
@@ -66,11 +72,17 @@ export default function PrivacyPage() {
                 <li>To create and manage your account and process payments.</li>
                 <li>To send you service-related emails (sign-in links, report notifications).</li>
                 <li>To operate, secure, and improve the service.</li>
+                <li>
+                  To identify and contact relevant UK corporate prospects about BrightCert,
+                  manage replies and opt-outs, and measure our B2B outreach responsibly.
+                </li>
               </ul>
               <p className="mt-3">
                 Our legal bases are performance of a contract with you, our legitimate
-                interests in operating and improving the service, and your consent where
-                required.
+                interests in operating, improving, and marketing our service to relevant
+                businesses, and your consent where required. For B2B outreach, we assess
+                our legitimate interests against the rights and expectations of the people
+                we contact before sending anything.
               </p>
             </Section>
 
@@ -85,13 +97,26 @@ export default function PrivacyPage() {
             </Section>
 
             <Section title="5. Who we share data with">
-              <p>We use the following processors to run the service:</p>
+              <p>
+                We use the following processors and sharing categories to run the service
+                and our outreach operations:
+              </p>
               <ul className="list-disc pl-5 space-y-1.5 mt-2">
                 <li><strong>Supabase</strong>{" "}— database and authentication (data hosted in the EU/London region).</li>
                 <li><strong>Google Cloud</strong>{" "}— the Gemini API (assessment analysis) and Cloud Storage (report PDFs, EU region).</li>
                 <li><strong>Stripe</strong>{" "}— payment processing.</li>
                 <li><strong>Resend</strong>{" "}— transactional email delivery.</li>
                 <li><strong>Vercel</strong>{" "}— application hosting.</li>
+                <li>
+                  <strong>Clay and licensed data providers</strong>{" "}— B2B prospect research
+                  and enrichment, where we use them. We may also collect public business
+                  context from company websites, public professional profiles, and public
+                  registers including Companies House.
+                </li>
+                <li>
+                  <strong>Professional advisers and authorities</strong>{" "}— only where needed
+                  for legal, accounting, fraud-prevention, or regulatory purposes.
+                </li>
               </ul>
               <p className="mt-3">
                 We do not sell your personal data. Where data is transferred outside the
@@ -101,12 +126,26 @@ export default function PrivacyPage() {
             </Section>
 
             <Section title="6. Data retention">
-              <p>
-                We keep your account and assessment data for as long as your account is
-                active or as needed to provide the service, and thereafter only as
-                required to meet legal, accounting, or reporting obligations. You may
-                request deletion of your account and associated data at any time.
-              </p>
+              <p>We keep data only for as long as it is needed for the purpose collected:</p>
+              <ul className="list-disc pl-5 space-y-1.5 mt-2">
+                <li>
+                  Account and assessment data: while your account is active, then only as
+                  needed for legal, accounting, or reporting obligations.
+                </li>
+                <li>
+                  Active B2B outreach records: for the sequence and up to 90 days after it
+                  ends, unless you become a customer or ask us to stop sooner.
+                </li>
+                <li>
+                  Other non-converted prospect records: deleted or de-identified no later
+                  than 180 days after the sequence ends.
+                </li>
+                <li>
+                  Suppression records: the minimum identifier and evidence needed to honour
+                  an opt-out are retained for as long as reasonably necessary to make sure
+                  we do not contact you again.
+                </li>
+              </ul>
             </Section>
 
             <Section title="7. Your rights">
@@ -118,6 +157,10 @@ export default function PrivacyPage() {
                 <li>Restrict or object to certain processing.</li>
                 <li>Data portability.</li>
                 <li>Withdraw consent where processing is based on consent.</li>
+                <li>
+                  Object at any time to direct marketing. We will stop direct marketing
+                  when you object; this right is unconditional.
+                </li>
               </ul>
               <p className="mt-3">
                 To exercise any of these, email{" "}
@@ -126,6 +169,15 @@ export default function PrivacyPage() {
                 </a>
                 . You also have the right to lodge a complaint with the Information
                 Commissioner&rsquo;s Office (ICO) at ico.org.uk.
+              </p>
+              <p className="mt-3">
+                <strong>To opt out of outreach:</strong>{" "}reply &ldquo;stop&rdquo; or &ldquo;opt out&rdquo; to
+                any BrightCert outreach email, or email{" "}
+                <a href="mailto:hello@brightcert.co.uk" className="text-[#059669] hover:underline">
+                  hello@brightcert.co.uk
+                </a>
+                . We will add the minimum details needed to our suppression list and stop
+                sending direct marketing.
               </p>
             </Section>
 

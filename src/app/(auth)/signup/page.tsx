@@ -38,10 +38,9 @@ export default function SignupPage() {
     setLoading(true);
     const supabase = createClient();
 
-    // Sign up via magic link — org name stored in metadata, profile created in
-    // callback. UTM attribution is read from a cookie set by proxy.ts in the
-    // callback route itself, not passed through here (keeps the email-OTP and
-    // Google-OAuth paths identical instead of duplicating this per auth method).
+    // Sign up via magic link — org name is stored in metadata and the callback
+    // reads consented attribution from its cookie, keeping OTP and Google OAuth
+    // on the same path without putting campaign data in the auth payload.
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {

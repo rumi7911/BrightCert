@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendConsentedGAEvent } from "@/lib/analytics/consent";
 
 // Fires begin_checkout before navigating to the Stripe checkout route. The
 // pages that need this (results, dashboard) are server components, so this
@@ -24,7 +24,7 @@ export function CheckoutLink({
       href={`/api/stripe/checkout?assessmentId=${assessmentId}`}
       className={className}
       title={title}
-      onClick={() => sendGAEvent("event", "begin_checkout")}
+      onClick={() => sendConsentedGAEvent("begin_checkout")}
     >
       {children}
     </Link>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendConsentedGAEvent } from "@/lib/analytics/consent";
 import {
   ClipboardList,
   HelpCircle,
@@ -382,7 +382,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
               title={`${cta.title} — ${cta.label}`}
               onClick={() => {
                 setMobileOpen(false);
-                if (isCheckoutCta) sendGAEvent("event", "begin_checkout");
+                if (isCheckoutCta) sendConsentedGAEvent("begin_checkout");
               }}
               className="bc-focus-light mt-3 hidden h-10 w-10 place-items-center rounded-[10px] border border-[#34D399]/40 bg-[#059669]/[0.22] text-[#A7F3D0] transition-colors hover:bg-[#059669]/30 md:grid"
             >
@@ -407,7 +407,7 @@ export function AppSidebar({ orgName, email, latest }: Props) {
                 href={cta.href}
                 onClick={() => {
                   setMobileOpen(false);
-                  if (isCheckoutCta) sendGAEvent("event", "begin_checkout");
+                  if (isCheckoutCta) sendConsentedGAEvent("begin_checkout");
                 }}
                 className="bc-focus-light block rounded-full bg-[#047857] py-2 text-center text-[11px] font-extrabold text-white transition-colors hover:bg-[#065F46]"
               >

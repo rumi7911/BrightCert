@@ -1,50 +1,155 @@
-// Single source of truth for the bc_consent decision, shared by
-// AnalyticsConsent (owns the banner UI + GoogleAnalytics mount), GatedGaEvent
-// (needs to know whether it's safe to fire yet), and anything that wants to
-// reopen or capture attribution off the back of a consent decision.
+"use client";
+
+import { sendGAEvent } from "@next/third-parties/google";
 
 const CONSENT_COOKIE = "bc_consent";
 const ATTRIBUTION_COOKIE = "bc_attribution";
-const PENDING_ATTRIBUTION_KEY = "bc_pending_attribution";
+const LEGACY_PENDING_ATTRIBUTION_KEY = "bc_pending_attribution";
 const CHANGE_EVENT = "bc-consent-change";
 const REOPEN_EVENT = "bc-consent-reopen";
+const ATTRIBUTION_COOKIE_MAX_BYTES = 3800;
+const UTM_VALUE_MAX_LENGTH = 200;
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content"] as const;
+
+type UtmKey = (typeof UTM_KEYS)[number];
+type UtmValues = Partial<Record<UtmKey, string>>;
+
+export type Attribution = {
+  first_touch: UtmValues;
+  last_touch: UtmValues;
+} & UtmValues;
 
 export type Consent = "granted" | "denied";
 
+let analyticsEventsEnabled = false;
+
+function cookieOptions(maxAge: number) {
+  const secure = window.location.protocol === "https:" && process.env.NODE_ENV === "production" ? "; secure" : "";
+  return `path=/; max-age=${maxAge}; samesite=lax${secure}`;
+}
+
+function deleteCookie(name: string) {
+  document.cookie = `${name}=; ${cookieOptions(0)}`;
+}
+
+function isValidUtmValue(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.length > 0 &&
+    value.length <= UTM_VALUE_MAX_LENGTH &&
+    !/[\u0000-\u001F\u007F]/.test(value)
+  );
+}
+
+function pickUtmValues(value: unknown): UtmValues | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+
+  if (!Object.keys(value).every((key) => (UTM_KEYS as readonly string[]).includes(key))) return null;
+
+  const result: UtmValues = {};
+  for (const key of UTM_KEYS) {
+    const candidate = (value as Record<string, unknown>)[key];
+    if (candidate === undefined) continue;
+    if (!isValidUtmValue(candidate)) return null;
+    result[key] = candidate;
+  }
+  return Object.keys(result).length > 0 ? result : null;
+}
+
+function decodeCookieValue(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+// Accepts both the former flat shape and the consented first-/last-touch
+// shape. Invalid cookies are declined rather than partially trusted.
+export function parseAttributionCookie(raw: string | undefined): Attribution | null {
+  if (!raw || raw.length > ATTRIBUTION_COOKIE_MAX_BYTES) return null;
+
+  try {
+    const parsed: unknown = JSON.parse(decodeCookieValue(raw));
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    const record = parsed as Record<string, unknown>;
+    const hasTouchShape = "first_touch" in record || "last_touch" in record;
+    if (
+      hasTouchShape &&
+      !Object.keys(record).every((key) =>
+        key === "first_touch" || key === "last_touch" || (UTM_KEYS as readonly string[]).includes(key)
+      )
+    ) {
+      return null;
+    }
+    const firstTouch = pickUtmValues(hasTouchShape ? record.first_touch : record);
+    const lastTouch = pickUtmValues(hasTouchShape ? record.last_touch : record);
+    if (!firstTouch || !lastTouch) return null;
+
+    return {
+      first_touch: firstTouch,
+      last_touch: lastTouch,
+      ...lastTouch,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function readCookie(name: string): string | undefined {
+  return document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))?.[1];
+}
+
 export function readConsent(): Consent | null {
-  const match = document.cookie.match(/(?:^|; )bc_consent=([^;]*)/);
-  const value = match?.[1];
+  const value = readCookie(CONSENT_COOKIE);
   return value === "granted" || value === "denied" ? value : null;
 }
 
-// Deletes any cookie whose name matches GA4's own naming (_ga, _ga_<id>) —
-// used on withdrawal so tracking actually stops, not just stops loading on
-// future visits. Best-effort: cookies set with a different path/domain than
-// this one can't be cleared from here, but GA4's own cookies are always
-// path=/ on the current host.
 function clearGoogleAnalyticsCookies() {
   document.cookie.split(";").forEach((entry) => {
     const name = entry.split("=")[0]?.trim();
-    if (name === "_ga" || name?.startsWith("_ga_")) {
-      document.cookie = `${name}=; path=/; max-age=0`;
-    }
+    if (name === "_ga" || name?.startsWith("_ga_")) deleteCookie(name);
   });
 }
 
+function removeLegacyAttributionStorage() {
+  // Earlier builds used session storage before consent. Clearing both stores is
+  // intentionally best effort: privacy withdrawal must never fail on a browser
+  // that has storage disabled.
+  for (const storage of [window.sessionStorage, window.localStorage]) {
+    try {
+      storage.removeItem(LEGACY_PENDING_ATTRIBUTION_KEY);
+    } catch {
+      // Storage is unavailable; there is no in-browser state we can remove.
+    }
+  }
+}
+
+export function clearTrackingState() {
+  analyticsEventsEnabled = false;
+  deleteCookie(ATTRIBUTION_COOKIE);
+  clearGoogleAnalyticsCookies();
+  removeLegacyAttributionStorage();
+  document
+    .querySelectorAll('script#_next-ga, script#_next-ga-init, script[src*="googletagmanager.com/gtag/js"]')
+    .forEach((script) => script.remove());
+  delete (window as Window & { dataLayer?: unknown[]; gtag?: unknown }).dataLayer;
+  delete (window as Window & { dataLayer?: unknown[]; gtag?: unknown }).gtag;
+}
+
 export function writeConsent(value: Consent) {
-  document.cookie = `${CONSENT_COOKIE}=${value}; path=/; max-age=31536000; samesite=lax`;
-  if (value === "denied") clearGoogleAnalyticsCookies();
+  document.cookie = `${CONSENT_COOKIE}=${value}; ${cookieOptions(31536000)}`;
+  if (value === "granted") analyticsEventsEnabled = true;
+  else clearTrackingState();
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: value }));
 }
 
 export function onConsentChange(handler: (value: Consent) => void): () => void {
-  const listener = (e: Event) => handler((e as CustomEvent<Consent>).detail);
+  const listener = (event: Event) => handler((event as CustomEvent<Consent>).detail);
   window.addEventListener(CHANGE_EVENT, listener);
   return () => window.removeEventListener(CHANGE_EVENT, listener);
 }
 
-// Lets a "Cookie settings" control (footer, /settings) re-show the banner
-// regardless of the existing cookie value.
 export function reopenConsent() {
   window.dispatchEvent(new Event(REOPEN_EVENT));
 }
@@ -54,15 +159,27 @@ export function onReopenConsent(handler: () => void): () => void {
   return () => window.removeEventListener(REOPEN_EVENT, handler);
 }
 
-// GoogleAnalytics sets window.dataLayer synchronously in its own inline
-// script the moment it mounts, but that script insertion+execution isn't
-// synchronous with the React render that mounts <GoogleAnalytics> — poll
-// briefly rather than assume it's there the instant consent flips to granted.
+export function enableAnalyticsEvents() {
+  analyticsEventsEnabled = readConsent() === "granted";
+}
+
+export function canSendAnalyticsEvents() {
+  return analyticsEventsEnabled && readConsent() === "granted";
+}
+
+export function sendConsentedGAEvent(event: string, params: Record<string, string | number> = {}) {
+  if (canSendAnalyticsEvents()) sendGAEvent("event", event, params);
+}
+
 export function waitForDataLayer(maxWaitMs = 3000): Promise<boolean> {
   return new Promise((resolve) => {
     const start = Date.now();
     (function poll() {
-      if (typeof (window as unknown as { dataLayer?: unknown[] }).dataLayer !== "undefined") {
+      if (!canSendAnalyticsEvents()) {
+        resolve(false);
+        return;
+      }
+      if (typeof (window as Window & { dataLayer?: unknown[] }).dataLayer !== "undefined") {
         resolve(true);
         return;
       }
@@ -75,63 +192,34 @@ export function waitForDataLayer(maxWaitMs = 3000): Promise<boolean> {
   });
 }
 
-const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content"] as const;
-
-function extractUtm(params: URLSearchParams): Record<string, string> | null {
-  const found: Record<string, string> = {};
-  let any = false;
+function extractUtm(params: URLSearchParams): UtmValues | null {
+  const result: UtmValues = {};
   for (const key of UTM_KEYS) {
     const value = params.get(key);
-    if (value) {
-      found[key] = value;
-      any = true;
-    }
+    if (value && isValidUtmValue(value)) result[key] = value;
   }
-  return any ? found : null;
+  return Object.keys(result).length > 0 ? result : null;
 }
 
-// Bridges "landed on page A with UTMs, decided on page B" within the same
-// tab — sessionStorage isn't sent anywhere and is cleared when the tab
-// closes, so it isn't itself a tracking cookie needing consent. Call on
-// every mount, regardless of consent state.
-export function stashPendingAttribution() {
-  if (sessionStorage.getItem(PENDING_ATTRIBUTION_KEY)) return;
-
-  const url = new URL(window.location.href);
-  let utm = extractUtm(url.searchParams);
-
-  if (!utm) {
-    const nextValue = url.searchParams.get("next");
-    if (nextValue) {
-      try {
-        const nextUrl = new URL(nextValue, window.location.origin);
-        utm = extractUtm(nextUrl.searchParams);
-      } catch {
-        // next isn't a resolvable URL — nothing to extract
-      }
-    }
-  }
-
-  if (utm) sessionStorage.setItem(PENDING_ATTRIBUTION_KEY, JSON.stringify(utm));
-}
-
-// Only ever called from the Accept path — writes the real, longer-lived
-// attribution cookie from whatever UTM signal is available (the stashed
-// session value first, falling back to the current page), first-touch only.
+// Attribution is read directly from the current URL only after consent. This
+// deliberately does not bridge tabs/pages with local or session storage.
 export function captureAttributionIfPresent() {
-  if (document.cookie.match(/(?:^|; )bc_attribution=/)) return;
+  if (readConsent() !== "granted") return;
 
-  let utm: Record<string, string> | null = null;
-  const pending = sessionStorage.getItem(PENDING_ATTRIBUTION_KEY);
-  if (pending) {
-    try {
-      utm = JSON.parse(pending);
-    } catch {
-      utm = null;
-    }
-  }
-  if (!utm) utm = extractUtm(new URL(window.location.href).searchParams);
-  if (!utm) return;
+  const existingRaw = readCookie(ATTRIBUTION_COOKIE);
+  const existing = existingRaw ? parseAttributionCookie(existingRaw) : null;
+  if (existingRaw && !existing) deleteCookie(ATTRIBUTION_COOKIE);
 
-  document.cookie = `${ATTRIBUTION_COOKIE}=${JSON.stringify(utm)}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
+  const currentTouch = extractUtm(new URL(window.location.href).searchParams);
+  if (!currentTouch) return;
+
+  const attribution: Attribution = {
+    first_touch: existing?.first_touch ?? currentTouch,
+    last_touch: currentTouch,
+    ...currentTouch,
+  };
+  const serialized = encodeURIComponent(JSON.stringify(attribution));
+  if (serialized.length > ATTRIBUTION_COOKIE_MAX_BYTES) return;
+
+  document.cookie = `${ATTRIBUTION_COOKIE}=${serialized}; ${cookieOptions(60 * 60 * 24 * 30)}`;
 }

@@ -6,6 +6,15 @@ const SLATE = "#475569";
 const BORDER = "#E2E8F0";
 const BG = "#F8FAFC";
 
+type ResendResponse = {
+  data?: unknown;
+  error: { message?: string; name?: string } | null;
+};
+
+export function throwIfResendError(response: ResendResponse) {
+  if (response.error) throw new Error(response.error.message ?? response.error.name ?? "Resend delivery failed");
+}
+
 function baseTemplate(body: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -81,12 +90,12 @@ export async function sendWelcomeEmail(email: string, orgName: string): Promise<
       Start your assessment →
     </a>`;
 
-  await resend.emails.send({
+  throwIfResendError(await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: "Welcome to BrightCert: start your Cyber Essentials assessment",
     html: baseTemplate(body),
-  });
+  }));
 }
 
 export async function sendReportReadyEmail(
@@ -124,12 +133,12 @@ export async function sendReportReadyEmail(
       Log in to brightcert.co.uk to view or download this at any time.
     </p>`;
 
-  await resend.emails.send({
+  throwIfResendError(await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: `Your BrightCert report is ready: ${overallScore}% readiness score`,
     html: baseTemplate(body),
-  });
+  }));
 }
 
 export async function sendUnlockReminderEmail(
@@ -167,12 +176,12 @@ export async function sendUnlockReminderEmail(
       View your results &amp; unlock report →
     </a>`;
 
-  await resend.emails.send({
+  throwIfResendError(await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: `Your Cyber Essentials readiness score: ${overallScore}%`,
     html: baseTemplate(body),
-  });
+  }));
 }
 
 export async function sendDraftReminderEmail(
@@ -223,7 +232,7 @@ export async function sendDraftReminderEmail(
       Continue your assessment →
     </a>`;
 
-  await resend.emails.send({
+  throwIfResendError(await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
     subject:
@@ -233,5 +242,5 @@ export async function sendDraftReminderEmail(
           ? "Still thinking about Cyber Essentials?"
           : `You're ${completedCount} of 5 sections in — finish your assessment`,
     html: baseTemplate(body),
-  });
+  }));
 }
