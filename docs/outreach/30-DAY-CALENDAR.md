@@ -2,8 +2,10 @@
 
 `T0` is the first Monday after every item in
 [LAUNCH-GATE.md](./LAUNCH-GATE.md) has passed. Do not put a fixed date in the
-campaign until that condition is true. The ten internal/friendly seed sends
-before T0 are a ceiling and are not part of the 150 verified prospect target.
+campaign until that condition is true. Before T0, run one fictitious/no-send
+CLI control-path rehearsal and exactly one internal/friendly seed batch with an
+aggregate ceiling of ten messages. The seed does not count in the 150, and
+there is no second seed batch after T0.
 
 The target is 150 distinct, verified corporate prospects receiving Touch 1:
 120 SME and 30 MSP. Later touches remain part of daily send volume but do not
@@ -14,30 +16,36 @@ follow-ups afterwards.
 ## Volume rules
 
 - Start at 10–15 total prospect messages per business day.
-- Cap all new touches plus follow-ups at 20/day until the first 50 prospect
-  sends have healthy evidence.
-- After the 50-send review passes, the owner may raise the cap to 30/day.
+- Count every new message and follow-up together toward the daily 10–15, 20,
+  and 30 message caps.
+- Cap that aggregate at 20/day until 50 distinct Touch 1 prospects have healthy
+  evidence.
+- After the 50-distinct-Touch-1 review passes, the owner may raise the aggregate
+  cap to 30/day.
 - Provider ceilings do not change these operating caps.
 - Pause immediately for hard bounces over 3%, any spam complaint, or any
   provider/domain warning.
 - Reply, objection, bounce, conversion, or closure removes every later touch.
 
-## Day 1–3 setup
+## Pre-T0 gate work
 
-| Day | Work | Exit evidence |
+| Order | Work | Exit evidence |
 |---|---|---|
-| Day 1 | Freeze campaign slug, `sme-v1`/`msp-v1`, 120/30 list plan, LIA, privacy wording, source rules, UTM convention, and scorecard | Owner records the approved versions; no external send |
-| Day 2 | Run up to ten internal/friendly seed sends; check From/Reply-To, plain-text rendering, links, SPF/DKIM/DMARC, inbox replies, and provider/domain warnings | Seed evidence is healthy or campaign pauses |
-| Day 3 | Validate private list, load suppression/event stores, run exact Companies House verification, review first control prospect, rehearse opt-out and report commands | One-prospect control-path signed; every launch gate still current |
+| 1 | Freeze campaign slug, `sme-v1`/`msp-v1`, 120/30 list plan, LIA, privacy wording, source rules, UTM convention, scorecard, and private-file lifecycle | Owner records the approved versions; no prospect send |
+| 2 | Run one fictitious/no-send CLI control-path rehearsal covering validation, step evidence, history blocking, suppression, and reporting | Fictitious evidence is signed; no fictitious row is sent |
+| 3 | Run exactly one internal/friendly seed batch of no more than ten aggregate messages; check From/Reply-To, plain-text rendering, links, SPF/DKIM/DMARC, inbox replies, and provider/domain warnings | Single seed-batch evidence is healthy or campaign pauses |
+| 4 | Complete every live/environment/legal/owner row in the launch gate | All rows pass and no pause is active |
 
-If all gates passed before Day 1 and the Day 1–3 checks remain healthy, external
-Touch 1 sending begins with the next available business-day batch. If not, T0
-moves; do not borrow days from setup.
+Only then schedule T0 as the first following Monday. Do not place any of this
+pre-T0 work inside the 30 campaign days.
 
 ## Week 1: control and first 25
 
 Goals:
 
+- on T0, process one real prospect end to end as the first campaign record,
+  count it in the 150, and pause for owner control confirmation before
+  continuing;
 - manually send 10–15 total messages/day;
 - reach 25 cumulative verified Touch 1 prospects, weighted 20 SME / 5 MSP;
 - preserve the 120/30 ratio in each research batch where practical;
@@ -59,12 +67,13 @@ message adjustment, changing one variable.
 
 ## Week 2: reach and review the first 50
 
-Continue at 10–15/day, never above 20 total messages/day. SME Touch 2 becomes
+Continue at 10–15 aggregate messages/day, never above 20 total messages/day.
+Every new message and follow-up consumes one slot. SME Touch 2 becomes
 due on business day 6 after each SME Touch 1; MSP Touch 2 becomes due on
 business day 7. Due follow-ups take priority over new Touch 1 slots.
 
 Reach 50 cumulative verified Touch 1 prospects, weighted 40 SME / 10 MSP, then
-hold the next new batch for the 50-send health review:
+hold the next new batch for the 50-distinct-Touch-1 health review:
 
 - delivery denominator and hard-bounce rate are reconciled;
 - no spam complaint or unresolved provider/domain warning exists;
@@ -74,7 +83,9 @@ hold the next new batch for the 50-send health review:
 - call booking and baseline hand-off are workable; and
 - no message, price, certification, timing, or privacy claim drift is present.
 
-Only recorded owner approval can raise the total daily cap from 20 to 30.
+This checkpoint is exactly 50 distinct Touch 1 prospects, not 50 total
+messages. Only recorded owner approval can raise the aggregate daily cap from
+20 to 30.
 A healthy checkpoint permits a higher ceiling; it does not require higher
 volume.
 

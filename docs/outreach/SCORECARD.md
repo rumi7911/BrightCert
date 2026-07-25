@@ -13,17 +13,20 @@ npm run outreach -- report \
   --output outreach/runs/weekly-funnel.csv
 ```
 
-The report groups by week, campaign, segment, trigger, and template version and
-deduplicates each prospect within an event type/week. See the event rules in the
-[operator runbook](./operator-runbook.md).
+The report groups by week, campaign, segment, trigger, and template version.
+Message metrics deduplicate prospect plus `sequence_step`, so separate touches
+remain separate messages. `touch_1_sent` is a distinct-prospect count; other
+funnel events are also distinct-prospect counts within event type/week. See the
+event rules in the [operator runbook](./operator-runbook.md).
 
 ## Funnel definitions
 
 | Status | Count only when |
 |---|---|
-| `sent` | A reviewed manual message was actually sent from the founder inbox; use distinct verified Touch 1 recipients for the 150 campaign denominator |
-| `delivered` | Provider/inbox evidence shows delivery and no hard bounce; absence of a bounce alone is not an open |
-| `bounced` | A hard bounce is observed; suppress the address the same day and stop the sequence |
+| `sent_messages` | Reviewed manual messages actually sent from the founder inbox; a prospect sent steps 1 and 2 counts as two messages |
+| `touch_1_sent` | Distinct verified prospects with an actual step 1 send; this is the 150 target, 120/30 mix, 25/50 checkpoint, and positive-reply denominator |
+| `delivered_messages` | Message steps with provider/inbox delivery evidence and no hard bounce; absence of a bounce alone is not an open |
+| `bounced_messages` | Message steps with an observed hard bounce; suppress the address the same day and stop the sequence |
 | `positive` | A human reply expresses relevant interest in the baseline, pilot, details, or a conversation |
 | `neutral` | A human reply is neither interest nor rejection, such as a referral or timing note without intent |
 | `objection` | A human reply gives a substantive concern or negative response; it stops the sequence even if it is not an opt-out |
@@ -59,22 +62,25 @@ These are campaign targets, not historic results or promises.
 
 ## Formulas
 
-Use distinct prospects in each relevant denominator:
+Use message counts for delivery safety and distinct Touch 1 prospects for
+campaign conversion:
 
 ```text
-delivery rate = delivered / sent
-hard-bounce rate = hard bounced / sent
-positive reply rate = positive / sent
+delivery rate = delivered_messages / sent_messages
+hard-bounce rate = bounced_messages / sent_messages
+positive reply rate = positive / touch_1_sent
 call booking rate = booked / positive
 baseline completion rate = baseline completed / booked
 completed-baseline-to-paid rate = verified paid / baseline completed
-opt-out rate = opt-out / sent
+opt-out rate = opt-out / touch_1_sent
 verified gross paid revenue = sum of reconciled Stripe payments before refunds
 verified net revenue = verified gross paid revenue - reconciled refunds
 ```
 
 Show `n/a`, not zero, when the denominator is zero. Do not sum percentages
-across weeks; recompute them from cumulative counts. The CLI report's
+across weeks; sum the applicable counts and recompute cumulative rates.
+`delivery_rate` and `hard_bounce_rate` in each CLI row are message-based
+percentages. The CLI report's
 `paid_revenue` is operator-event data and does not become revenue truth until it
 matches Stripe plus application entitlement.
 
@@ -120,9 +126,9 @@ counts from provider evidence beside, not inside, the CLI report because
 Copy this table into a protected operator record. Use one row per exact
 week/segment/trigger/campaign/template combination.
 
-| Week start | Campaign | Segment | Trigger | Template | Sent | Delivered | Hard bounced | Positive | Neutral | Objection | Opt-out | Booked | Baseline completed | Checkout started | Verified paid | Refunded | Lost | Complaints |
-|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `YYYY-MM-DD` | `founding_pilot_2026` | `sme` | `tender_requirement` | `sme-v1` | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Week start | Campaign | Segment | Trigger | Template | Sent messages | Touch 1 sent | Delivered messages | Delivery rate | Bounced messages | Hard-bounce rate | Positive | Neutral | Objection | Opt-out | Booked | Baseline completed | Checkout started | Verified paid | Refunded | Lost | Complaints |
+|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `YYYY-MM-DD` | `founding_pilot_2026` | `sme` | `tender_requirement` | `sme-v1` | 0 | 0 | 0 | `n/a` | 0 | `n/a` | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 Weekly review:
 
@@ -132,7 +138,8 @@ Weekly review:
 - [ ] Calculate cumulative rates with explicit denominators.
 - [ ] Review protected verbatim objections and approved lost reasons.
 - [ ] Compare SME/MSP, triggers, campaigns, and copy versions.
-- [ ] Check the 25/50-send checkpoints and daily volume cap.
+- [ ] Check the 25/50 distinct-Touch-1 checkpoints; count every new and
+  follow-up message toward the daily 10–15, 20, and 30 aggregate caps.
 - [ ] Record any one-variable test and avoid using opens.
 - [ ] Choose continue, revise targeting, revise message, revise onboarding, or
   pause; name the owner and review date.

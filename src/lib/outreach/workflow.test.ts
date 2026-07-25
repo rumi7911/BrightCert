@@ -47,6 +47,22 @@ function approvedRow(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function importedEvent(overrides: Record<string, string> = {}) {
+  return {
+    event_id: "event-imported",
+    prospect_id: "sme-001",
+    type: "imported",
+    campaign: "founding-2026",
+    segment: "sme",
+    trigger: "Cyber Essentials renewal",
+    template_version: "sme-v1",
+    sequence_step: "",
+    occurred_at: "2026-07-25T09:00:00Z",
+    amount_paid: "",
+    ...overrides,
+  };
+}
+
 describe("CSV protection", () => {
   test("parses BOM-prefixed RFC 4180 CSV including quoted commas and newlines", () => {
     const rows = parseCsv(
@@ -117,7 +133,13 @@ describe("prospect workflows", () => {
         }),
       ],
       [{ scope: "company", value: "00999999", reason: "existing customer" }],
-      [],
+      [
+        importedEvent(),
+        importedEvent({
+          event_id: "event-imported-2",
+          prospect_id: "sme-002",
+        }),
+      ],
       1,
       async (companyNumber) => ({
         kind: "active",
@@ -179,6 +201,7 @@ describe("prospect workflows", () => {
       [approvedRow()],
       [],
       [
+        importedEvent(),
         {
           event_id: "event-1",
           prospect_id: "sme-001",
@@ -187,18 +210,15 @@ describe("prospect workflows", () => {
           segment: "sme",
           trigger: "Cyber Essentials renewal",
           template_version: "sme-v1",
+          sequence_step: "",
           occurred_at: "2026-07-25T10:00:00Z",
           amount_paid: "",
         },
       ],
       1,
-      async (companyNumber) => ({
-        kind: "active",
-        companyNumber,
-        companyStatus: "active",
-        companyType: "ltd",
-        checkedAt: "2026-07-25T12:00:00Z",
-      })
+      async () => {
+        throw new Error("terminal history must block before verification");
+      }
     );
 
     expect(rows[0]).toMatchObject({
@@ -211,7 +231,7 @@ describe("prospect workflows", () => {
     const rows = await buildQueueRows(
       [approvedRow()],
       [],
-      [],
+      [importedEvent()],
       1,
       async (companyNumber) => ({
         kind: "inactive",
@@ -227,6 +247,122 @@ describe("prospect workflows", () => {
       verification_result: "inactive",
       company_status: "dissolved",
       gate_reasons: "companies_house_inactive",
+    });
+  });
+
+  test.each([
+    {
+      name: "header-only",
+      events: [],
+    },
+    {
+      name: "unrelated campaign",
+      events: [importedEvent({ campaign: "other-campaign" })],
+    },
+    {
+      name: "unrelated segment",
+      events: [importedEvent({ segment: "msp" })],
+    },
+  ])(
+    "queue blocks $name event history before Companies House verification",
+    async ({ events }) => {
+      let verificationCalls = 0;
+
+      const rows = await buildQueueRows(
+        [approvedRow()],
+        [],
+        events,
+        1,
+        async (companyNumber) => {
+          verificationCalls += 1;
+          return {
+            kind: "active",
+            companyNumber,
+            companyStatus: "active",
+            companyType: "ltd",
+            checkedAt: "2026-07-25T12:00:00Z",
+          };
+        }
+      );
+
+      expect(rows[0]).toMatchObject({
+        queue_status: "blocked",
+        gate_reasons: "missing_imported_event",
+        verification_result: "not_attempted",
+      });
+      expect(verificationCalls).toBe(0);
+    }
+  );
+
+  test.each([
+    {
+      step: 2 as const,
+      sequenceStatus: "touch_1_sent",
+      priorStep: "1",
+    },
+    {
+      step: 3 as const,
+      sequenceStatus: "touch_2_sent",
+      priorStep: "2",
+    },
+  ])(
+    "queue step $step requires matching sent evidence for step $priorStep",
+    async ({ step, sequenceStatus }) => {
+      let verificationCalls = 0;
+      const rows = await buildQueueRows(
+        [approvedRow({ sequence_status: sequenceStatus })],
+        [],
+        [importedEvent()],
+        step,
+        async (companyNumber) => {
+          verificationCalls += 1;
+          return {
+            kind: "active",
+            companyNumber,
+            companyStatus: "active",
+            companyType: "ltd",
+            checkedAt: "2026-07-25T12:00:00Z",
+          };
+        }
+      );
+
+      expect(rows[0]).toMatchObject({
+        queue_status: "blocked",
+        gate_reasons: "missing_prior_step_sent_event",
+        verification_result: "not_attempted",
+      });
+      expect(verificationCalls).toBe(0);
+    }
+  );
+
+  test("queue accepts corroborating canonical state and prior-step sent evidence", async () => {
+    const rows = await buildQueueRows(
+      [approvedRow({ sequence_status: "touch_1_sent" })],
+      [],
+      [
+        importedEvent(),
+        importedEvent({
+          event_id: "event-sent-1",
+          type: "sent",
+          sequence_step: "1",
+          occurred_at: "2026-07-25T10:00:00Z",
+        }),
+      ],
+      2,
+      async (companyNumber) => ({
+        kind: "active",
+        companyNumber,
+        companyStatus: "active",
+        companyType: "ltd",
+        checkedAt: "2026-07-25T12:00:00Z",
+      })
+    );
+
+    expect(rows[0]).toMatchObject({
+      queue_status: "ready_manual_send",
+      sequence_step: "2",
+      gate_reasons: "",
+      verification_result: "active",
     });
   });
 });
@@ -312,13 +448,16 @@ describe("operator stores and reporting", () => {
         template_version: "sme-v1",
         imported: "1",
         eligible_queued: "1",
-        sent: "0",
-        delivered: "0",
+        sent_messages: "0",
+        touch_1_sent: "0",
+        delivered_messages: "0",
+        delivery_rate: "n/a",
         positive: "0",
         neutral: "0",
         objection: "0",
         opt_out: "0",
-        bounced: "0",
+        bounced_messages: "0",
+        hard_bounce_rate: "n/a",
         booked: "0",
         baseline_completed: "0",
         checkout_started: "0",
@@ -328,6 +467,188 @@ describe("operator stores and reporting", () => {
         paid_revenue: "198.00",
       }),
     ]);
+  });
+
+  test.each(["sent", "delivered", "bounced"] as const)(
+    "requires sequence_step for %s events before writing",
+    async (type) => {
+      const directory = await mkdtemp(join(tmpdir(), "brightcert-events-"));
+      const store = join(directory, "events.csv");
+
+      await expect(
+        appendEvent(store, {
+          prospect_id: "sme-001",
+          type,
+          campaign: "founding-2026",
+          segment: "sme",
+        })
+      ).rejects.toThrow("sequence_step");
+      await expect(readFile(store, "utf8")).rejects.toMatchObject({
+        code: "ENOENT",
+      });
+    }
+  );
+
+  test("rejects an invalid sequence_step and persists valid step evidence", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-events-"));
+    const store = join(directory, "events.csv");
+
+    await expect(
+      appendEvent(store, {
+        prospect_id: "sme-001",
+        type: "sent",
+        campaign: "founding-2026",
+        segment: "sme",
+        sequence_step: 4 as 1,
+      })
+    ).rejects.toThrow("sequence_step must be 1, 2, or 3");
+
+    await appendEvent(store, {
+      prospect_id: "sme-001",
+      type: "sent",
+      campaign: "founding-2026",
+      segment: "sme",
+      sequence_step: 1,
+    });
+
+    expect(parseCsv(await readFile(store, "utf8"))[0]).toMatchObject({
+      type: "sent",
+      sequence_step: "1",
+    });
+  });
+
+  test("validates bounced step evidence before adding a suppression", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-events-"));
+    const events = join(directory, "events.csv");
+    const suppressions = join(directory, "suppressions.csv");
+
+    await expect(
+      recordProspectEvent(
+        events,
+        suppressions,
+        [approvedRow()],
+        {
+          prospect_id: "sme-001",
+          type: "bounced",
+          campaign: "founding-2026",
+          segment: "sme",
+        }
+      )
+    ).rejects.toThrow("sequence_step");
+    await expect(readFile(events, "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+    await expect(readFile(suppressions, "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+  });
+
+  test("reports separate messages and a distinct Touch 1 denominator across weeks", () => {
+    const baseEvent = {
+      event_id: "event",
+      prospect_id: "sme-001",
+      campaign: "founding-2026",
+      segment: "sme",
+      trigger: "renewal",
+      template_version: "sme-v1",
+      amount_paid: "",
+    };
+    const report = buildWeeklyFunnel([
+      {
+        ...baseEvent,
+        event_id: "sent-1",
+        type: "sent",
+        sequence_step: "1",
+        occurred_at: "2026-07-24T10:00:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "delivered-1",
+        type: "delivered",
+        sequence_step: "1",
+        occurred_at: "2026-07-24T10:01:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "sent-2",
+        type: "sent",
+        sequence_step: "2",
+        occurred_at: "2026-07-27T10:00:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "sent-2-duplicate",
+        type: "sent",
+        sequence_step: "2",
+        occurred_at: "2026-07-27T10:00:30Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "bounce-2",
+        type: "bounced",
+        sequence_step: "2",
+        occurred_at: "2026-07-27T10:01:00Z",
+      },
+    ]);
+
+    expect(report).toEqual([
+      expect.objectContaining({
+        week_start: "2026-07-20",
+        sent_messages: "1",
+        touch_1_sent: "1",
+        delivered_messages: "1",
+        bounced_messages: "0",
+        delivery_rate: "100.00%",
+        hard_bounce_rate: "0.00%",
+      }),
+      expect.objectContaining({
+        week_start: "2026-07-27",
+        sent_messages: "1",
+        touch_1_sent: "0",
+        delivered_messages: "0",
+        bounced_messages: "1",
+        delivery_rate: "0.00%",
+        hard_bounce_rate: "100.00%",
+      }),
+    ]);
+  });
+
+  test("counts two different sequence steps as two messages in the same week", () => {
+    const report = buildWeeklyFunnel([
+      {
+        ...importedEvent({
+          event_id: "sent-1",
+          type: "sent",
+          sequence_step: "1",
+        }),
+      },
+      {
+        ...importedEvent({
+          event_id: "sent-2",
+          type: "sent",
+          sequence_step: "2",
+        }),
+      },
+    ]);
+
+    expect(report[0]).toMatchObject({
+      sent_messages: "2",
+      touch_1_sent: "1",
+    });
+  });
+
+  test("excludes legacy message events that lack valid sequence-step evidence", () => {
+    expect(
+      buildWeeklyFunnel([
+        {
+          ...importedEvent({
+            event_id: "legacy-sent",
+            type: "sent",
+            sequence_step: "",
+          }),
+        },
+      ])
+    ).toEqual([]);
   });
 
   test("records an opt-out only for a canonical prospect and suppresses its email first", async () => {

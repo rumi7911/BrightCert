@@ -48,10 +48,42 @@ and `closed`. Step 1 requires `approved`, step 2 requires `touch_1_sent`, and
 step 3 requires `touch_2_sent`. A reply, opt-out, bounce, customer conversion,
 or closure stops all later steps.
 
-## Commands
+## Canonical private-file lifecycle
 
 All writes use a temporary sibling file and an atomic rename. Exported cells
-that could be interpreted as spreadsheet formulas are neutralized.
+that could be interpreted as spreadsheet formulas are neutralized. Generated
+validation, verification, and queue files are snapshots: do not edit them.
+
+1. Export Clay research to the one private canonical file,
+   `.outreach/prospects.csv`.
+2. Run pre-review validation. It is expected to block rows whose human
+   approval, LIA, personalisation, or state fields are incomplete.
+3. Review and fill those fields in `.outreach/prospects.csv` itself, or
+   re-export the reviewed Clay rows to that exact path.
+4. Re-run validation from the reviewed canonical file to the current
+   `outreach/runs/validated.csv`, then verify that file to the current
+   `outreach/runs/verified.csv`.
+5. Record `imported` against the current verified snapshot, then queue from
+   that same snapshot and the canonical event history.
+6. After each manual send, immediately record `sent` with the exact
+   `--sequence-step`. Update `sequence_status` in
+   `.outreach/prospects.csv`, then re-run both final validation and verification
+   before building a later-touch queue.
+
+The CLI never sends a message and never mutates `.outreach/prospects.csv` or
+its `sequence_status`.
+
+## Commands
+
+Pre-review research-quality validation:
+
+```sh
+npm run outreach -- validate \
+  --input .outreach/prospects.csv \
+  --output outreach/runs/pre-review-validation.csv
+```
+
+After human review has updated the private canonical file:
 
 ```sh
 npm run outreach -- validate \
@@ -92,6 +124,16 @@ npm run outreach -- event \
   --prospects outreach/runs/verified.csv \
   --suppressions .outreach/suppressions.csv \
   --prospect-id sme-001 \
+  --type sent \
+  --campaign founding-2026 \
+  --segment sme \
+  --sequence-step 1
+
+npm run outreach -- event \
+  --store .outreach/events.csv \
+  --prospects outreach/runs/verified.csv \
+  --suppressions .outreach/suppressions.csv \
+  --prospect-id sme-001 \
   --type positive \
   --campaign founding-2026 \
   --segment sme \
@@ -108,16 +150,31 @@ Validation and queue outputs retain every input row. Only rows with
 carry semicolon-separated `gate_reasons`. Always review the file before sending.
 Queue always requires `COMPANIES_HOUSE_API_KEY` and performs a fresh exact-number
 profile check; status/type/timestamps already present in a CSV are review data,
-not authority. The event store must already exist (normally beginning with
-canonical `imported` events); a missing history is an error, not an empty
-history.
+not authority. The event store must already exist. A missing file is an error;
+an empty, header-only, or unrelated history blocks with
+`missing_imported_event`. Step 2 also requires a matching `sent` event with
+`sequence_step=1`; step 3 requires one with `sequence_step=2`. Missing
+corroboration blocks with `missing_prior_step_sent_event`. All history matches
+use prospect, campaign, and segment, and any block prevents the Companies House
+request.
 
 The event types are `imported`, `eligible`, `queued`, `sent`, `delivered`,
 `positive`, `neutral`, `objection`, `reply`, `opt_out`, `bounced`, `booked`,
 `baseline_completed`, `checkout_started`, `paid`, `customer`, `refunded`,
 `lost`, and `closed`.
-Reports deduplicate a prospect within each event type and week. They deliberately
-exclude opens and open rates.
+`sent`, `delivered`, and `bounced` require `--sequence-step 1`, `2`, or `3`.
+The event CSV persists that field:
+
+```text
+event_id,prospect_id,type,campaign,segment,trigger,template_version,sequence_step,occurred_at,amount_paid
+```
+
+Reports deduplicate message events by prospect and sequence step within each
+week. `sent_messages`, `delivered_messages`, and `bounced_messages` therefore
+count separate touches, while `touch_1_sent` counts distinct Touch 1 prospects.
+`delivery_rate` and `hard_bounce_rate` are message-based percentages and show
+`n/a` with no send denominator. Other event metrics remain distinct-prospect
+counts per event type/week. Reports deliberately exclude opens and open rates.
 
 Positive, neutral, objection, reply, opt-out, bounce, paid/customer, and
 lost/closed events stop later queue attempts. Opt-out and bounce also append an

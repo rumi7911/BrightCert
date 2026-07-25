@@ -87,10 +87,27 @@ Before export:
 The CLI repeats critical gates. A row remaining in a validation output does not
 mean it is approved; inspect `gate_status` and `gate_reasons`.
 
-## Validate, verify, and queue
+## Review, validate, verify, and queue
 
 Load the Companies House key exactly as described in the
-[operator runbook](./operator-runbook.md), then use private ignored files:
+[operator runbook](./operator-runbook.md), then follow this literal lifecycle:
+
+1. Clay exports research to the one canonical
+   `.outreach/prospects.csv`.
+2. Run pre-review validation to expose research and incomplete-review reasons:
+
+```sh
+npm run outreach -- validate \
+  --input .outreach/prospects.csv \
+  --output outreach/runs/pre-review-validation.csv
+```
+
+3. A human resolves research issues and fills approval, LIA,
+   personalisation, and `sequence_status` fields in
+   `.outreach/prospects.csv` itself, or re-exports reviewed Clay rows to that
+   exact path. Do not edit the generated validation file.
+4. Re-run validation from the reviewed canonical file, then verify the current
+   validated snapshot:
 
 ```sh
 npm run outreach -- validate \
@@ -100,7 +117,12 @@ npm run outreach -- validate \
 npm run outreach -- verify \
   --input outreach/runs/validated.csv \
   --output outreach/runs/verified.csv
+```
 
+5. Seed suppressions, record `imported` against the current verified snapshot,
+   and queue from that same snapshot:
+
+```sh
 npm run outreach -- seed-suppressions \
   --store .outreach/suppressions.csv
 
@@ -127,3 +149,21 @@ profile check, and approves only supported active corporate types. Send
 manually only when the current row says
 `queue_status=ready_manual_send` and a human has rechecked every field. See the
 complete workflow in [SOP.md](./SOP.md).
+
+6. Immediately after a manual send, record the exact message step:
+
+```sh
+npm run outreach -- event \
+  --store .outreach/events.csv \
+  --prospects outreach/runs/verified.csv \
+  --suppressions .outreach/suppressions.csv \
+  --prospect-id sme-example-only \
+  --type sent \
+  --campaign founding-example \
+  --segment sme \
+  --sequence-step 1
+```
+
+Then update `sequence_status` in `.outreach/prospects.csv`, not in a generated
+snapshot. Re-run both final validation and verification before queueing Touch 2
+or Touch 3. The CLI does not update prospect state.

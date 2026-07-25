@@ -102,7 +102,24 @@ describe("outreach operator CLI", () => {
     const events = join(directory, "events.csv");
     const output = join(directory, "queue.csv");
     await atomicWriteCsv(input, [approvedRow()], PROSPECT_COLUMNS);
-    await atomicWriteCsv(events, [], EVENT_COLUMNS);
+    await atomicWriteCsv(
+      events,
+      [
+        {
+          event_id: "event-imported",
+          prospect_id: "sme-001",
+          type: "imported",
+          campaign: "founding-2026",
+          segment: "sme",
+          trigger: "renewal",
+          template_version: "sme-v1",
+          sequence_step: "",
+          occurred_at: "2026-07-25T09:00:00Z",
+          amount_paid: "",
+        },
+      ],
+      EVENT_COLUMNS
+    );
 
     await runCli(["seed-suppressions", "--store", suppressions]);
     await runCli([
@@ -246,6 +263,76 @@ describe("outreach operator CLI", () => {
     expect(report).not.toHaveProperty("opened");
     expect(report).not.toHaveProperty("open_rate");
   });
+
+  test.each(["sent", "delivered", "bounced"])(
+    "event requires --sequence-step for %s and persists valid evidence",
+    async (type) => {
+      const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
+      const events = join(directory, "events.csv");
+      const prospects = join(directory, "prospects.csv");
+      const suppressions = join(directory, "suppressions.csv");
+      await atomicWriteCsv(prospects, [approvedRow()], PROSPECT_COLUMNS);
+
+      const args = [
+        "event",
+        "--store",
+        events,
+        "--prospects",
+        prospects,
+        "--suppressions",
+        suppressions,
+        "--prospect-id",
+        "sme-001",
+        "--type",
+        type,
+        "--campaign",
+        "founding-2026",
+        "--segment",
+        "sme",
+      ];
+
+      await expect(runCli(args)).rejects.toThrow(
+        "Missing required option: --sequence-step"
+      );
+      await runCli([...args, "--sequence-step", "1"]);
+
+      expect(parseCsv(await readFile(events, "utf8"))[0]).toMatchObject({
+        type,
+        sequence_step: "1",
+      });
+    }
+  );
+
+  test.each(["0", "4", ""])(
+    "event rejects invalid --sequence-step %j for every event type",
+    async (invalidStep) => {
+      const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
+      const prospects = join(directory, "prospects.csv");
+      await atomicWriteCsv(prospects, [approvedRow()], PROSPECT_COLUMNS);
+
+      await expect(
+        runCli([
+          "event",
+          "--store",
+          join(directory, "events.csv"),
+          "--prospects",
+          prospects,
+          "--suppressions",
+          join(directory, "suppressions.csv"),
+          "--prospect-id",
+          "sme-001",
+          "--type",
+          "positive",
+          "--campaign",
+          "founding-2026",
+          "--segment",
+          "sme",
+          "--sequence-step",
+          invalidStep,
+        ])
+      ).rejects.toThrow("--sequence-step must be 1, 2, or 3");
+    }
+  );
 
   test("an opt-out event suppresses the canonical email and blocks a later queue", async () => {
     const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));

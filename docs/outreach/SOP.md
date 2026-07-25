@@ -39,9 +39,17 @@ remain explicit.
   suppression store, and event store are ready.
 - [ ] No live prospect file or populated secret appears in Git.
 
-The first ten internal/friendly seed sends are a ceiling, not permission for
-external prospecting. External sending remains blocked until every launch gate
-passes.
+Pre-T0 work consists of one fictitious/no-send CLI control-path rehearsal,
+exactly one internal/friendly seed batch with no more than ten aggregate
+messages, and completion of every live, environment, legal, and owner gate.
+The seed batch is not permission for external prospecting and does not count
+towards the 150. Do not run another seed batch after T0.
+
+T0 is the first Monday after every launch-gate row passes. On T0, process one
+real prospect end to end as the first campaign record, count that Touch 1 in
+the 150, pause for the owner to confirm the controls, and only then continue
+that day's authorised volume. This T0 checkpoint is not a prerequisite for the
+already-passed launch gate.
 
 ## Secure setup and seed stores
 
@@ -60,45 +68,42 @@ The seed command is idempotent. Create the event store by recording the
 canonical `imported` event for each approved research row before queueing; a
 missing event history is an error.
 
-Internal/friendly seed tests are owner actions:
+The single pre-T0 internal/friendly seed batch is an owner action:
 
-- send only approved plain-text test content to controlled recipients;
+- send no more than ten approved plain-text test messages in aggregate to
+  controlled recipients;
 - check From/Reply-To, SPF/DKIM/DMARC results, rendering, links, and replies;
 - do not use an open pixel or count opens;
 - record recipient permission and results outside the prospect campaign; and
 - pause on any provider or domain warning.
 
+Separately, rehearse the CLI with fictitious `.test` data and no send. Capture
+the expected ready/block unit evidence, fail-closed live verification result,
+event schema, queue history reasons, suppression behavior, and report output.
+Never convert the fictitious row into a live send.
+
 ## Daily operating workflow
 
-### 1. Prepare and validate
+### 1. Export and run pre-review validation
 
 Export Clay research to `.outreach/prospects.csv` using
-[CLAY-CSV-CONTRACT.md](./CLAY-CSV-CONTRACT.md), then:
+[CLAY-CSV-CONTRACT.md](./CLAY-CSV-CONTRACT.md). This is the one private
+canonical prospect file. Run a research-quality pass:
 
 ```sh
 npm run outreach -- validate \
   --input .outreach/prospects.csv \
-  --output outreach/runs/validated.csv
+  --output outreach/runs/pre-review-validation.csv
 ```
 
-Review every row. `gate_status=eligible` only means the static checks passed;
-it does not authorise a send. Resolve or exclude every `gate_reasons` value.
+This pre-review snapshot will normally block incomplete approval, LIA,
+personalisation, or state fields. It is diagnostic only.
 
-### 2. Verify Companies House
+### 2. Human-review the private canonical file
 
-```sh
-npm run outreach -- verify \
-  --input outreach/runs/validated.csv \
-  --output outreach/runs/verified.csv
-```
-
-Confirm exact company-number match, `active` status, supported corporate type,
-and fresh timestamp. A missing or ambiguous match blocks; never infer that it
-is a sole trader.
-
-### 3. Human review
-
-For each row, confirm:
+Resolve research issues and fill the approval, LIA, personalisation, and
+sequence-state fields in `.outreach/prospects.csv` itself, or re-export the
+reviewed Clay rows to that exact path. For each row, confirm:
 
 - [ ] strong or approved-medium trigger and reachable evidence;
 - [ ] factual personalisation linked to the named role;
@@ -113,7 +118,31 @@ For each row, confirm:
 - [ ] exactly one reply CTA and the privacy/opt-out wording; and
 - [ ] `human_approved_at` reflects the actual review.
 
-### 4. Seed canonical event history
+Do not edit `pre-review-validation.csv`, a verified snapshot, or a generated
+queue to make a row pass.
+
+### 3. Re-validate and verify the reviewed canonical file
+
+Create the current reviewed snapshots:
+
+```sh
+npm run outreach -- validate \
+  --input .outreach/prospects.csv \
+  --output outreach/runs/validated.csv
+
+npm run outreach -- verify \
+  --input outreach/runs/validated.csv \
+  --output outreach/runs/verified.csv
+```
+
+Review every final validation row. `gate_status=eligible` only means the static
+checks passed; it does not authorise a send. Resolve or exclude every
+`gate_reasons` value in the canonical file and re-run both commands. Confirm
+the exact company-number match, `active` status, supported corporate type, and
+fresh timestamp. A missing or ambiguous match blocks; never infer that it is a
+sole trader.
+
+### 4. Record canonical imported history
 
 Use values that exactly match one canonical prospect row:
 
@@ -146,9 +175,13 @@ npm run outreach -- queue \
 
 For later touches use `--step 2` with a private canonical row whose
 `sequence_status` is `touch_1_sent`, or `--step 3` with
-`sequence_status=touch_2_sent`. Do not edit a queue result to remove a block.
-Only `queue_status=ready_manual_send` after the fresh exact-number check may
-move to the manual draft.
+`sequence_status=touch_2_sent`. The event history must corroborate that state:
+step 2 requires the matching `sent` event for sequence step 1, and step 3
+requires the matching `sent` event for sequence step 2. An empty, header-only,
+or unrelated store blocks with `missing_imported_event`; absent prior-send
+evidence blocks with `missing_prior_step_sent_event`. Do not edit a queue result
+to remove a block. Only `queue_status=ready_manual_send` after the fresh
+exact-number check may move to the manual draft.
 
 ### 6. Manually send
 
@@ -159,8 +192,9 @@ move to the manual draft.
 4. Send one plain-text message from `muhammad@brightcert.co.uk`.
 5. Record the `sent` event immediately.
 6. Update the private canonical CSV `sequence_status` to `touch_1_sent`,
-   `touch_2_sent`, or `touch_3_sent` only after send evidence exists; re-run
-   validation before a later queue.
+   `touch_2_sent`, or `touch_3_sent` only after send evidence exists.
+7. Before any later queue, re-run final validation from the canonical file and
+   verification from the new validated snapshot.
 
 ```sh
 npm run outreach -- event \
@@ -170,10 +204,27 @@ npm run outreach -- event \
   --prospect-id sme-example-001 \
   --type sent \
   --campaign founding-example \
-  --segment sme
+  --segment sme \
+  --sequence-step 1
 ```
 
-No CLI command sends an email or mutates `sequence_status`.
+Use `--sequence-step 2` or `3` only for the matching message. `delivered` and
+`bounced` events also require the exact `--sequence-step`. No CLI command sends
+an email or mutates `sequence_status`; only the operator updates the private
+canonical file.
+
+For a later touch, after updating `.outreach/prospects.csv`, refresh both
+snapshots before queueing:
+
+```sh
+npm run outreach -- validate \
+  --input .outreach/prospects.csv \
+  --output outreach/runs/validated.csv
+
+npm run outreach -- verify \
+  --input outreach/runs/validated.csv \
+  --output outreach/runs/verified.csv
+```
 
 ### 7. Handle replies and terminal outcomes
 
@@ -224,12 +275,13 @@ spreadsheet note. Complete the reconciliation checklist below first.
 ## Daily volumes and cadence
 
 - Start with 10–15 total manual prospect messages per business day.
-- Never exceed 20 total messages/day until the first 50 prospect sends have
+- Never exceed 20 total messages/day until 50 distinct Touch 1 prospects have
   healthy delivery evidence.
-- Only after the 50-send checkpoint is healthy may the owner approve up to 30
-  total messages/day.
-- Count new touches and follow-ups together. Due follow-ups take priority over
-  increasing new Touch 1 volume.
+- Only after that 50-distinct-Touch-1 checkpoint is healthy may the owner
+  approve up to 30 total messages/day.
+- Count every new message and follow-up together toward the daily 10–15, 20,
+  and 30 message caps. Due follow-ups take priority over increasing new Touch 1
+  volume.
 - The provider's published technical ceiling is not the operating target.
 - SME timing is business days 1, 6, and 12. MSP timing is business days 1, 7,
   and 14. Never compress a cadence to hit a volume target.
@@ -270,9 +322,12 @@ npm run outreach -- report \
   --output outreach/runs/weekly-funnel.csv
 ```
 
-Review the output using [SCORECARD.md](./SCORECARD.md). It deduplicates a
-prospect within each event type/week and excludes opens/open rates. Review
-verbatim objections in the protected operator notes, never in Git.
+Review the output using [SCORECARD.md](./SCORECARD.md). Message counts
+deduplicate prospect plus sequence step within the week; `touch_1_sent` is the
+distinct-prospect campaign denominator. Delivery and hard-bounce rates use
+message counts. Other funnel statuses remain distinct-prospect event counts.
+The report excludes opens/open rates. Review verbatim objections in protected
+operator notes, never in Git.
 
 ## Retention cleanup
 
@@ -342,24 +397,27 @@ Never expose keys, full payment credentials, or unnecessary customer data in
 the evidence record. `refunded` requires corresponding Stripe evidence and an
 entitlement review.
 
-## One-prospect control-path acceptance test
+## T0 first-real-prospect checkpoint
 
-Run this only after all launch gates pass, using one owner-approved private
-corporate prospect. The test is not complete merely because the CLI exits zero.
+Run this on T0, the first Monday after all launch gates have passed. It is the
+first campaign operation, not evidence needed to pass the launch gate.
 
-1. Put exactly one reviewed row in `.outreach/control-prospect.csv`.
-2. Validate to `outreach/runs/control-validated.csv`; require no gate reasons.
-3. Verify to `outreach/runs/control-verified.csv`; compare the exact company
-   number and require active/supported result.
-4. Record its `imported` event in the real private event store.
-5. Queue step 1 and require exactly one `ready_manual_send` row.
-6. Have a second human check recipient, source, trigger, body, CTA, footer, and
+1. Put the one owner-approved real corporate prospect for the checkpoint in
+   `.outreach/prospects.csv`.
+2. Run the pre-review validation, complete human review in that same canonical
+   file, then run final validation and verification; require no gate reasons
+   and an exact active/supported company result.
+3. Record its `imported` event in the real private event store.
+4. Queue step 1 and require exactly one `ready_manual_send` row.
+5. Have a second human check recipient, source, trigger, body, CTA, footer, and
    absence of tracking.
-7. Manually send from the founder inbox, then record `sent` and update the
-   private sequence state.
+6. Manually send from the founder inbox, immediately record `sent` with
+   `--sequence-step 1`, and update the canonical sequence state.
+7. Count this prospect as the first of the 150 Touch 1 prospects.
 8. Confirm reply routing, delivery evidence, suppression lookup, and reporting
    row without using open tracking.
-9. Hold the next batch until the owner signs the control result.
+9. Pause the next campaign message until the owner signs the checkpoint result,
+   then continue only within that day's authorised aggregate message cap.
 
 If the row blocks, the test passes only in the sense that the gate failed
 closed; do not override it. Resolve the evidence or replace the prospect.

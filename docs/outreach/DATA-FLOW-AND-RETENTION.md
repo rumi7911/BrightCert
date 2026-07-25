@@ -11,10 +11,13 @@ public business sources / licensed Clay data
                     |
                     v
         private canonical CSV research
-        (.outreach/ or outreach/runs/)
+          (.outreach/prospects.csv)
                     |
                     v
-   validate -> human ICP/LIA/source review
+ pre-review validate -> human review in canonical CSV
+                    |
+                    v
+       final validate from canonical CSV
                     |
                     v
     exact-number Companies House verification
@@ -52,12 +55,12 @@ approve the LIA, invent a trigger, set human approval, or send an email.
 | Stage | Data and action | Owner | Required control |
 |---|---|---|---|
 | Research | Company, contact, role, corporate email, source URL/date, trigger evidence | Research operator | Public business context or licensed data only; private ignored path |
-| Validation | Canonical fields, explicit gate reasons | Outreach operator | Preserve every row; blocked is not approved |
+| Validation | Pre-review research reasons, then a final reviewed snapshot generated from `.outreach/prospects.csv` | Outreach operator | Human edits only the private canonical file; generated outputs preserve every row and blocked is not approved |
 | Company verification | Exact company number, type, status, checked timestamp | Outreach operator | Server/operator environment key; no key or raw payload in Git/logs |
 | Human approval | ICP relevance, source accuracy, LIA coverage, email copy | Founder/approved reviewer | Timestamped approval; ambiguity blocks |
 | Queue | Suppression, event history, fresh Companies House result | Outreach operator | `ready_manual_send` is mandatory |
 | Manual send | Recipient, subject, plain-text body, timestamp | Founder | From `muhammad@brightcert.co.uk`; no open pixel |
-| Outcome | Sent/delivery/reply/objection/funnel event | Founder/operator | Record promptly against the canonical prospect |
+| Outcome | Sent/delivery/bounce/reply/objection/funnel event | Founder/operator | Record message events promptly with exact sequence step; update state in the private canonical file and re-run final validation/verification before a later touch |
 | Optional database | Campaign, company, prospect, append-only events, send attempts, suppressions | Authorised service-role/operator | RLS, no public/anon/authenticated access |
 | Reporting | Aggregated weekly funnel by approved dimensions | Founder | No opens/open rates; avoid exporting row-level PII |
 | Disposal | Purge expired personal fields; preserve minimum suppression | Data owner/operator | Review evidence and record purge run |

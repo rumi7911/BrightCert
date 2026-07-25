@@ -182,12 +182,23 @@ async function eventCommand(options: Map<string, string>) {
     "--segment",
     "--trigger",
     "--template-version",
+    "--sequence-step",
     "--occurred-at",
     "--amount-paid",
   ]);
   const type = required(options, "--type");
   if (!EVENT_TYPES.includes(type as OutreachEventType)) {
     throw new Error(`Unsupported outreach event type: ${type}`);
+  }
+  const rawSequenceStep =
+    ["sent", "delivered", "bounced"].includes(type)
+      ? required(options, "--sequence-step")
+      : options.get("--sequence-step")?.trim();
+  if (
+    options.has("--sequence-step") &&
+    !["1", "2", "3"].includes(rawSequenceStep ?? "")
+  ) {
+    throw new Error("--sequence-step must be 1, 2, or 3");
   }
   await recordProspectEvent(
     required(options, "--store"),
@@ -200,6 +211,9 @@ async function eventCommand(options: Map<string, string>) {
       segment: required(options, "--segment"),
       trigger: options.get("--trigger"),
       template_version: options.get("--template-version"),
+      sequence_step: rawSequenceStep
+        ? (Number(rawSequenceStep) as SequenceStep)
+        : undefined,
       occurred_at: options.get("--occurred-at"),
       amount_paid: options.get("--amount-paid"),
     }

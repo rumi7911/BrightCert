@@ -86,6 +86,7 @@ export const EVENT_COLUMNS = [
   "segment",
   "trigger",
   "template_version",
+  "sequence_step",
   "occurred_at",
   "amount_paid",
 ] as const;
@@ -98,13 +99,16 @@ export const REPORT_COLUMNS = [
   "template_version",
   "imported",
   "eligible_queued",
-  "sent",
-  "delivered",
+  "sent_messages",
+  "touch_1_sent",
+  "delivered_messages",
+  "delivery_rate",
   "positive",
   "neutral",
   "objection",
   "opt_out",
-  "bounced",
+  "bounced_messages",
+  "hard_bounce_rate",
   "booked",
   "baseline_completed",
   "checkout_started",
@@ -166,12 +170,7 @@ function terminalEventReasons(
 ): string[] {
   const reasons = new Set<string>();
   for (const event of events) {
-    if (
-      event.prospect_id !== prospect.prospect_id ||
-      event.campaign !== prospect.campaign
-    ) {
-      continue;
-    }
+    if (!eventMatchesProspect(event, prospect)) continue;
     if (["positive", "neutral", "objection", "reply"].includes(event.type)) {
       reasons.add("terminal_event_replied");
     } else if (event.type === "opt_out") {
@@ -185,6 +184,42 @@ function terminalEventReasons(
     }
   }
   return [...reasons];
+}
+
+function eventMatchesProspect(
+  event: Readonly<Record<string, string>>,
+  prospect: Prospect
+): boolean {
+  return (
+    event.prospect_id?.trim() === prospect.prospect_id &&
+    event.campaign?.trim() === prospect.campaign &&
+    event.segment?.trim().toLowerCase() === prospect.segment
+  );
+}
+
+function canonicalHistoryReasons(
+  events: readonly Record<string, string>[],
+  prospect: Prospect,
+  step: SequenceStep
+): string[] {
+  const matchingEvents = events.filter((event) =>
+    eventMatchesProspect(event, prospect)
+  );
+  const reasons: string[] = [];
+  if (!matchingEvents.some((event) => event.type === "imported")) {
+    reasons.push("missing_imported_event");
+  }
+  if (
+    step > 1 &&
+    !matchingEvents.some(
+      (event) =>
+        event.type === "sent" &&
+        event.sequence_step?.trim() === String(step - 1)
+    )
+  ) {
+    reasons.push("missing_prior_step_sent_event");
+  }
+  return reasons;
 }
 
 function verificationReason(result: CompanyVerificationResult): string {
@@ -231,6 +266,7 @@ export async function buildQueueRows(
     });
     const reasons = [
       ...gate.reasons,
+      ...canonicalHistoryReasons(events, prospect, step),
       ...terminalEventReasons(events, prospect),
     ];
     if (prospect.prospect_id) seenProspectIds.add(prospect.prospect_id);
@@ -385,15 +421,18 @@ export interface NewOutreachEvent {
   segment: string;
   trigger?: string;
   template_version?: string;
+  sequence_step?: SequenceStep;
   occurred_at?: string;
   amount_paid?: string;
 }
 
-export async function appendEvent(
-  path: string,
-  event: NewOutreachEvent,
-  now: () => Date = () => new Date()
-): Promise<void> {
+const MESSAGE_EVENT_TYPES = new Set<OutreachEventType>([
+  "sent",
+  "delivered",
+  "bounced",
+]);
+
+function validateEvent(event: NewOutreachEvent): void {
   if (!EVENT_TYPES.includes(event.type)) {
     throw new Error(`Unsupported outreach event type: ${event.type}`);
   }
@@ -401,17 +440,37 @@ export async function appendEvent(
     throw new Error("Event requires prospect_id, campaign, and segment");
   }
   if (
+    event.sequence_step !== undefined &&
+    ![1, 2, 3].includes(event.sequence_step)
+  ) {
+    throw new Error("sequence_step must be 1, 2, or 3");
+  }
+  if (MESSAGE_EVENT_TYPES.has(event.type) && event.sequence_step === undefined) {
+    throw new Error(`sequence_step is required for ${event.type} events`);
+  }
+  if (
     event.amount_paid &&
     (!Number.isFinite(Number(event.amount_paid)) || Number(event.amount_paid) < 0)
   ) {
     throw new Error("amount_paid must be a non-negative number");
   }
+  if (
+    event.occurred_at &&
+    Number.isNaN(new Date(event.occurred_at).getTime())
+  ) {
+    throw new Error("occurred_at must be a valid timestamp");
+  }
+}
+
+export async function appendEvent(
+  path: string,
+  event: NewOutreachEvent,
+  now: () => Date = () => new Date()
+): Promise<void> {
+  validateEvent(event);
   const occurredAt = event.occurred_at
     ? new Date(event.occurred_at)
     : now();
-  if (Number.isNaN(occurredAt.getTime())) {
-    throw new Error("occurred_at must be a valid timestamp");
-  }
   await withExclusiveFileLock(path, async () => {
     const rows = await readRowsIfPresent(path);
     rows.push({
@@ -422,6 +481,7 @@ export async function appendEvent(
       segment: event.segment.trim().toLowerCase(),
       trigger: event.trigger?.trim() ?? "",
       template_version: event.template_version?.trim() ?? "",
+      sequence_step: event.sequence_step?.toString() ?? "",
       occurred_at: occurredAt.toISOString(),
       amount_paid: event.amount_paid?.trim() ?? "",
     });
@@ -436,6 +496,7 @@ export async function recordProspectEvent(
   event: NewOutreachEvent,
   now: () => Date = () => new Date()
 ): Promise<void> {
+  validateEvent(event);
   const matches = prospectRows
     .map((row) => normalizeProspect(row))
     .filter((prospect) => prospect.prospect_id === event.prospect_id.trim());
@@ -481,6 +542,12 @@ interface FunnelAccumulator {
   paidByProspect: Map<string, number>;
 }
 
+function percentage(numerator: number, denominator: number): string {
+  return denominator === 0
+    ? "n/a"
+    : `${((numerator / denominator) * 100).toFixed(2)}%`;
+}
+
 function mondayUtc(date: Date): string {
   const monday = new Date(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
@@ -497,6 +564,12 @@ export function buildWeeklyFunnel(
 
   for (const event of events) {
     if (!EVENT_TYPES.includes(event.type as OutreachEventType)) continue;
+    if (
+      MESSAGE_EVENT_TYPES.has(event.type as OutreachEventType) &&
+      !["1", "2", "3"].includes(event.sequence_step)
+    ) {
+      continue;
+    }
     const occurredAt = new Date(event.occurred_at);
     if (Number.isNaN(occurredAt.getTime()) || !event.prospect_id) continue;
     const dimensions = {
@@ -521,8 +594,19 @@ export function buildWeeklyFunnel(
         ? "eligible_queued"
         : event.type;
     const prospects = group.metrics.get(metric) ?? new Set<string>();
-    prospects.add(event.prospect_id);
+    const metricIdentity = MESSAGE_EVENT_TYPES.has(
+      event.type as OutreachEventType
+    )
+      ? `${event.prospect_id}\u001f${event.sequence_step}`
+      : event.prospect_id;
+    prospects.add(metricIdentity);
     group.metrics.set(metric, prospects);
+    if (event.type === "sent" && event.sequence_step === "1") {
+      const touchOneProspects =
+        group.metrics.get("touch_1_sent") ?? new Set<string>();
+      touchOneProspects.add(event.prospect_id);
+      group.metrics.set("touch_1_sent", touchOneProspects);
+    }
     if (event.type === "paid") {
       const amount = Number(event.amount_paid || 0);
       if (Number.isFinite(amount)) {
@@ -540,29 +624,39 @@ export function buildWeeklyFunnel(
         .join("\u001f")
         .localeCompare(Object.values(right.dimensions).join("\u001f"))
     )
-    .map((group) => ({
-      ...group.dimensions,
-      imported: String(group.metrics.get("imported")?.size ?? 0),
-      eligible_queued: String(group.metrics.get("eligible_queued")?.size ?? 0),
-      sent: String(group.metrics.get("sent")?.size ?? 0),
-      delivered: String(group.metrics.get("delivered")?.size ?? 0),
-      positive: String(group.metrics.get("positive")?.size ?? 0),
-      neutral: String(group.metrics.get("neutral")?.size ?? 0),
-      objection: String(group.metrics.get("objection")?.size ?? 0),
-      opt_out: String(group.metrics.get("opt_out")?.size ?? 0),
-      bounced: String(group.metrics.get("bounced")?.size ?? 0),
-      booked: String(group.metrics.get("booked")?.size ?? 0),
-      baseline_completed: String(
-        group.metrics.get("baseline_completed")?.size ?? 0
-      ),
-      checkout_started: String(
-        group.metrics.get("checkout_started")?.size ?? 0
-      ),
-      paid: String(group.metrics.get("paid")?.size ?? 0),
-      refunded: String(group.metrics.get("refunded")?.size ?? 0),
-      lost: String(group.metrics.get("lost")?.size ?? 0),
-      paid_revenue: [...group.paidByProspect.values()]
-        .reduce((sum, amount) => sum + amount, 0)
-        .toFixed(2),
-    }));
+    .map((group) => {
+      const sentMessages = group.metrics.get("sent")?.size ?? 0;
+      const deliveredMessages = group.metrics.get("delivered")?.size ?? 0;
+      const bouncedMessages = group.metrics.get("bounced")?.size ?? 0;
+      return {
+        ...group.dimensions,
+        imported: String(group.metrics.get("imported")?.size ?? 0),
+        eligible_queued: String(
+          group.metrics.get("eligible_queued")?.size ?? 0
+        ),
+        sent_messages: String(sentMessages),
+        touch_1_sent: String(group.metrics.get("touch_1_sent")?.size ?? 0),
+        delivered_messages: String(deliveredMessages),
+        delivery_rate: percentage(deliveredMessages, sentMessages),
+        positive: String(group.metrics.get("positive")?.size ?? 0),
+        neutral: String(group.metrics.get("neutral")?.size ?? 0),
+        objection: String(group.metrics.get("objection")?.size ?? 0),
+        opt_out: String(group.metrics.get("opt_out")?.size ?? 0),
+        bounced_messages: String(bouncedMessages),
+        hard_bounce_rate: percentage(bouncedMessages, sentMessages),
+        booked: String(group.metrics.get("booked")?.size ?? 0),
+        baseline_completed: String(
+          group.metrics.get("baseline_completed")?.size ?? 0
+        ),
+        checkout_started: String(
+          group.metrics.get("checkout_started")?.size ?? 0
+        ),
+        paid: String(group.metrics.get("paid")?.size ?? 0),
+        refunded: String(group.metrics.get("refunded")?.size ?? 0),
+        lost: String(group.metrics.get("lost")?.size ?? 0),
+        paid_revenue: [...group.paidByProspect.values()]
+          .reduce((sum, amount) => sum + amount, 0)
+          .toFixed(2),
+      };
+    });
 }

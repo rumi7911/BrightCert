@@ -13,7 +13,8 @@ changing any row to `verified`.
 | `owner action required` | Founder/account/domain/legal authority or an interactive live action is required |
 
 The overall decision is **no-go** if any row is not `verified`, any evidence is
-stale/ambiguous, or a pause rule is active.
+stale/ambiguous, or a pause rule is active. All work in this checklist is
+pre-T0. T0 is the first Monday after every row passes.
 
 | Gate | Required evidence | Initial status | Owner/reviewer | Evidence/date |
 |---|---|---|---|---|
@@ -26,7 +27,7 @@ stale/ambiguous, or a pause rule is active.
 | ICP and copy approval | 120 SME/30 MSP criteria, triggers, exclusions, template versions, cadence, footer, UTM convention and human checklist are approved | owner action required |  |  |
 | Private data controls | `.outreach/` and `outreach/runs/` are ignored; no live PII in Git; operator access and incident route are confirmed | operator action required |  |  |
 | Suppression store | Idempotent seed succeeds; existing objections/bounces/customers are reconciled; email/domain/company test suppression blocks queue | operator action required |  |  |
-| CLI/control path | Validate, verify, imported event, fresh queue, blocked-path, ready-path, outcome, report and one-prospect control evidence match the current CLI/runbook | operator action required |  |  |
+| Fictitious CLI/control rehearsal | Exactly one no-send rehearsal with fictitious `.test` data covers pre-review/final validation, verification fail-closed evidence, imported and stepped events, fresh queue history blocks, ready/block unit evidence, suppression and report output under the current CLI/runbook | operator action required |  |  |
 | Companies House credential | Key is loaded only from the protected operator environment and is absent from Git/browser/logs | owner action required |  |  |
 | Companies House live check | Exact known company number returns expected active/type/checked result; mismatch/inactive/unsupported/error fails closed; queue repeats a fresh check | owner action required |  |  |
 | Database migration | Reviewed outreach migration is applied to the intended project; version recorded; RLS/grants/constraints/functions/views verified | owner action required |  |  |
@@ -34,9 +35,9 @@ stale/ambiguous, or a pause rule is active.
 | SPF | Current DNS/provider evidence passes for the exact sending domain/identity | owner action required |  |  |
 | DKIM | Current DNS/provider evidence passes for the exact sending domain/identity | owner action required |  |  |
 | DMARC | Exact domain record and monitoring destination are confirmed; policy is monitored and no conflicting record exists | owner action required |  |  |
-| Seed delivery | Up to ten internal/friendly messages render correctly, authenticate, route replies, and show no hard bounce, complaint, provider or domain warning | owner action required |  |  |
+| Single seed batch | Exactly one internal/friendly batch, no more than ten messages in aggregate, renders correctly, authenticates, routes replies, and shows no hard bounce, complaint, provider or domain warning; recipients and evidence are outside the prospect campaign | owner action required |  |  |
 | Sending identity | `muhammad@brightcert.co.uk` From/Reply-To and monitored inbox are verified; provider ceiling is not used as the operating target | owner action required |  |  |
-| Daily pause controls | 10–15/day start, max 20 until 50 healthy, max 30 after approval, >3% hard-bounce pause, any complaint/warning pause are assigned and rehearsed | operator action required |  |  |
+| Daily pause controls | Every new/follow-up message counts toward the 10–15/day start; maximum 20 until 50 distinct Touch 1 prospects are healthy; maximum 30 only after recorded owner approval; >3% message hard-bounce, any complaint/warning pause are assigned and rehearsed | operator action required |  |  |
 | Production checkout | Live product creates the expected £199 checkout and accepts the authorised `FOUNDING10` path to £99 including VAT | owner action required |  |  |
 | Webhook | Successful and failed/replayed live webhook handling is evidenced without secret exposure or false success | owner action required |  |  |
 | Entitlement | Successful payment unlocks the matching assessment/report/workspace; failed/unpaid checkout does not | owner action required |  |  |
@@ -51,12 +52,13 @@ stale/ambiguous, or a pause rule is active.
 | Retention job/process | 90-day post-sequence and 180-day personal-data purge process, customer transfer, minimal suppression, operator evidence and owner are scheduled | operator action required |  |  |
 | Rights/incident readiness | Inbox monitoring, one-month SAR workflow, immediate objection handling, breach escalation and pause/resume authority are assigned | owner action required |  |  |
 
-## Seed ceiling
+## Pre-T0 control boundary
 
-Before every row above is `verified`, the only permitted campaign-related sends
-are the first ten internal/friendly seed messages to controlled recipients.
-Ten is the ceiling, not a target. They do not authorise prospect contact and do
-not count towards the 150-send funnel.
+Before T0, run one fictitious/no-send CLI control-path rehearsal and exactly one
+internal/friendly seed batch. The seed batch may contain fewer than ten
+messages, but never more than ten in aggregate. It does not authorise prospect
+contact and does not count towards the 150 Touch 1 prospects. Do not run a
+second seed batch before or after T0.
 
 ## Go/no-go sign-off
 
@@ -72,7 +74,10 @@ not count towards the 150-send funnel.
 | Evidence index | ____________________ |
 | Next review | ____________________ |
 
-If the decision is go, set `T0` using
-[30-DAY-CALENDAR.md](./30-DAY-CALENDAR.md) and run the one-prospect control path
-in [SOP.md](./SOP.md). Any later failed gate or pause threshold returns the
-campaign to no-go.
+If the decision is go, set T0 to the first Monday after all rows passed, using
+[30-DAY-CALENDAR.md](./30-DAY-CALENDAR.md). On T0, the first campaign record is
+one real prospect processed end to end under the
+[SOP checkpoint](./SOP.md#t0-first-real-prospect-checkpoint). It counts in the
+150; pause after it to confirm the controls, then continue only within the
+authorised daily cap. This live checkpoint is not a circular launch-gate row.
+Any later failed gate or pause threshold returns the campaign to no-go.
