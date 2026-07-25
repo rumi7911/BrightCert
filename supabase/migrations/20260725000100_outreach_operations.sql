@@ -36,14 +36,15 @@ create table if not exists public.outreach_companies (
   ),
   companies_house_checked_at timestamptz not null,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (id, company_number)
 );
 
 create table if not exists public.outreach_prospects (
   id uuid primary key default gen_random_uuid(),
   prospect_id text not null unique check (length(trim(prospect_id)) between 1 and 150),
   campaign_id uuid not null references public.outreach_campaigns(id),
-  company_id uuid not null references public.outreach_companies(id),
+  company_id uuid not null,
   segment text not null check (segment in ('sme', 'msp')),
   template_version text not null check (length(trim(template_version)) between 1 and 100),
   company_name text not null check (length(trim(company_name)) > 0),
@@ -108,7 +109,9 @@ create table if not exists public.outreach_prospects (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (campaign_id, work_email),
-  unique (id, campaign_id)
+  unique (id, campaign_id),
+  foreign key (company_id, company_number)
+    references public.outreach_companies (id, company_number)
 );
 
 create table if not exists public.outreach_suppressions (
@@ -224,7 +227,7 @@ declare
 begin
   update public.outreach_prospects
   set
-    work_email_hash = encode(digest(lower(work_email), 'sha256'), 'hex'),
+    work_email_hash = null,
     work_email = null,
     contact_name = null,
     role = null,

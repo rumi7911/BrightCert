@@ -127,6 +127,8 @@ row in the supplied canonical prospect file.
 Suppression and event files use bounded exclusive sibling locks around the
 complete read/modify/replace operation. Suppression evidence is append-only in
 the database. The operator-only
-`purge_expired_outreach_prospect_personal_data()` database function hashes the
-work email and clears contact, role, source, evidence, and personalisation data
-at expiry while retaining non-personal funnel events.
+`purge_expired_outreach_prospect_personal_data()` database function clears the
+work email, any prospect-level email fingerprint, contact, role, source,
+evidence, and personalisation data at expiry while retaining non-personal
+funnel events. Only separate immutable opt-out/bounce suppression records keep
+the minimal evidence needed to prevent re-contact.

@@ -49,6 +49,23 @@ describe("outreach migration invariants", () => {
     expect(sql.match(/references\s+public\.outreach_prospects\s*\(id,\s*campaign_id\)/gi)).toHaveLength(2);
   });
 
+  test("a prospect company number must match its referenced company row", async () => {
+    const sql = await migrationSql();
+    const companyTable =
+      sql.match(
+        /create table if not exists public\.outreach_companies \(([\s\S]*?)\n\);\n\ncreate table if not exists public\.outreach_prospects/
+      )?.[1] ?? "";
+    const prospectTable =
+      sql.match(
+        /create table if not exists public\.outreach_prospects \(([\s\S]*?)\n\);\n\ncreate table if not exists public\.outreach_suppressions/
+      )?.[1] ?? "";
+
+    expect(companyTable).toMatch(/unique\s*\(id,\s*company_number\)/i);
+    expect(prospectTable).toMatch(
+      /foreign key\s*\(company_id,\s*company_number\)\s*references\s+public\.outreach_companies\s*\(id,\s*company_number\)/i
+    );
+  });
+
   test("suppression evidence rejects updates and deletes", async () => {
     const sql = await migrationSql();
 
@@ -58,12 +75,24 @@ describe("outreach migration invariants", () => {
     );
   });
 
-  test("expiry anonymisation irreversibly removes personal fields without deleting audit events", async () => {
+  test("expiry anonymisation removes email and every prospect-level email fingerprint", async () => {
+    const sql = await migrationSql();
+    const purgeFunction =
+      sql.match(
+        /create or replace function public\.purge_expired_outreach_prospect_personal_data[\s\S]*?\$\$;/
+      )?.[0] ?? "";
+
+    expect(purgeFunction).toContain(
+      "purge_expired_outreach_prospect_personal_data"
+    );
+    expect(purgeFunction).toMatch(/work_email\s*=\s*null/i);
+    expect(purgeFunction).toMatch(/work_email_hash\s*=\s*null/i);
+    expect(purgeFunction).not.toMatch(/digest\s*\(\s*(?:lower\s*\(\s*)?work_email/i);
+  });
+
+  test("expiry anonymisation removes personal fields without deleting audit events", async () => {
     const sql = await migrationSql();
 
-    expect(sql).toContain("purge_expired_outreach_prospect_personal_data");
-    expect(sql).toMatch(/work_email_hash\s*=\s*encode\s*\(\s*digest/i);
-    expect(sql).toMatch(/work_email\s*=\s*null/i);
     for (const column of [
       "contact_name",
       "role",
