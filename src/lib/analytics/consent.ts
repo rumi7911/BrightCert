@@ -10,6 +10,7 @@ const REOPEN_EVENT = "bc-consent-reopen";
 const ATTRIBUTION_COOKIE_MAX_BYTES = 3800;
 const UTM_VALUE_MAX_LENGTH = 200;
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content"] as const;
+const GA_DISABLE_FLAG = "ga-disable-G-YW9BG1DXPC";
 
 type UtmKey = (typeof UTM_KEYS)[number];
 type UtmValues = Partial<Record<UtmKey, string>>;
@@ -20,8 +21,6 @@ export type Attribution = {
 } & UtmValues;
 
 export type Consent = "granted" | "denied";
-
-let analyticsEventsEnabled = false;
 
 function cookieOptions(maxAge: number) {
   const secure = window.location.protocol === "https:" && process.env.NODE_ENV === "production" ? "; secure" : "";
@@ -126,7 +125,7 @@ function removeLegacyAttributionStorage() {
 }
 
 export function clearTrackingState() {
-  analyticsEventsEnabled = false;
+  (window as Window & { [GA_DISABLE_FLAG]?: boolean })[GA_DISABLE_FLAG] = true;
   deleteCookie(ATTRIBUTION_COOKIE);
   clearGoogleAnalyticsCookies();
   removeLegacyAttributionStorage();
@@ -139,7 +138,7 @@ export function clearTrackingState() {
 
 export function writeConsent(value: Consent) {
   document.cookie = `${CONSENT_COOKIE}=${value}; ${cookieOptions(31536000)}`;
-  if (value === "granted") analyticsEventsEnabled = true;
+  if (value === "granted") delete (window as Window & { [GA_DISABLE_FLAG]?: boolean })[GA_DISABLE_FLAG];
   else clearTrackingState();
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: value }));
 }
@@ -160,11 +159,14 @@ export function onReopenConsent(handler: () => void): () => void {
 }
 
 export function enableAnalyticsEvents() {
-  analyticsEventsEnabled = readConsent() === "granted";
+  if (readConsent() === "granted") delete (window as Window & { [GA_DISABLE_FLAG]?: boolean })[GA_DISABLE_FLAG];
 }
 
 export function canSendAnalyticsEvents() {
-  return analyticsEventsEnabled && readConsent() === "granted";
+  return (
+    readConsent() === "granted" &&
+    (window as Window & { [GA_DISABLE_FLAG]?: boolean })[GA_DISABLE_FLAG] !== true
+  );
 }
 
 export function sendConsentedGAEvent(event: string, params: Record<string, string | number> = {}) {

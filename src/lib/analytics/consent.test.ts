@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   captureAttributionIfPresent,
+  canSendAnalyticsEvents,
   clearTrackingState,
   parseAttributionCookie,
   readConsent,
@@ -21,6 +22,7 @@ afterEach(() => {
   localStorage.clear();
   document.querySelectorAll("#_next-ga, #_next-ga-init").forEach((node) => node.remove());
   delete (window as Window & { dataLayer?: unknown[] }).dataLayer;
+  delete (window as Window & { [key: string]: unknown })["ga-disable-G-YW9BG1DXPC"];
 });
 
 describe("consented attribution", () => {
@@ -61,6 +63,14 @@ describe("consented attribution", () => {
     expect(getItem).not.toHaveBeenCalled();
     expect(setItem).not.toHaveBeenCalled();
     expect(document.cookie).not.toContain("bc_attribution=");
+  });
+
+  test("allows an already-consented return visit to wait for GA before the consent component effect runs", () => {
+    clearTrackingState();
+    delete (window as Window & { [key: string]: unknown })["ga-disable-G-YW9BG1DXPC"];
+    document.cookie = "bc_consent=granted; path=/";
+
+    expect(canSendAnalyticsEvents()).toBe(true);
   });
 
   test("stores first touch, last touch, and latest flat UTM values after consent", () => {
@@ -112,5 +122,15 @@ describe("consented attribution", () => {
     expect(document.querySelector("#_next-ga")).toBeNull();
     expect(document.querySelector("#_next-ga-init")).toBeNull();
     expect((window as Window & { dataLayer?: unknown[] }).dataLayer).toBeUndefined();
+  });
+
+  test("sets GA's disable flag on withdrawal and clears it when consent is granted", () => {
+    writeConsent("denied");
+
+    expect((window as Window & { [key: string]: unknown })["ga-disable-G-YW9BG1DXPC"]).toBe(true);
+
+    writeConsent("granted");
+
+    expect((window as Window & { [key: string]: unknown })["ga-disable-G-YW9BG1DXPC"]).toBeUndefined();
   });
 });
