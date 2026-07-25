@@ -7,9 +7,9 @@ import {
   PROSPECT_COLUMNS,
   REPORT_COLUMNS,
   addSuppression,
-  appendEvent,
   buildQueueRows,
   buildWeeklyFunnel,
+  recordProspectEvent,
   seedSuppressionStore,
   validateProspectRows,
   verifyProspectRows,
@@ -111,30 +111,50 @@ async function verifyCommand(
   ]);
 }
 
-async function queueCommand(options: Map<string, string>) {
+async function queueCommand(
+  options: Map<string, string>,
+  dependencies: CliDependencies
+) {
   ensureOnly(options, [
     "--input",
     "--suppressions",
+    "--events",
     "--step",
     "--output",
   ]);
   const input = required(options, "--input");
   const suppressions = required(options, "--suppressions");
+  const events = required(options, "--events");
   const output = required(options, "--output");
+  const apiKey =
+    (dependencies.env ?? process.env).COMPANIES_HOUSE_API_KEY?.trim() ?? "";
+  if (!apiKey) {
+    throw new Error(
+      "COMPANIES_HOUSE_API_KEY is required for queue-time Companies House verification"
+    );
+  }
   const rawStep = required(options, "--step");
   if (!["1", "2", "3"].includes(rawStep)) {
     throw new Error("--step must be 1, 2, or 3");
   }
-  const rows = buildQueueRows(
+  const verifier =
+    dependencies.verifier ??
+    ((companyNumber: string) =>
+      verifyCompanyNumber(companyNumber, { apiKey }));
+  const rows = await buildQueueRows(
     await readCsv(input),
     readSuppressions(await readCsv(suppressions)),
-    Number(rawStep) as SequenceStep
+    await readCsv(events),
+    Number(rawStep) as SequenceStep,
+    verifier
   );
   await atomicWriteCsv(output, rows, [
     ...PROSPECT_COLUMNS,
     "sequence_step",
     "queue_status",
     "gate_reasons",
+    "verification_result",
+    "verification_reason",
   ]);
 }
 
@@ -154,6 +174,8 @@ async function suppressCommand(options: Map<string, string>) {
 async function eventCommand(options: Map<string, string>) {
   ensureOnly(options, [
     "--store",
+    "--prospects",
+    "--suppressions",
     "--prospect-id",
     "--type",
     "--campaign",
@@ -167,16 +189,21 @@ async function eventCommand(options: Map<string, string>) {
   if (!EVENT_TYPES.includes(type as OutreachEventType)) {
     throw new Error(`Unsupported outreach event type: ${type}`);
   }
-  await appendEvent(required(options, "--store"), {
-    prospect_id: required(options, "--prospect-id"),
-    type: type as OutreachEventType,
-    campaign: required(options, "--campaign"),
-    segment: required(options, "--segment"),
-    trigger: options.get("--trigger"),
-    template_version: options.get("--template-version"),
-    occurred_at: options.get("--occurred-at"),
-    amount_paid: options.get("--amount-paid"),
-  });
+  await recordProspectEvent(
+    required(options, "--store"),
+    required(options, "--suppressions"),
+    await readCsv(required(options, "--prospects")),
+    {
+      prospect_id: required(options, "--prospect-id"),
+      type: type as OutreachEventType,
+      campaign: required(options, "--campaign"),
+      segment: required(options, "--segment"),
+      trigger: options.get("--trigger"),
+      template_version: options.get("--template-version"),
+      occurred_at: options.get("--occurred-at"),
+      amount_paid: options.get("--amount-paid"),
+    }
+  );
 }
 
 async function reportCommand(options: Map<string, string>) {
@@ -210,7 +237,7 @@ export async function runCli(
       await verifyCommand(options, dependencies);
       return;
     case "queue":
-      await queueCommand(options);
+      await queueCommand(options, dependencies);
       return;
     case "suppress":
       await suppressCommand(options);

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, rename, unlink, writeFile } from "node:fs/promises";
+import { mkdir, open, rename, unlink, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { parse } from "csv-parse/sync";
 
@@ -58,4 +58,36 @@ export async function atomicWriteCsv(
   columns?: readonly string[]
 ): Promise<void> {
   await atomicWriteText(path, serializeCsv(rows, columns));
+}
+
+export async function withExclusiveFileLock<T>(
+  path: string,
+  operation: () => Promise<T>,
+  timeoutMs = 5_000
+): Promise<T> {
+  await mkdir(dirname(path), { recursive: true, mode: 0o700 });
+  const lockPath = `${path}.lock`;
+  const deadline = Date.now() + timeoutMs;
+  let handle;
+
+  while (!handle) {
+    try {
+      handle = await open(lockPath, "wx", 0o600);
+    } catch (error) {
+      if (
+        (error as NodeJS.ErrnoException).code !== "EEXIST" ||
+        Date.now() >= deadline
+      ) {
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+  }
+
+  try {
+    return await operation();
+  } finally {
+    await handle.close().catch(() => undefined);
+    await unlink(lockPath).catch(() => undefined);
+  }
 }

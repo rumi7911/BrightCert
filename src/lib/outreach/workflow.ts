@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import {
   atomicWriteCsv,
   parseCsv,
+  withExclusiveFileLock,
   type CsvRow,
 } from "./csv";
 import {
@@ -19,27 +20,31 @@ import type { CompanyVerificationResult } from "./companies-house";
 export const PROSPECT_COLUMNS = [
   "prospect_id",
   "campaign",
-  "segment",
   "template_version",
-  "first_name",
-  "last_name",
-  "job_title",
-  "email",
+  "segment",
   "company_name",
+  "domain",
+  "legal_entity_type",
   "company_number",
-  "company_domain",
+  "employee_band",
+  "sector",
+  "contact_name",
+  "role",
+  "work_email",
   "source_url",
   "source_date",
   "trigger",
-  "trigger_evidence",
+  "trigger_evidence_url",
+  "personalisation_note",
+  "lawful_basis",
   "lia_status",
+  "suppression_status",
+  "sequence_status",
   "human_approved_at",
   "existing_customer",
   "email_status",
   "company_status",
-  "company_type",
   "companies_house_checked_at",
-  "sequence_state",
 ] as const;
 
 export const SUPPRESSION_COLUMNS = [
@@ -58,14 +63,17 @@ export const EVENT_TYPES = [
   "positive",
   "neutral",
   "objection",
+  "reply",
   "opt_out",
   "bounced",
   "booked",
   "baseline_completed",
   "checkout_started",
   "paid",
+  "customer",
   "refunded",
   "lost",
+  "closed",
 ] as const;
 
 export type OutreachEventType = (typeof EVENT_TYPES)[number];
@@ -135,7 +143,7 @@ function gateRows(
       seenEmails,
     });
     if (prospect.prospect_id) seenProspectIds.add(prospect.prospect_id);
-    if (prospect.email) seenEmails.add(prospect.email);
+    if (prospect.work_email) seenEmails.add(prospect.work_email);
     return {
       ...prospectToRow(prospect),
       gate_reasons: gate.reasons.join(";"),
@@ -152,22 +160,121 @@ export function validateProspectRows(
   }));
 }
 
-export function buildQueueRows(
+function terminalEventReasons(
+  events: readonly Record<string, string>[],
+  prospect: Prospect
+): string[] {
+  const reasons = new Set<string>();
+  for (const event of events) {
+    if (
+      event.prospect_id !== prospect.prospect_id ||
+      event.campaign !== prospect.campaign
+    ) {
+      continue;
+    }
+    if (["positive", "neutral", "objection", "reply"].includes(event.type)) {
+      reasons.add("terminal_event_replied");
+    } else if (event.type === "opt_out") {
+      reasons.add("terminal_event_opted_out");
+    } else if (event.type === "bounced") {
+      reasons.add("terminal_event_bounced");
+    } else if (["paid", "customer"].includes(event.type)) {
+      reasons.add("terminal_event_customer");
+    } else if (["lost", "closed"].includes(event.type)) {
+      reasons.add("terminal_event_closed");
+    }
+  }
+  return [...reasons];
+}
+
+function verificationReason(result: CompanyVerificationResult): string {
+  return result.kind === "error"
+    ? `companies_house_${result.code}`
+    : `companies_house_${result.kind}`;
+}
+
+export async function buildQueueRows(
   rows: readonly Record<string, unknown>[],
   suppressions: readonly Suppression[],
-  step: SequenceStep
-): Array<
+  events: readonly Record<string, string>[],
+  step: SequenceStep,
+  verifier: (companyNumber: string) => Promise<CompanyVerificationResult>
+): Promise<Array<
   CsvRow & {
     sequence_step: string;
     queue_status: string;
     gate_reasons: string;
+    verification_result: string;
+    verification_reason: string;
   }
-> {
-  return gateRows(rows, suppressions, step).map((row) => ({
-    ...row,
-    sequence_step: String(step),
-    queue_status: row.gate_reasons ? "blocked" : "ready_manual_send",
-  }));
+>> {
+  const seenProspectIds = new Set<string>();
+  const seenEmails = new Set<string>();
+  const output: Array<
+    CsvRow & {
+      sequence_step: string;
+      queue_status: string;
+      gate_reasons: string;
+      verification_result: string;
+      verification_reason: string;
+    }
+  > = [];
+
+  for (const input of rows) {
+    const prospect = normalizeProspect(input);
+    const gate = gateProspect(prospect, {
+      step,
+      skipCompanyVerification: true,
+      suppressions,
+      seenProspectIds,
+      seenEmails,
+    });
+    const reasons = [
+      ...gate.reasons,
+      ...terminalEventReasons(events, prospect),
+    ];
+    if (prospect.prospect_id) seenProspectIds.add(prospect.prospect_id);
+    if (prospect.work_email) seenEmails.add(prospect.work_email);
+
+    const row = prospectToRow(prospect);
+    row.company_status = "";
+    row.companies_house_checked_at = "";
+    let verificationResult = "not_attempted";
+    let verificationResultReason = "";
+
+    if (reasons.length === 0) {
+      const result = await verifier(prospect.company_number);
+      verificationResult = result.kind;
+      if (
+        result.kind === "active" ||
+        result.kind === "inactive" ||
+        result.kind === "unsupported"
+      ) {
+        row.company_status = result.companyStatus;
+        row.legal_entity_type = result.companyType;
+        row.companies_house_checked_at = result.checkedAt;
+      } else {
+        row.legal_entity_type = "";
+      }
+      if (result.kind !== "active") {
+        verificationResultReason = verificationReason(result);
+        reasons.push(verificationResultReason);
+      }
+    }
+
+    const uniqueReasons = [...new Set(reasons)];
+    output.push({
+      ...row,
+      sequence_step: String(step),
+      queue_status:
+        uniqueReasons.length === 0 ? "ready_manual_send" : "blocked",
+      gate_reasons: uniqueReasons.join(";"),
+      verification_result: verificationResult,
+      verification_reason: verificationResultReason,
+    });
+  }
+
+  return output;
 }
 
 export async function verifyProspectRows(
@@ -188,11 +295,11 @@ export async function verifyProspectRows(
       result.kind === "unsupported"
     ) {
       row.company_status = result.companyStatus;
-      row.company_type = result.companyType;
+      row.legal_entity_type = result.companyType;
       row.companies_house_checked_at = result.checkedAt;
     } else {
       row.company_status = "";
-      row.company_type = "";
+      row.legal_entity_type = "";
       row.companies_house_checked_at = "";
     }
     output.push({
@@ -220,12 +327,14 @@ async function readRowsIfPresent(path: string): Promise<CsvRow[]> {
 }
 
 export async function seedSuppressionStore(path: string): Promise<void> {
-  try {
-    await readFile(path, "utf8");
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-    await atomicWriteCsv(path, [], SUPPRESSION_COLUMNS);
-  }
+  await withExclusiveFileLock(path, async () => {
+    try {
+      await readFile(path, "utf8");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      await atomicWriteCsv(path, [], SUPPRESSION_COLUMNS);
+    }
+  });
 }
 
 function normalizedSuppressionValue(
@@ -244,27 +353,29 @@ export async function addSuppression(
   suppression: Omit<Suppression, "created_at">,
   now: () => Date = () => new Date()
 ): Promise<void> {
-  const rows = await readRowsIfPresent(path);
-  const value = normalizedSuppressionValue(
-    suppression.scope,
-    suppression.value
-  );
-  if (
-    rows.some(
-      (row) =>
-        row.scope === suppression.scope &&
-        normalizedSuppressionValue(suppression.scope, row.value) === value
-    )
-  ) {
-    return;
-  }
-  rows.push({
-    scope: suppression.scope,
-    value,
-    reason: suppression.reason.trim(),
-    created_at: now().toISOString(),
+  await withExclusiveFileLock(path, async () => {
+    const rows = await readRowsIfPresent(path);
+    const value = normalizedSuppressionValue(
+      suppression.scope,
+      suppression.value
+    );
+    if (
+      rows.some(
+        (row) =>
+          row.scope === suppression.scope &&
+          normalizedSuppressionValue(suppression.scope, row.value) === value
+      )
+    ) {
+      return;
+    }
+    rows.push({
+      scope: suppression.scope,
+      value,
+      reason: suppression.reason.trim(),
+      created_at: now().toISOString(),
+    });
+    await atomicWriteCsv(path, rows, SUPPRESSION_COLUMNS);
   });
-  await atomicWriteCsv(path, rows, SUPPRESSION_COLUMNS);
 }
 
 export interface NewOutreachEvent {
@@ -301,19 +412,67 @@ export async function appendEvent(
   if (Number.isNaN(occurredAt.getTime())) {
     throw new Error("occurred_at must be a valid timestamp");
   }
-  const rows = await readRowsIfPresent(path);
-  rows.push({
-    event_id: randomUUID(),
-    prospect_id: event.prospect_id.trim(),
-    type: event.type,
-    campaign: event.campaign.trim(),
-    segment: event.segment.trim().toLowerCase(),
-    trigger: event.trigger?.trim() ?? "",
-    template_version: event.template_version?.trim() ?? "",
-    occurred_at: occurredAt.toISOString(),
-    amount_paid: event.amount_paid?.trim() ?? "",
+  await withExclusiveFileLock(path, async () => {
+    const rows = await readRowsIfPresent(path);
+    rows.push({
+      event_id: randomUUID(),
+      prospect_id: event.prospect_id.trim(),
+      type: event.type,
+      campaign: event.campaign.trim(),
+      segment: event.segment.trim().toLowerCase(),
+      trigger: event.trigger?.trim() ?? "",
+      template_version: event.template_version?.trim() ?? "",
+      occurred_at: occurredAt.toISOString(),
+      amount_paid: event.amount_paid?.trim() ?? "",
+    });
+    await atomicWriteCsv(path, rows, EVENT_COLUMNS);
   });
-  await atomicWriteCsv(path, rows, EVENT_COLUMNS);
+}
+
+export async function recordProspectEvent(
+  eventStore: string,
+  suppressionStore: string,
+  prospectRows: readonly Record<string, unknown>[],
+  event: NewOutreachEvent,
+  now: () => Date = () => new Date()
+): Promise<void> {
+  const matches = prospectRows
+    .map((row) => normalizeProspect(row))
+    .filter((prospect) => prospect.prospect_id === event.prospect_id.trim());
+  const prospect = matches.length === 1 ? matches[0] : undefined;
+  if (
+    !prospect ||
+    prospect.campaign !== event.campaign.trim() ||
+    prospect.segment !== event.segment.trim().toLowerCase()
+  ) {
+    throw new Error(
+      "Event prospect, campaign, and segment must match one canonical prospect"
+    );
+  }
+
+  if (event.type === "opt_out" || event.type === "bounced") {
+    await addSuppression(
+      suppressionStore,
+      {
+        scope: "email",
+        value: prospect.work_email,
+        reason: event.type,
+      },
+      now
+    );
+  }
+
+  await appendEvent(
+    eventStore,
+    {
+      ...event,
+      campaign: prospect.campaign,
+      segment: prospect.segment,
+      trigger: prospect.trigger,
+      template_version: prospect.template_version,
+    },
+    now
+  );
 }
 
 interface FunnelAccumulator {

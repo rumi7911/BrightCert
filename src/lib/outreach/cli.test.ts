@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 import { runCli } from "./cli";
 import { atomicWriteCsv, parseCsv } from "./csv";
-import { PROSPECT_COLUMNS } from "./workflow";
+import { EVENT_COLUMNS, PROSPECT_COLUMNS } from "./workflow";
 
 function approvedRow() {
   return {
@@ -12,25 +12,29 @@ function approvedRow() {
     campaign: "founding-2026",
     segment: "sme",
     template_version: "sme-v1",
-    first_name: "Alex",
-    last_name: "Morgan",
-    job_title: "Operations Director",
-    email: "alex.morgan@example-ltd.test",
+    contact_name: "Alex Morgan",
+    role: "Operations Director",
+    work_email: "alex.morgan@example-ltd.test",
     company_name: "Example Manufacturing Ltd",
     company_number: "00123456",
-    company_domain: "example-ltd.test",
+    domain: "example-ltd.test",
+    legal_entity_type: "ltd",
+    employee_band: "10-49",
+    sector: "manufacturing",
     source_url: "https://example-ltd.test/about",
     source_date: "2026-07-20",
     trigger: "renewal",
-    trigger_evidence: "Public procurement notice",
+    trigger_evidence_url: "https://example-ltd.test/evidence",
+    personalisation_note: "Public procurement notice references Cyber Essentials.",
+    lawful_basis: "legitimate_interests",
     lia_status: "approved",
+    suppression_status: "clear",
     human_approved_at: "2026-07-24T12:00:00Z",
     existing_customer: "false",
     email_status: "verified",
     company_status: "active",
-    company_type: "ltd",
     companies_house_checked_at: "2026-07-24T11:00:00Z",
-    sequence_state: "approved",
+    sequence_status: "approved",
   };
 }
 
@@ -95,8 +99,10 @@ describe("outreach operator CLI", () => {
     const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
     const input = join(directory, "input.csv");
     const suppressions = join(directory, "suppressions.csv");
+    const events = join(directory, "events.csv");
     const output = join(directory, "queue.csv");
     await atomicWriteCsv(input, [approvedRow()], PROSPECT_COLUMNS);
+    await atomicWriteCsv(events, [], EVENT_COLUMNS);
 
     await runCli(["seed-suppressions", "--store", suppressions]);
     await runCli([
@@ -116,11 +122,22 @@ describe("outreach operator CLI", () => {
       input,
       "--suppressions",
       suppressions,
+      "--events",
+      events,
       "--step",
       "1",
       "--output",
       output,
-    ]);
+    ], {
+      env: { COMPANIES_HOUSE_API_KEY: "operator-test-key" },
+      verifier: async (companyNumber) => ({
+        kind: "active",
+        companyNumber,
+        companyStatus: "active",
+        companyType: "ltd",
+        checkedAt: "2026-07-25T12:00:00Z",
+      }),
+    });
 
     expect(parseCsv(await readFile(output, "utf8"))[0]).toMatchObject({
       queue_status: "blocked",
@@ -128,15 +145,83 @@ describe("outreach operator CLI", () => {
     });
   });
 
+  test("queue refuses to write without a Companies House key", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
+    const input = join(directory, "input.csv");
+    const suppressions = join(directory, "suppressions.csv");
+    const events = join(directory, "events.csv");
+    const output = join(directory, "queue.csv");
+    await atomicWriteCsv(input, [approvedRow()], PROSPECT_COLUMNS);
+    await runCli(["seed-suppressions", "--store", suppressions]);
+
+    await expect(
+      runCli([
+        "queue",
+        "--input",
+        input,
+        "--suppressions",
+        suppressions,
+        "--events",
+        events,
+        "--step",
+        "1",
+        "--output",
+        output,
+      ], { env: {} })
+    ).rejects.toThrow("COMPANIES_HOUSE_API_KEY");
+    await expect(readFile(output, "utf8")).rejects.toMatchObject({ code: "ENOENT" });
+  });
+
+  test("queue refuses to treat a missing event store as an empty history", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
+    const input = join(directory, "input.csv");
+    const suppressions = join(directory, "suppressions.csv");
+    const events = join(directory, "missing-events.csv");
+    await atomicWriteCsv(input, [approvedRow()], PROSPECT_COLUMNS);
+    await runCli(["seed-suppressions", "--store", suppressions]);
+
+    await expect(
+      runCli([
+        "queue",
+        "--input",
+        input,
+        "--suppressions",
+        suppressions,
+        "--events",
+        events,
+        "--step",
+        "1",
+        "--output",
+        join(directory, "queue.csv"),
+      ], {
+        env: { COMPANIES_HOUSE_API_KEY: "operator-test-key" },
+        verifier: async (companyNumber) => ({
+          kind: "active",
+          companyNumber,
+          companyStatus: "active",
+          companyType: "ltd",
+          checkedAt: "2026-07-25T12:00:00Z",
+        }),
+      })
+    ).rejects.toMatchObject({ code: "ENOENT" });
+  });
+
   test("event and report create the required weekly funnel without an open metric", async () => {
     const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
     const events = join(directory, "events.csv");
+    const prospects = join(directory, "prospects.csv");
+    const suppressions = join(directory, "suppressions.csv");
     const output = join(directory, "report.csv");
+    await atomicWriteCsv(prospects, [approvedRow()], PROSPECT_COLUMNS);
 
     await runCli([
       "event",
       "--store",
       events,
+      "--prospects",
+      prospects,
+      "--suppressions",
+      suppressions,
       "--prospect-id",
       "sme-001",
       "--type",
@@ -160,5 +245,63 @@ describe("outreach operator CLI", () => {
     expect(report).toMatchObject({ paid: "1", paid_revenue: "99.00" });
     expect(report).not.toHaveProperty("opened");
     expect(report).not.toHaveProperty("open_rate");
+  });
+
+  test("an opt-out event suppresses the canonical email and blocks a later queue", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
+    const prospects = join(directory, "prospects.csv");
+    const suppressions = join(directory, "suppressions.csv");
+    const events = join(directory, "events.csv");
+    const output = join(directory, "queue.csv");
+    await atomicWriteCsv(prospects, [approvedRow()], PROSPECT_COLUMNS);
+
+    await runCli([
+      "event",
+      "--store",
+      events,
+      "--prospects",
+      prospects,
+      "--suppressions",
+      suppressions,
+      "--prospect-id",
+      "sme-001",
+      "--type",
+      "opt_out",
+      "--campaign",
+      "founding-2026",
+      "--segment",
+      "sme",
+    ]);
+    await runCli([
+      "queue",
+      "--input",
+      prospects,
+      "--suppressions",
+      suppressions,
+      "--events",
+      events,
+      "--step",
+      "1",
+      "--output",
+      output,
+    ], {
+      env: { COMPANIES_HOUSE_API_KEY: "operator-test-key" },
+      verifier: async (companyNumber) => ({
+        kind: "active",
+        companyNumber,
+        companyStatus: "active",
+        companyType: "ltd",
+        checkedAt: "2026-07-25T12:00:00Z",
+      }),
+    });
+
+    expect(parseCsv(await readFile(output, "utf8"))[0]).toMatchObject({
+      queue_status: "blocked",
+      gate_reasons: expect.stringContaining("terminal_event_opted_out"),
+    });
+    expect(parseCsv(await readFile(suppressions, "utf8"))[0]).toMatchObject({
+      scope: "email",
+      value: "alex.morgan@example-ltd.test",
+    });
   });
 });

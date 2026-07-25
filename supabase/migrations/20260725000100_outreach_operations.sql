@@ -46,21 +46,50 @@ create table if not exists public.outreach_prospects (
   company_id uuid not null references public.outreach_companies(id),
   segment text not null check (segment in ('sme', 'msp')),
   template_version text not null check (length(trim(template_version)) between 1 and 100),
-  first_name text,
-  last_name text,
-  job_title text,
-  email text not null check (email = lower(email) and email ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'),
-  email_domain text not null check (email_domain = lower(email_domain)),
+  company_name text not null check (length(trim(company_name)) > 0),
+  company_number text not null check (
+    company_number = upper(company_number)
+    and company_number ~ '^[A-Z0-9]{2,8}$'
+  ),
+  domain text not null check (domain = lower(domain)),
+  legal_entity_type text not null check (
+    legal_entity_type in (
+      'ltd',
+      'plc',
+      'llp',
+      'private-unlimited',
+      'private-unlimited-nsc',
+      'private-limited-guarant-nsc',
+      'private-limited-guarant-nsc-limited-exemption',
+      'private-limited-shares-section-30-exemption'
+    )
+  ),
+  employee_band text not null check (length(trim(employee_band)) > 0),
+  sector text not null check (length(trim(sector)) > 0),
+  contact_name text,
+  role text,
+  work_email text check (
+    work_email is null
+    or (work_email = lower(work_email) and work_email ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$')
+  ),
+  work_email_hash text,
   email_status text not null check (length(trim(email_status)) > 0),
-  source_url text not null check (source_url ~ '^https?://'),
+  company_status text not null check (length(trim(company_status)) > 0),
+  companies_house_checked_at timestamptz not null,
+  source_url text check (source_url is null or source_url ~ '^https?://'),
   source_date date not null,
   trigger text not null check (length(trim(trigger)) > 0),
-  trigger_evidence text not null check (length(trim(trigger_evidence)) > 0),
+  trigger_evidence_url text check (
+    trigger_evidence_url is null or trigger_evidence_url ~ '^https?://'
+  ),
+  personalisation_note text,
+  lawful_basis text not null check (lawful_basis = 'legitimate_interests'),
   lia_status text not null check (lia_status in ('pending', 'approved', 'rejected')),
+  suppression_status text not null check (suppression_status in ('clear', 'suppressed')),
   human_approved_at timestamptz,
   existing_customer boolean not null default false,
-  sequence_state text not null default 'candidate' check (
-    sequence_state in (
+  sequence_status text not null default 'candidate' check (
+    sequence_status in (
       'candidate',
       'approved',
       'touch_1_sent',
@@ -74,10 +103,12 @@ create table if not exists public.outreach_prospects (
     )
   ),
   expires_at timestamptz not null,
+  personal_data_purged_at timestamptz,
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (campaign_id, email)
+  unique (campaign_id, work_email),
+  unique (id, campaign_id)
 );
 
 create table if not exists public.outreach_suppressions (
@@ -93,7 +124,7 @@ create table if not exists public.outreach_suppressions (
 create table if not exists public.outreach_events (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.outreach_campaigns(id),
-  prospect_id uuid not null references public.outreach_prospects(id),
+  prospect_id uuid not null,
   event_type text not null check (
     event_type in (
       'imported',
@@ -104,14 +135,17 @@ create table if not exists public.outreach_events (
       'positive',
       'neutral',
       'objection',
+      'reply',
       'opt_out',
       'bounced',
       'booked',
       'baseline_completed',
       'checkout_started',
       'paid',
+      'customer',
       'refunded',
-      'lost'
+      'lost',
+      'closed'
     )
   ),
   segment text not null check (segment in ('sme', 'msp')),
@@ -120,26 +154,30 @@ create table if not exists public.outreach_events (
   occurred_at timestamptz not null default now(),
   amount_paid numeric(12, 2) check (amount_paid is null or amount_paid >= 0),
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  foreign key (prospect_id, campaign_id)
+    references public.outreach_prospects (id, campaign_id)
 );
 
 create table if not exists public.outreach_send_attempts (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.outreach_campaigns(id),
-  prospect_id uuid not null references public.outreach_prospects(id),
+  prospect_id uuid not null,
   sequence_step smallint not null check (sequence_step between 1 and 3),
   status text not null check (status in ('queued', 'sent', 'delivered', 'failed', 'cancelled')),
   attempted_at timestamptz,
   failure_code text,
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now(),
-  unique (campaign_id, prospect_id, sequence_step)
+  unique (campaign_id, prospect_id, sequence_step),
+  foreign key (prospect_id, campaign_id)
+    references public.outreach_prospects (id, campaign_id)
 );
 
 create index if not exists outreach_prospects_company_idx
   on public.outreach_prospects (company_id);
 create index if not exists outreach_prospects_state_idx
-  on public.outreach_prospects (campaign_id, sequence_state);
+  on public.outreach_prospects (campaign_id, sequence_status);
 create index if not exists outreach_events_funnel_idx
   on public.outreach_events (occurred_at, campaign_id, event_type, prospect_id);
 create index if not exists outreach_suppressions_lookup_idx
@@ -158,6 +196,51 @@ drop trigger if exists outreach_events_append_only on public.outreach_events;
 create trigger outreach_events_append_only
   before update or delete on public.outreach_events
   for each row execute function public.reject_outreach_event_mutation();
+
+create or replace function public.reject_outreach_suppression_mutation()
+returns trigger
+language plpgsql
+as $$
+begin
+  raise exception 'outreach_suppressions is append-only';
+end;
+$$;
+
+drop trigger if exists outreach_suppressions_append_only on public.outreach_suppressions;
+create trigger outreach_suppressions_append_only
+  before update or delete on public.outreach_suppressions
+  for each row execute function public.reject_outreach_suppression_mutation();
+
+create or replace function public.purge_expired_outreach_prospect_personal_data(
+  p_now timestamptz default now()
+)
+returns integer
+language plpgsql
+security definer
+set search_path = public, extensions
+as $$
+declare
+  affected integer;
+begin
+  update public.outreach_prospects
+  set
+    work_email_hash = encode(digest(lower(work_email), 'sha256'), 'hex'),
+    work_email = null,
+    contact_name = null,
+    role = null,
+    source_url = null,
+    trigger_evidence_url = null,
+    personalisation_note = null,
+    metadata = '{}'::jsonb,
+    personal_data_purged_at = p_now,
+    updated_at = p_now
+  where expires_at <= p_now
+    and personal_data_purged_at is null;
+
+  get diagnostics affected = row_count;
+  return affected;
+end;
+$$;
 
 alter table public.outreach_campaigns enable row level security;
 alter table public.outreach_companies enable row level security;
@@ -230,6 +313,8 @@ revoke all on table public.outreach_events from public, anon, authenticated;
 revoke all on table public.outreach_send_attempts from public, anon, authenticated;
 revoke all on table public.outreach_weekly_funnel from public, anon, authenticated;
 revoke all on function public.reject_outreach_event_mutation() from public, anon, authenticated;
+revoke all on function public.reject_outreach_suppression_mutation() from public, anon, authenticated;
+revoke all on function public.purge_expired_outreach_prospect_personal_data(timestamptz) from public, anon, authenticated;
 
 grant all on table public.outreach_campaigns to service_role;
 grant all on table public.outreach_companies to service_role;
@@ -238,3 +323,4 @@ grant all on table public.outreach_suppressions to service_role;
 grant all on table public.outreach_events to service_role;
 grant all on table public.outreach_send_attempts to service_role;
 grant select on table public.outreach_weekly_funnel to service_role;
+grant execute on function public.purge_expired_outreach_prospect_personal_data(timestamptz) to service_role;

@@ -8,6 +8,7 @@ import {
   appendEvent,
   buildQueueRows,
   buildWeeklyFunnel,
+  recordProspectEvent,
   seedSuppressionStore,
   validateProspectRows,
   verifyProspectRows,
@@ -19,25 +20,29 @@ function approvedRow(overrides: Record<string, unknown> = {}) {
     campaign: "founding-2026",
     segment: "sme",
     template_version: "sme-v1",
-    first_name: "Alex",
-    last_name: "Morgan",
-    job_title: "Operations Director",
-    email: "alex.morgan@example-ltd.test",
+    contact_name: "Alex Morgan",
+    role: "Operations Director",
+    work_email: "alex.morgan@example-ltd.test",
     company_name: "Example Manufacturing Ltd",
     company_number: "00123456",
-    company_domain: "example-ltd.test",
+    domain: "example-ltd.test",
+    legal_entity_type: "ltd",
+    employee_band: "10-49",
+    sector: "manufacturing",
     source_url: "https://example-ltd.test/about",
     source_date: "2026-07-20",
     trigger: "Cyber Essentials renewal",
-    trigger_evidence: "Public procurement notice",
+    trigger_evidence_url: "https://example-ltd.test/evidence",
+    personalisation_note: "Public procurement notice references Cyber Essentials.",
+    lawful_basis: "legitimate_interests",
     lia_status: "approved",
+    suppression_status: "clear",
     human_approved_at: "2026-07-24T12:00:00Z",
     existing_customer: "false",
     email_status: "verified",
     company_status: "active",
-    company_type: "ltd",
     companies_house_checked_at: "2026-07-24T11:00:00Z",
-    sequence_state: "approved",
+    sequence_status: "approved",
     ...overrides,
   };
 }
@@ -80,7 +85,7 @@ describe("prospect workflows", () => {
       approvedRow(),
       approvedRow({
         prospect_id: "sme-002",
-        email: "info@gmail.com",
+        work_email: "info@gmail.com",
         human_approved_at: "",
       }),
     ]);
@@ -100,19 +105,27 @@ describe("prospect workflows", () => {
     expect(rows[1]?.gate_reasons).toContain("human_approval_missing");
   });
 
-  test("queue retains blocked rows but marks only approved transitions ready for manual send", () => {
-    const rows = buildQueueRows(
+  test("queue retains blocked rows but marks only approved transitions ready for manual send", async () => {
+    const rows = await buildQueueRows(
       [
         approvedRow(),
         approvedRow({
           prospect_id: "sme-002",
-          email: "pat@example-two.test",
+          work_email: "pat@example-two.test",
           company_number: "00999999",
-          company_domain: "example-two.test",
+          domain: "example-two.test",
         }),
       ],
       [{ scope: "company", value: "00999999", reason: "existing customer" }],
-      1
+      [],
+      1,
+      async (companyNumber) => ({
+        kind: "active",
+        companyNumber,
+        companyStatus: "active",
+        companyType: "ltd",
+        checkedAt: "2026-07-25T12:00:00Z",
+      })
     );
 
     expect(rows).toHaveLength(2);
@@ -147,17 +160,73 @@ describe("prospect workflows", () => {
 
     expect(rows[0]).toMatchObject({
       company_status: "active",
-      company_type: "ltd",
+      legal_entity_type: "ltd",
       companies_house_checked_at: "2026-07-25T12:00:00.000Z",
       verification_result: "active",
       verification_reason: "",
     });
     expect(rows[1]).toMatchObject({
       company_status: "",
-      company_type: "",
+      legal_entity_type: "",
       companies_house_checked_at: "",
       verification_result: "not_found",
       verification_reason: "not_found",
+    });
+  });
+
+  test("a prior opt-out event blocks every later queue attempt", async () => {
+    const rows = await buildQueueRows(
+      [approvedRow()],
+      [],
+      [
+        {
+          event_id: "event-1",
+          prospect_id: "sme-001",
+          type: "opt_out",
+          campaign: "founding-2026",
+          segment: "sme",
+          trigger: "Cyber Essentials renewal",
+          template_version: "sme-v1",
+          occurred_at: "2026-07-25T10:00:00Z",
+          amount_paid: "",
+        },
+      ],
+      1,
+      async (companyNumber) => ({
+        kind: "active",
+        companyNumber,
+        companyStatus: "active",
+        companyType: "ltd",
+        checkedAt: "2026-07-25T12:00:00Z",
+      })
+    );
+
+    expect(rows[0]).toMatchObject({
+      queue_status: "blocked",
+      gate_reasons: "terminal_event_opted_out",
+    });
+  });
+
+  test("queue ignores self-asserted company data and requires a fresh active profile", async () => {
+    const rows = await buildQueueRows(
+      [approvedRow()],
+      [],
+      [],
+      1,
+      async (companyNumber) => ({
+        kind: "inactive",
+        companyNumber,
+        companyStatus: "dissolved",
+        companyType: "ltd",
+        checkedAt: "2026-07-25T12:00:00Z",
+      })
+    );
+
+    expect(rows[0]).toMatchObject({
+      queue_status: "blocked",
+      verification_result: "inactive",
+      company_status: "dissolved",
+      gate_reasons: "companies_house_inactive",
     });
   });
 });
@@ -259,5 +328,89 @@ describe("operator stores and reporting", () => {
         paid_revenue: "198.00",
       }),
     ]);
+  });
+
+  test("records an opt-out only for a canonical prospect and suppresses its email first", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-outcome-"));
+    const events = join(directory, "events.csv");
+    const suppressions = join(directory, "suppressions.csv");
+
+    await recordProspectEvent(
+      events,
+      suppressions,
+      [approvedRow()],
+      {
+        prospect_id: "sme-001",
+        type: "opt_out",
+        campaign: "founding-2026",
+        segment: "sme",
+        occurred_at: "2026-07-25T10:00:00Z",
+      }
+    );
+
+    expect(parseCsv(await readFile(suppressions, "utf8"))[0]).toMatchObject({
+      scope: "email",
+      value: "alex.morgan@example-ltd.test",
+      reason: "opt_out",
+    });
+    expect(parseCsv(await readFile(events, "utf8"))[0]).toMatchObject({
+      prospect_id: "sme-001",
+      type: "opt_out",
+      campaign: "founding-2026",
+      segment: "sme",
+      trigger: "Cyber Essentials renewal",
+      template_version: "sme-v1",
+    });
+  });
+
+  test("refuses to append an event with dimensions unrelated to the canonical prospect", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-outcome-"));
+
+    await expect(
+      recordProspectEvent(
+        join(directory, "events.csv"),
+        join(directory, "suppressions.csv"),
+        [approvedRow()],
+        {
+          prospect_id: "sme-001",
+          type: "positive",
+          campaign: "founding-2026",
+          segment: "msp",
+        }
+      )
+    ).rejects.toThrow("canonical prospect");
+
+    await expect(readFile(join(directory, "events.csv"), "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+  });
+
+  test("concurrent event and suppression updates do not lose records", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-concurrency-"));
+    const events = join(directory, "events.csv");
+    const suppressions = join(directory, "suppressions.csv");
+
+    await Promise.all([
+      ...Array.from({ length: 20 }, (_, index) =>
+        appendEvent(events, {
+          prospect_id: `sme-${index}`,
+          type: "imported",
+          campaign: "founding-2026",
+          segment: "sme",
+          occurred_at: "2026-07-25T10:00:00Z",
+        })
+      ),
+      ...Array.from({ length: 20 }, (_, index) =>
+        addSuppression(suppressions, {
+          scope: "email",
+          value: `person-${index}@example.test`,
+          reason: "test",
+        })
+      ),
+    ]);
+
+    expect(parseCsv(await readFile(events, "utf8"))).toHaveLength(20);
+    expect(parseCsv(await readFile(suppressions, "utf8"))).toHaveLength(20);
+    expect((await readdir(directory)).filter((name) => name.endsWith(".lock"))).toEqual([]);
   });
 });

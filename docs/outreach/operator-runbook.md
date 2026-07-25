@@ -39,7 +39,7 @@ The tracked example uses only reserved `.test` domains and fictitious details.
 The prospect contract is:
 
 ```text
-prospect_id,campaign,segment,template_version,first_name,last_name,job_title,email,company_name,company_number,company_domain,source_url,source_date,trigger,trigger_evidence,lia_status,human_approved_at,existing_customer,email_status,company_status,company_type,companies_house_checked_at,sequence_state
+prospect_id,campaign,template_version,segment,company_name,domain,legal_entity_type,company_number,employee_band,sector,contact_name,role,work_email,source_url,source_date,trigger,trigger_evidence_url,personalisation_note,lawful_basis,lia_status,suppression_status,sequence_status,human_approved_at,existing_customer,email_status,company_status,companies_house_checked_at
 ```
 
 The supported sequence states are `candidate`, `approved`, `touch_1_sent`,
@@ -71,14 +71,26 @@ npm run outreach -- suppress \
   --value person@example.test \
   --reason opt-out
 
+npm run outreach -- event \
+  --store .outreach/events.csv \
+  --prospects outreach/runs/verified.csv \
+  --suppressions .outreach/suppressions.csv \
+  --prospect-id sme-001 \
+  --type imported \
+  --campaign founding-2026 \
+  --segment sme
+
 npm run outreach -- queue \
   --input outreach/runs/verified.csv \
   --suppressions .outreach/suppressions.csv \
+  --events .outreach/events.csv \
   --step 1 \
   --output outreach/runs/step-1-review.csv
 
 npm run outreach -- event \
   --store .outreach/events.csv \
+  --prospects outreach/runs/verified.csv \
+  --suppressions .outreach/suppressions.csv \
   --prospect-id sme-001 \
   --type positive \
   --campaign founding-2026 \
@@ -94,9 +106,27 @@ npm run outreach -- report \
 Validation and queue outputs retain every input row. Only rows with
 `queue_status=ready_manual_send` are approved for manual sending; blocked rows
 carry semicolon-separated `gate_reasons`. Always review the file before sending.
+Queue always requires `COMPANIES_HOUSE_API_KEY` and performs a fresh exact-number
+profile check; status/type/timestamps already present in a CSV are review data,
+not authority. The event store must already exist (normally beginning with
+canonical `imported` events); a missing history is an error, not an empty
+history.
 
 The event types are `imported`, `eligible`, `queued`, `sent`, `delivered`,
-`positive`, `neutral`, `objection`, `opt_out`, `bounced`, `booked`,
-`baseline_completed`, `checkout_started`, `paid`, `refunded`, and `lost`.
+`positive`, `neutral`, `objection`, `reply`, `opt_out`, `bounced`, `booked`,
+`baseline_completed`, `checkout_started`, `paid`, `customer`, `refunded`,
+`lost`, and `closed`.
 Reports deduplicate a prospect within each event type and week. They deliberately
 exclude opens and open rates.
+
+Positive, neutral, objection, reply, opt-out, bounce, paid/customer, and
+lost/closed events stop later queue attempts. Opt-out and bounce also append an
+email suppression before the event is recorded. Event dimensions must match one
+row in the supplied canonical prospect file.
+
+Suppression and event files use bounded exclusive sibling locks around the
+complete read/modify/replace operation. Suppression evidence is append-only in
+the database. The operator-only
+`purge_expired_outreach_prospect_personal_data()` database function hashes the
+work email and clears contact, role, source, evidence, and personalisation data
+at expiry while retaining non-personal funnel events.
