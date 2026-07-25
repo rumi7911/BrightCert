@@ -177,6 +177,7 @@ export default function QuestionPage({
       section_id: sectionId,
       question_key: question.key,
       answer: selectedAnswer,
+      updated_at: new Date().toISOString(),
     }, { onConflict: "assessment_id,question_key" });
 
     setSaving(false);

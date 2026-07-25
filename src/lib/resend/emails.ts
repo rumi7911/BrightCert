@@ -187,16 +187,23 @@ export async function sendDraftReminderEmail(
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const continueUrl = `${appUrl}${continueHref}`;
 
-  const heading = tier === "24h" ? "Continue where you left off" : "Still working on your assessment?";
+  const heading =
+    tier === "24h"
+      ? "Continue where you left off"
+      : completedCount === 0
+        ? "Still thinking about Cyber Essentials?"
+        : "Still working on your assessment?";
   const intro =
     tier === "24h"
       ? completedCount === 0
         ? "You started your Cyber Essentials readiness assessment. Your progress is saved — continue whenever it suits you."
         : "You started your Cyber Essentials readiness assessment — it only takes a few more minutes to finish."
-      : "Your Cyber Essentials readiness assessment is still in progress. Here's where you're at:";
+      : completedCount === 0
+        ? "You started a Cyber Essentials readiness assessment but haven't answered any questions yet. It's free to complete, takes about 2 hours, and your progress is saved automatically as you go."
+        : "Your Cyber Essentials readiness assessment is still in progress. Here's where you're at:";
 
   const progressBlock =
-    tier === "72h"
+    tier === "72h" && completedCount > 0
       ? `
     <div style="background:${BG};border:1px solid ${BORDER};border-radius:12px;padding:20px 24px;text-align:center;margin-bottom:24px;">
       <span style="font-size:32px;font-weight:700;color:${EMERALD};">${completedCount} of 5</span>
@@ -219,7 +226,12 @@ export async function sendDraftReminderEmail(
   await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
-    subject: tier === "24h" ? "Pick up your Cyber Essentials assessment" : `You're ${completedCount} of 5 sections in — finish your assessment`,
+    subject:
+      tier === "24h"
+        ? "Pick up your Cyber Essentials assessment"
+        : completedCount === 0
+          ? "Still thinking about Cyber Essentials?"
+          : `You're ${completedCount} of 5 sections in — finish your assessment`,
     html: baseTemplate(body),
   });
 }

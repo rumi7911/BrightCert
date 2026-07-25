@@ -138,6 +138,9 @@ export default function PrivacyPage() {
                 We also use Google Analytics to understand how visitors use the site
                 (e.g. which pages are viewed). This sets analytics cookies and shares
                 usage data with Google. It does not include your assessment responses.
+                Analytics only runs after you accept the cookie banner shown on your
+                first visit — declining, or never responding, means it never loads. You
+                can change your choice at any time by clearing cookies for this site.
               </p>
             </Section>
 

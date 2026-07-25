@@ -29,11 +29,21 @@ export async function GET(request: Request) {
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const code = searchParams.get("code");
-  // Only allow internal paths — an absolute (`https://evil.com`) or
-  // protocol-relative (`//evil.com`) `next` would otherwise turn a real
-  // BrightCert magic-link email into a phishing redirect.
+  // Only allow internal paths — resolve against origin and check the
+  // *resolved* origin, rather than pattern-matching the raw string. A
+  // string-prefix check (e.g. rejecting only "//") can still be bypassed by
+  // a backslash variant like "/\evil.example", which WHATWG URL resolution
+  // silently normalizes into an external host.
   const rawNext = searchParams.get("next") ?? "/dashboard";
-  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
+  let next = "/dashboard";
+  try {
+    const resolved = new URL(rawNext, origin);
+    if (resolved.origin === origin) {
+      next = resolved.pathname + resolved.search + resolved.hash;
+    }
+  } catch {
+    // rawNext isn't a resolvable URL at all — fall back to /dashboard
+  }
 
   // Supabase can bounce back here with an error (expired/consumed link, etc.)
   const urlError =

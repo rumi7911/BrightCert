@@ -90,11 +90,11 @@ export async function GET(request: NextRequest) {
 
     const { data: responses } = await admin
       .from("responses")
-      .select("section_id, created_at")
+      .select("section_id, created_at, updated_at")
       .eq("assessment_id", assessment.id);
 
     const lastActivityMs = (responses ?? []).reduce(
-      (latest, r) => Math.max(latest, new Date(r.created_at).getTime()),
+      (latest, r) => Math.max(latest, new Date(r.updated_at ?? r.created_at).getTime()),
       new Date(assessment.created_at).getTime()
     );
     const ageMs = now - lastActivityMs;
