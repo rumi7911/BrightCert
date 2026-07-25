@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     // Check assessment is paid
     const { data: assessment, error: assessmentError } = await supabase
       .from("assessments")
-      .select("id, org_id, status, overall_score, overall_status, organisations(name)")
+      .select("id, org_id, status, overall_score, overall_status, executive_summary, organisations(name)")
       .eq("id", assessmentId)
       .single();
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     const doc = createElement(ReportDocument, {
       orgName,
-      assessmentId,
+      executiveSummary: assessment.executive_summary ?? null,
       overallScore: assessment.overall_score ?? 0,
       overallStatus: assessment.overall_status ?? "not_ready",
       controls: controlScores,
