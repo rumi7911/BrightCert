@@ -34,7 +34,7 @@ const PRICING_SCHEMA = {
       price: "99",
       priceCurrency: "GBP",
       description: "Monthly readiness review, remediation tracking, and renewal preparation support.",
-      availability: "https://schema.org/PreOrder",
+      availability: "https://schema.org/OutOfStock",
     },
     {
       "@type": "Offer",
@@ -42,7 +42,7 @@ const PRICING_SCHEMA = {
       price: "499",
       priceCurrency: "GBP",
       description: "Cyber Essentials Plus preparation: checklist, evidence collection guidance, and readiness review before technical testing.",
-      availability: "https://schema.org/PreOrder",
+      availability: "https://schema.org/OutOfStock",
     },
     {
       "@type": "Offer",
@@ -50,14 +50,15 @@ const PRICING_SCHEMA = {
       price: "299",
       priceCurrency: "GBP",
       description: "Multi-client dashboard and assessment workflow for MSPs supporting UK SME clients (per month).",
-      availability: "https://schema.org/PreOrder",
+      availability: "https://schema.org/OutOfStock",
     },
   ],
 };
 
 // Not yet purchasable — only the £199 Assessment has a live checkout path.
 // Cards are shown for roadmap visibility with an inert "Coming soon" label
-// instead of a real CTA (see PRICING_SCHEMA's availability: PreOrder above).
+// instead of a real CTA (see PRICING_SCHEMA's availability: OutOfStock above —
+// not PreOrder, since there's no mechanism to actually order these ahead).
 const MINI_TIERS = [
   {
     id: undefined,

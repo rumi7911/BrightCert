@@ -73,7 +73,7 @@ export async function sendWelcomeEmail(email: string, orgName: string): Promise<
         <td style="padding:6px 0;vertical-align:top;">
           <span style="display:inline-block;width:20px;height:20px;background:${EMERALD};color:#fff;border-radius:50%;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">3</span>
         </td>
-        <td style="padding:6px 0;font-size:14px;color:${SLATE};line-height:1.5;">Unlock your full PDF report and remediation roadmap for £199</td>
+        <td style="padding:6px 0;font-size:14px;color:${SLATE};line-height:1.5;">Unlock your full PDF report and remediation roadmap for £199 (£99 for our first 10 customers with code FOUNDING10)</td>
       </tr>
     </table>
     <a href="https://brightcert.co.uk/dashboard"
@@ -171,6 +171,53 @@ export async function sendUnlockReminderEmail(
     from: FROM_EMAIL,
     to: email,
     subject: `Your Cyber Essentials readiness score: ${overallScore}%`,
+    html: baseTemplate(body),
+  });
+}
+
+export async function sendDraftReminderEmail(
+  email: string,
+  orgName: string,
+  assessmentId: string,
+  tier: "24h" | "72h",
+  completedCount: number,
+  continueHref: string,
+): Promise<void> {
+  const resend = getResend();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const continueUrl = `${appUrl}${continueHref}`;
+
+  const heading = tier === "24h" ? "Continue where you left off" : "Still working on your assessment?";
+  const intro =
+    tier === "24h"
+      ? "You started your Cyber Essentials readiness assessment — it only takes a few more minutes to finish."
+      : "Your Cyber Essentials readiness assessment is still in progress. Here's where you're at:";
+
+  const progressBlock =
+    tier === "72h"
+      ? `
+    <div style="background:${BG};border:1px solid ${BORDER};border-radius:12px;padding:20px 24px;text-align:center;margin-bottom:24px;">
+      <span style="font-size:32px;font-weight:700;color:${EMERALD};">${completedCount} of 5</span>
+      <p style="margin:4px 0 0;font-size:14px;color:${SLATE};">sections complete</p>
+    </div>`
+      : "";
+
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:${NAVY};">${heading}</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:${SLATE};line-height:1.6;">
+      Hi${orgName ? ` from ${orgName}` : ""},<br><br>
+      ${intro}
+    </p>
+    ${progressBlock}
+    <a href="${continueUrl}"
+       style="display:inline-block;background:${EMERALD};color:#ffffff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;">
+      Continue your assessment →
+    </a>`;
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: tier === "24h" ? "Pick up your Cyber Essentials assessment" : `You're ${completedCount} of 5 sections in — finish your assessment`,
     html: baseTemplate(body),
   });
 }

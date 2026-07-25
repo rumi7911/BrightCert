@@ -29,7 +29,11 @@ export async function GET(request: Request) {
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  // Only allow internal paths — an absolute (`https://evil.com`) or
+  // protocol-relative (`//evil.com`) `next` would otherwise turn a real
+  // BrightCert magic-link email into a phishing redirect.
+  const rawNext = searchParams.get("next") ?? "/dashboard";
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
 
   // Supabase can bounce back here with an error (expired/consumed link, etc.)
   const urlError =

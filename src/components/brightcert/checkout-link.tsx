@@ -11,16 +11,19 @@ import { sendGAEvent } from "@next/third-parties/google";
 export function CheckoutLink({
   assessmentId,
   className,
+  title,
   children,
 }: {
   assessmentId: string;
   className?: string;
+  title?: string;
   children: React.ReactNode;
 }) {
   return (
     <Link
       href={`/api/stripe/checkout?assessmentId=${assessmentId}`}
       className={className}
+      title={title}
       onClick={() => sendGAEvent("event", "begin_checkout")}
     >
       {children}

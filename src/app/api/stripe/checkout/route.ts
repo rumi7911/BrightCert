@@ -6,6 +6,11 @@ async function createCheckoutUrl(assessmentId: string): Promise<string> {
   const stripe = getStripe();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
+  // Buckets by assessment + hour so a double-click or two open tabs within
+  // the same hour reuse one Checkout Session instead of creating duplicates,
+  // without permanently blocking a legitimate retry after a session expires.
+  const idempotencyKey = `checkout-${assessmentId}-${new Date().toISOString().slice(0, 13)}`;
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     currency: "gbp",
@@ -33,7 +38,7 @@ async function createCheckoutUrl(assessmentId: string): Promise<string> {
     cancel_url: `${appUrl}/assessment/${assessmentId}/results`,
     payment_method_types: ["card"],
     billing_address_collection: "required",
-  });
+  }, { idempotencyKey });
 
   if (!session.url) throw new Error("Stripe did not return a checkout URL");
   return session.url;
@@ -50,6 +55,16 @@ export async function POST(request: NextRequest) {
     const ownership = await verifyAssessmentOwnership(assessmentId);
     if (!ownership.authorized) {
       return NextResponse.json({ error: "Unauthorized" }, { status: ownership.status });
+    }
+
+    // Nothing to buy for a paid assessment — send the caller to the report
+    // they already own instead of creating a second Checkout Session.
+    if (ownership.assessmentStatus === "paid") {
+      return NextResponse.json({ url: `/assessment/${assessmentId}/report` });
+    }
+    // Nothing to buy yet for a draft — the assessment hasn't been analysed.
+    if (ownership.assessmentStatus !== "analysed") {
+      return NextResponse.json({ error: "Assessment is not ready for checkout" }, { status: 400 });
     }
 
     const url = await createCheckoutUrl(assessmentId);
@@ -76,6 +91,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       new URL(ownership.status === 401 ? "/login" : "/dashboard", request.url)
     );
+  }
+
+  // Nothing to buy for a paid assessment — send the caller to the report
+  // they already own instead of creating a second Checkout Session.
+  if (ownership.assessmentStatus === "paid") {
+    return NextResponse.redirect(new URL(`/assessment/${assessmentId}/report`, request.url));
+  }
+  // Nothing to buy yet for a draft — the assessment hasn't been analysed.
+  if (ownership.assessmentStatus !== "analysed") {
+    return NextResponse.redirect(new URL(`/assessment/${assessmentId}`, request.url));
   }
 
   try {

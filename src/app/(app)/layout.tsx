@@ -67,26 +67,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             href: `/api/stripe/checkout?assessmentId=${assessment.id}`,
           };
         } else if (assessment.status === "paid") {
-          const { data: report } = await supabase
-            .from("reports")
-            .select("gcs_url")
-            .eq("assessment_id", assessment.id)
-            .limit(1)
-            .maybeSingle();
-          cta = report?.gcs_url
-            ? {
-                title: "Report unlocked",
-                body: "Your full readiness report is ready to share.",
-                label: "Download PDF",
-                href: report.gcs_url,
-                external: true,
-              }
-            : {
-                title: "Report unlocked",
-                body: "Your full readiness report is ready to view.",
-                label: "View report",
-                href: `/assessment/${assessment.id}/report`,
-              };
+          // Always route through the report page rather than a stored GCS
+          // URL — signed URLs expire after 7 days, and the report page
+          // already regenerates a fresh one (and handles "still generating").
+          cta = {
+            title: "Report unlocked",
+            body: "Your full readiness report is ready to view.",
+            label: "View report",
+            href: `/assessment/${assessment.id}/report`,
+          };
         }
 
         const status = (assessment.overall_status ?? (score != null ? getOverallStatus(score) : null)) as OverallStatus | null;

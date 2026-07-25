@@ -29,6 +29,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
+    // checkout.session.completed can fire before payment is actually
+    // confirmed for async payment methods — only mark paid once Stripe
+    // itself confirms the payment succeeded.
+    if (session.payment_status !== "paid") {
+      return NextResponse.json({ received: true });
+    }
+
     const supabase = createAdminClient();
 
     // Mark assessment as paid, and record the actual payment so `paid`

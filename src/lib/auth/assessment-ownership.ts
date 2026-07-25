@@ -1,7 +1,7 @@
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 export type OwnershipResult =
-  | { authorized: true; orgId: string }
+  | { authorized: true; orgId: string; assessmentStatus: string }
   | { authorized: false; status: 401 | 403 };
 
 // Verifies the currently-signed-in caller (via the session cookie) owns the
@@ -23,10 +23,10 @@ export async function verifyAssessmentOwnership(assessmentId: string): Promise<O
 
   const { data: assessment } = await admin
     .from("assessments")
-    .select("org_id")
+    .select("org_id, status")
     .eq("id", assessmentId)
     .single();
   if (!assessment || assessment.org_id !== profile.org_id) return { authorized: false, status: 403 };
 
-  return { authorized: true, orgId: profile.org_id };
+  return { authorized: true, orgId: profile.org_id, assessmentStatus: assessment.status };
 }

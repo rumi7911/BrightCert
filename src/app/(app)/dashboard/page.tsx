@@ -55,11 +55,6 @@ type ControlScoreRow = {
   gaps: Gap[] | null;
 };
 
-type ReportRow = {
-  assessment_id: string;
-  gcs_url: string;
-};
-
 function formatDate(value: string | null | undefined, month: "short" | "long" = "short") {
   if (!value) return "Not submitted";
   return new Date(value).toLocaleDateString("en-GB", {
@@ -132,7 +127,12 @@ function DashboardTopbar({
       </div>
       <div className="flex shrink-0 items-center gap-2.5">
         {unlockAssessmentId && (
-          <Button asChild size="sm" className="bg-[#047857] hover:bg-[#065F46]">
+          <Button
+            asChild
+            size="sm"
+            className="bg-[#047857] hover:bg-[#065F46]"
+            title="First 10 customers: £99 with code FOUNDING10"
+          >
             <CheckoutLink assessmentId={unlockAssessmentId}>
               <Lock className="h-4 w-4" />
               Unlock report · £199
@@ -354,11 +354,9 @@ function VerdictBand({
 
 function ReportSection({
   latest,
-  reportUrl,
   controls,
 }: {
   latest: AssessmentRow;
-  reportUrl: string | undefined;
   controls: ControlScoreRow[];
 }) {
   const isPaid = latest.status === "paid";
@@ -390,24 +388,25 @@ function ReportSection({
         })}
       </div>
 
-      {reportUrl ? (
+      {isPaid ? (
         <Button asChild size="sm" className="w-full">
-          <a href={reportUrl} target="_blank" rel="noopener noreferrer">
+          <Link href={`/assessment/${latest.id}/report`}>
             <Download className="h-4 w-4" />
-            Download PDF
-          </a>
-        </Button>
-      ) : isPaid ? (
-        <Button asChild size="sm" className="w-full">
-          <Link href={`/assessment/${latest.id}/report`}>Generate report</Link>
+            View report
+          </Link>
         </Button>
       ) : isAnalysed ? (
-        <Button asChild size="sm" className="w-full">
-          <CheckoutLink assessmentId={latest.id}>
-            <Lock className="h-4 w-4" />
-            Unlock report · £199
-          </CheckoutLink>
-        </Button>
+        <>
+          <p className="mb-2 text-center text-[11px] font-semibold text-[#059669]">
+            First 10 customers: £99 with code FOUNDING10
+          </p>
+          <Button asChild size="sm" className="w-full">
+            <CheckoutLink assessmentId={latest.id}>
+              <Lock className="h-4 w-4" />
+              Unlock report · £199
+            </CheckoutLink>
+          </Button>
+        </>
       ) : (
         <Button asChild variant="outline" size="sm" className="w-full">
           <Link href={`/assessment/${latest.id}/results`}>View results</Link>
@@ -427,17 +426,14 @@ function ReportSection({
 
 function HistorySection({
   assessments,
-  reportMap,
 }: {
   assessments: AssessmentRow[];
-  reportMap: Map<string, string>;
 }) {
   return (
     <div className="mt-6 rounded-[16px] border border-[#0F2044]/[0.07] bg-white p-5 sm:p-6">
       <h2 className="font-display text-[15px] font-bold text-[#0F2044]">History</h2>
       <div className="mt-2">
         {assessments.slice(0, 5).map((assessment, index) => {
-          const reportUrl = reportMap.get(assessment.id);
           const href =
             assessment.status === "draft"
               ? `/assessment/${assessment.id}`
@@ -454,15 +450,13 @@ function HistorySection({
               <span className="min-w-0 flex-1 truncate text-[#77829A]">
                 · #{assessments.length - index} · {shortDate(assessment.created_at)}
               </span>
-              {assessment.status === "paid" && reportUrl ? (
-                <a
-                  href={reportUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {assessment.status === "paid" ? (
+                <Link
+                  href={`/assessment/${assessment.id}/report`}
                   className="bc-focus shrink-0 text-xs font-semibold text-[#047857] hover:text-[#065F46]"
                 >
                   PDF
-                </a>
+                </Link>
               ) : (
                 <Link
                   href={href}
@@ -551,27 +545,11 @@ export default async function DashboardPage() {
     .filter((score) => score.assessment_id === latest.id)
     .sort((a, b) => a.section_id - b.section_id);
 
-  const paidIds = assessments.filter((assessment) => assessment.status === "paid").map((assessment) => assessment.id);
-  const { data: reports } = paidIds.length
-    ? await supabase
-      .from("reports")
-      .select("assessment_id, gcs_url")
-      .in("assessment_id", paidIds)
-    : { data: [] };
-
-  const reportMap = new Map<string, string>();
-  ((reports ?? []) as ReportRow[]).forEach((report) => {
-    if (!reportMap.has(report.assessment_id)) {
-      reportMap.set(report.assessment_id, report.gcs_url);
-    }
-  });
-
   const previousWithScore = assessments.slice(1).find((assessment) => assessment.overall_score != null);
   const scoreChange = latest.overall_score != null && previousWithScore?.overall_score != null
     ? latest.overall_score - previousWithScore.overall_score
     : null;
   const p1Count = countPriority(latestControls, "P1");
-  const latestReportUrl = reportMap.get(latest.id);
   const lastActivity = latest.submitted_at ?? latest.created_at;
 
   const scoreHistory = assessments
@@ -612,8 +590,8 @@ export default async function DashboardPage() {
           <DashboardIssues assessmentId={latest.id} controls={dashboardControls} />
         </div>
         <div>
-          <ReportSection latest={latest} reportUrl={latestReportUrl} controls={latestControls} />
-          <HistorySection assessments={assessments} reportMap={reportMap} />
+          <ReportSection latest={latest} controls={latestControls} />
+          <HistorySection assessments={assessments} />
           <TipCard tip={tip} />
         </div>
       </div>
