@@ -138,9 +138,14 @@ export default function PrivacyPage() {
                 We also use Google Analytics to understand how visitors use the site
                 (e.g. which pages are viewed). This sets analytics cookies and shares
                 usage data with Google. It does not include your assessment responses.
-                Analytics only runs after you accept the cookie banner shown on your
-                first visit — declining, or never responding, means it never loads. You
-                can change your choice at any time by clearing cookies for this site.
+                If you arrived via a marketing link (e.g. an email or campaign), we
+                also record which campaign referred you, so we can tell which channels
+                are working. Neither of these run until you accept the cookie banner
+                shown on your first visit — declining, or never responding, means
+                neither loads or is set. You can change your choice at any time via
+                &ldquo;Cookie Settings&rdquo; in the footer, or in Settings if you have
+                an account — withdrawing consent also removes the analytics cookies
+                already set.
               </p>
             </Section>
 

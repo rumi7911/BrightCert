@@ -29,6 +29,7 @@ export default function QuestionPage({
   const [sectionAnswers, setSectionAnswers] = useState<Record<string, string>>({});
   const [whyOpen, setWhyOpen] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sectionDone, setSectionDone] = useState<{
     target: string;
@@ -86,6 +87,7 @@ export default function QuestionPage({
     setSelectedAnswer("");
     setWhyOpen(false);
     setHasError(false);
+    setSaveFailed(false);
   }
 
   useEffect(() => {
@@ -165,14 +167,18 @@ export default function QuestionPage({
       return;
     }
     setHasError(false);
+    setSaveFailed(false);
     setSaving(true);
 
     // Save to localStorage immediately for resilience
     localStorage.setItem(`bc_${assessmentId}_${question.key}`, selectedAnswer);
 
-    // Save to Supabase
+    // Save to Supabase — localStorage above already has the answer, but the
+    // server-side row is what actually counts as "answered" everywhere else
+    // (progress calc, analysis, reminders), so a failed save here must not
+    // let the user believe it was recorded and move on.
     const supabase = createClient();
-    await supabase.from("responses").upsert({
+    const { error: saveError } = await supabase.from("responses").upsert({
       assessment_id: assessmentId,
       section_id: sectionId,
       question_key: question.key,
@@ -181,6 +187,11 @@ export default function QuestionPage({
     }, { onConflict: "assessment_id,question_key" });
 
     setSaving(false);
+
+    if (saveError) {
+      setSaveFailed(true);
+      return;
+    }
 
     if (returnTarget) {
       router.push(returnTarget);
@@ -310,6 +321,11 @@ export default function QuestionPage({
           Select an answer to continue
         </p>
       )}
+      {saveFailed && (
+        <p className="mb-5 border-l-4 border-[#DC2626] pl-3 text-sm font-semibold text-[#B91C1C]">
+          Couldn&rsquo;t save your answer — check your connection and try again
+        </p>
+      )}
 
       {/* Plain GOV.UK-style radios — no boxed option cards */}
       <div className="mb-8 mt-4 space-y-1" role="radiogroup" aria-label={question.text}>
@@ -328,6 +344,7 @@ export default function QuestionPage({
                 onChange={() => {
                   setSelectedAnswer(option.value);
                   setHasError(false);
+                  setSaveFailed(false);
                 }}
                 className="peer sr-only"
               />

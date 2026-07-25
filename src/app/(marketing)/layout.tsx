@@ -2,8 +2,9 @@
 // components/brightcert/signal-nav.tsx, signal-footer.tsx) as part of the
 // "Signal & Paper" redesign, so this layout is just a pass-through. The
 // previous shared Navbar/Footer/Eyebrow components they replaced have been
-// removed. UTM attribution capture lives in proxy.ts (runs on every request,
-// not just marketing pages) rather than here — see withAttributionCookie.
+// removed. UTM attribution capture is consent-gated client-side (see
+// src/lib/analytics/consent.ts, mounted site-wide via AnalyticsConsent in
+// the root layout) rather than done here or in proxy.ts.
 export default function MarketingLayout({
   children,
 }: {

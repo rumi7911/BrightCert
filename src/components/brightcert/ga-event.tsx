@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { sendGAEvent } from "@next/third-parties/google";
+import { readConsent, onConsentChange, waitForDataLayer } from "@/lib/analytics/consent";
 
 // Fires a GA4 event once when a query param is present on arrival — used for
 // one-off lifecycle events (sign_up, assessment_started, reminder_clicked,
@@ -16,6 +17,13 @@ import { sendGAEvent } from "@next/third-parties/google";
 // — a plain refresh no longer has it, which is the real fix for the
 // refire-on-refresh bug (transaction_id/session_id dedup in GA4 itself is a
 // second, independent safety net for the purchase event specifically).
+//
+// GA4 only loads after the user accepts the cookie consent banner (see
+// AnalyticsConsent), so this can't just fire+strip unconditionally on mount
+// — sendGAEvent silently no-ops until window.dataLayer exists, and if we'd
+// already stripped the flag, that conversion would be lost forever the
+// moment consent isn't yet granted. Wait for a real decision (and, once
+// granted, for dataLayer to actually exist) before firing or stripping.
 export function GatedGaEvent({
   param,
   value,
@@ -33,11 +41,37 @@ export function GatedGaEvent({
     if (actual === null) return;
     if (value !== undefined && actual !== value) return;
 
-    sendGAEvent("event", event, params ?? {});
+    function strip() {
+      const u = new URL(window.location.href);
+      u.searchParams.delete(param);
+      window.history.replaceState({}, "", u.pathname + u.search + u.hash);
+    }
 
-    url.searchParams.delete(param);
-    window.history.replaceState({}, "", url.pathname + url.search + url.hash);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fire once on mount only, not on every params identity change
+    async function fireAndStrip() {
+      await waitForDataLayer();
+      sendGAEvent("event", event, params ?? {});
+      strip();
+    }
+
+    const consent = readConsent();
+    if (consent === "granted") {
+      fireAndStrip();
+      return;
+    }
+    if (consent === "denied") {
+      strip();
+      return;
+    }
+
+    // Not decided yet — hold the flag in the URL rather than stripping it
+    // blind, and act once the user actually chooses.
+    const unsubscribe = onConsentChange((next) => {
+      unsubscribe();
+      if (next === "granted") fireAndStrip();
+      else strip();
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fire once on mount + react to a single consent decision, not every params identity change
   }, []);
 
   return null;

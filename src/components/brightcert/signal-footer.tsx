@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/brightcert/logo";
+import { reopenConsent } from "@/lib/analytics/consent";
 
-type FooterLink = { label: string; href?: string; anchor?: string };
+type FooterLink = { label: string; href?: string; anchor?: string; action?: "cookie-settings" };
 
 const PRODUCT_LINKS: FooterLink[] = [
   { label: "How it works", href: "/how-it-works" },
@@ -24,6 +25,7 @@ const RESOURCES_LINKS: FooterLink[] = [
 const COMPANY_LINKS: FooterLink[] = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
+  { label: "Cookie Settings", action: "cookie-settings" },
   { label: "Contact us", href: "mailto:hello@brightcert.co.uk" },
 ];
 
@@ -65,11 +67,22 @@ export function SignalFooter() {
 
           <nav className="flex flex-col gap-3 sm:col-span-2 md:col-span-1" aria-label="Company">
             <strong className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/45">Company</strong>
-            {COMPANY_LINKS.map((l) => (
-              <a key={l.label} href={resolve(l)} className="w-fit text-[14.5px] text-white/65 transition-all hover:text-[#6EE7B7] hover:translate-x-0.5">
-                {l.label}
-              </a>
-            ))}
+            {COMPANY_LINKS.map((l) =>
+              l.action === "cookie-settings" ? (
+                <button
+                  key={l.label}
+                  type="button"
+                  onClick={reopenConsent}
+                  className="w-fit text-left text-[14.5px] text-white/65 transition-all hover:text-[#6EE7B7] hover:translate-x-0.5"
+                >
+                  {l.label}
+                </button>
+              ) : (
+                <a key={l.label} href={resolve(l)} className="w-fit text-[14.5px] text-white/65 transition-all hover:text-[#6EE7B7] hover:translate-x-0.5">
+                  {l.label}
+                </a>
+              )
+            )}
           </nav>
 
           <div className="sm:col-span-2 md:col-span-1">

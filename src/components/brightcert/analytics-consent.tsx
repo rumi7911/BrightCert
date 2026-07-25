@@ -4,37 +4,42 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
+import {
+  type Consent,
+  readConsent,
+  writeConsent,
+  onReopenConsent,
+  stashPendingAttribution,
+  captureAttributionIfPresent,
+} from "@/lib/analytics/consent";
 
-const CONSENT_COOKIE = "bc_consent";
 const GA_ID = "G-YW9BG1DXPC";
 
-type Consent = "granted" | "denied";
-
-function readConsent(): Consent | null {
-  const match = document.cookie.match(/(?:^|; )bc_consent=([^;]*)/);
-  const value = match?.[1];
-  return value === "granted" || value === "denied" ? value : null;
-}
-
-function writeConsent(value: Consent) {
-  document.cookie = `${CONSENT_COOKIE}=${value}; path=/; max-age=31536000; samesite=lax`;
-}
-
 // GA4 only ever loads after explicit accept — no script, no cookies, no
-// tracking until then. See privacy policy "Cookies" section.
+// tracking until then. Accepting also captures first-touch UTM attribution
+// (see captureAttributionIfPresent) — declining or not deciding means
+// neither GA nor attribution runs. See privacy policy "Cookies" section.
+// Reachable again any time via "Cookie Settings" (footer / /settings).
 export function AnalyticsConsent() {
   const [consent, setConsent] = useState<Consent | null>(null);
   const [ready, setReady] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time cookie read on mount, not an ongoing sync
+    // One-time reads on mount, not an ongoing sync.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConsent(readConsent());
     setReady(true);
+    stashPendingAttribution();
+
+    return onReopenConsent(() => setOpen(true));
   }, []);
 
   if (!ready) return null;
 
-  if (consent === null) {
+  const showBanner = consent === null || open;
+
+  if (showBanner) {
     return (
       <div
         role="dialog"
@@ -43,7 +48,7 @@ export function AnalyticsConsent() {
       >
         <div className="mx-auto flex max-w-4xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[13px] leading-relaxed text-[#33405C]">
-            We use analytics cookies to understand how visitors use this site. See our{" "}
+            We use cookies for analytics and to understand which campaign brought you here. See our{" "}
             <Link href="/privacy" className="bc-focus font-semibold text-[#047857] hover:underline">
               Privacy Policy
             </Link>
@@ -56,6 +61,7 @@ export function AnalyticsConsent() {
               onClick={() => {
                 writeConsent("denied");
                 setConsent("denied");
+                setOpen(false);
               }}
             >
               Decline
@@ -64,7 +70,9 @@ export function AnalyticsConsent() {
               size="sm"
               onClick={() => {
                 writeConsent("granted");
+                captureAttributionIfPresent();
                 setConsent("granted");
+                setOpen(false);
               }}
             >
               Accept
