@@ -30,7 +30,7 @@ pre-T0. T0 is the first Monday after every row passes.
 | Fictitious CLI/control rehearsal | Exactly one no-send rehearsal with fictitious `.test` data covers pre-review/final validation, verification fail-closed evidence, imported and stepped events, fresh queue history blocks, ready/block unit evidence, suppression and report output under the current CLI/runbook | operator action required |  |  |
 | Companies House credential | Key is loaded only from the protected operator environment and is absent from Git/browser/logs | owner action required |  |  |
 | Companies House live check | Exact known company number returns expected active/type/checked result; mismatch/inactive/unsupported/error fails closed; queue repeats a fresh check | owner action required |  |  |
-| Database migration | Reviewed outreach migration is applied to the intended project; version recorded; RLS/grants/constraints/functions/views verified | owner action required |  |  |
+| Database migrations | The ordered reviewed outreach migrations, including the later sequence-step/reporting upgrade, are applied to the intended project; versions recorded; RLS/grants/constraints/functions/views verified | owner action required |  |  |
 | Database reconciliation | Outreach/customer/application rows reconcile without unresolved paid or entitlement mismatches; no destructive correction is hidden | owner action required |  |  |
 | SPF | Current DNS/provider evidence passes for the exact sending domain/identity | owner action required |  |  |
 | DKIM | Current DNS/provider evidence passes for the exact sending domain/identity | owner action required |  |  |

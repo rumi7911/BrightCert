@@ -14,10 +14,13 @@ npm run outreach -- report \
 ```
 
 The report groups by week, campaign, segment, trigger, and template version.
-Message metrics deduplicate prospect plus `sequence_step`, so separate touches
-remain separate messages. `touch_1_sent` is a distinct-prospect count; other
-funnel events are also distinct-prospect counts within event type/week. See the
-event rules in the [operator runbook](./operator-runbook.md).
+Message metrics globally deduplicate campaign, prospect, event type, and
+`sequence_step` before grouping. The earliest valid occurrence owns the
+canonical week and dimensions, so separate touches remain separate messages
+but cross-week duplicates do not inflate cumulative sums. `touch_1_sent` is a
+distinct-prospect count; other funnel events are also distinct-prospect counts
+within event type/week. See the event rules in the
+[operator runbook](./operator-runbook.md).
 
 ## Funnel definitions
 
@@ -78,7 +81,8 @@ verified net revenue = verified gross paid revenue - reconciled refunds
 ```
 
 Show `n/a`, not zero, when the denominator is zero. Do not sum percentages
-across weeks; sum the applicable counts and recompute cumulative rates.
+across weeks; sum the globally idempotent report counts and recompute
+cumulative rates.
 `delivery_rate` and `hard_bounce_rate` in each CLI row are message-based
 percentages. The CLI report's
 `paid_revenue` is operator-event data and does not become revenue truth until it

@@ -517,6 +517,36 @@ describe("operator stores and reporting", () => {
     });
   });
 
+  test.each(["sent", "delivered", "bounced"] as const)(
+    "rejects a duplicate cross-week %s message key without changing the event file",
+    async (type) => {
+      const directory = await mkdtemp(join(tmpdir(), "brightcert-events-"));
+      const store = join(directory, "events.csv");
+      const canonicalEvent = {
+        prospect_id: "sme-001",
+        type,
+        campaign: "founding-2026",
+        segment: "sme",
+        sequence_step: 1 as const,
+      };
+
+      await appendEvent(store, {
+        ...canonicalEvent,
+        occurred_at: "2026-07-24T10:00:00Z",
+      });
+      const beforeDuplicate = await readFile(store, "utf8");
+
+      await expect(
+        appendEvent(store, {
+          ...canonicalEvent,
+          occurred_at: "2026-07-27T10:00:00Z",
+        })
+      ).rejects.toThrow("Duplicate message event");
+
+      expect(await readFile(store, "utf8")).toBe(beforeDuplicate);
+    }
+  );
+
   test("validates bounced step evidence before adding a suppression", async () => {
     const directory = await mkdtemp(join(tmpdir(), "brightcert-events-"));
     const events = join(directory, "events.csv");
@@ -609,6 +639,95 @@ describe("operator stores and reporting", () => {
         bounced_messages: "1",
         delivery_rate: "0.00%",
         hard_bounce_rate: "100.00%",
+      }),
+    ]);
+  });
+
+  test("globally deduplicates cross-week message keys into their earliest valid week", () => {
+    const baseEvent = {
+      event_id: "event",
+      prospect_id: "sme-001",
+      campaign: "founding-2026",
+      segment: "sme",
+      trigger: "renewal",
+      template_version: "sme-v1",
+      amount_paid: "",
+    };
+    const report = buildWeeklyFunnel([
+      {
+        ...baseEvent,
+        event_id: "sent-1-later-duplicate",
+        type: "sent",
+        sequence_step: "1",
+        segment: "msp",
+        trigger: "later-duplicate",
+        template_version: "msp-v2",
+        occurred_at: "2026-08-03T10:00:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "delivered-1-later-duplicate",
+        type: "delivered",
+        sequence_step: "1",
+        occurred_at: "2026-08-03T10:01:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "bounced-1-later-duplicate",
+        type: "bounced",
+        sequence_step: "1",
+        occurred_at: "2026-08-03T10:02:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "sent-2",
+        type: "sent",
+        sequence_step: "2",
+        occurred_at: "2026-07-27T10:00:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "sent-1-earliest",
+        type: "sent",
+        sequence_step: "1",
+        occurred_at: "2026-07-24T10:00:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "delivered-1-earliest",
+        type: "delivered",
+        sequence_step: "1",
+        occurred_at: "2026-07-24T10:01:00Z",
+      },
+      {
+        ...baseEvent,
+        event_id: "bounced-1-earliest",
+        type: "bounced",
+        sequence_step: "1",
+        occurred_at: "2026-07-24T10:02:00Z",
+      },
+    ]);
+
+    expect(report).toEqual([
+      expect.objectContaining({
+        week_start: "2026-07-20",
+        campaign: "founding-2026",
+        segment: "sme",
+        trigger: "renewal",
+        template_version: "sme-v1",
+        sent_messages: "1",
+        touch_1_sent: "1",
+        delivered_messages: "1",
+        bounced_messages: "1",
+        delivery_rate: "100.00%",
+        hard_bounce_rate: "100.00%",
+      }),
+      expect.objectContaining({
+        week_start: "2026-07-27",
+        sent_messages: "1",
+        touch_1_sent: "0",
+        delivered_messages: "0",
+        bounced_messages: "0",
       }),
     ]);
   });

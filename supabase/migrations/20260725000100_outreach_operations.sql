@@ -154,15 +154,10 @@ create table if not exists public.outreach_events (
   segment text not null check (segment in ('sme', 'msp')),
   trigger text,
   template_version text,
-  sequence_step smallint check (sequence_step between 1 and 3),
   occurred_at timestamptz not null default now(),
   amount_paid numeric(12, 2) check (amount_paid is null or amount_paid >= 0),
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now(),
-  check (
-    event_type not in ('sent', 'delivered', 'bounced')
-    or sequence_step is not null
-  ),
   foreign key (prospect_id, campaign_id)
     references public.outreach_prospects (id, campaign_id)
 );
@@ -187,21 +182,7 @@ create index if not exists outreach_prospects_company_idx
 create index if not exists outreach_prospects_state_idx
   on public.outreach_prospects (campaign_id, sequence_status);
 create index if not exists outreach_events_funnel_idx
-  on public.outreach_events (
-    occurred_at,
-    campaign_id,
-    event_type,
-    sequence_step,
-    prospect_id
-  );
-create unique index if not exists outreach_events_message_step_idx
-  on public.outreach_events (
-    campaign_id,
-    prospect_id,
-    event_type,
-    sequence_step
-  )
-  where event_type in ('sent', 'delivered', 'bounced');
+  on public.outreach_events (occurred_at, campaign_id, event_type, prospect_id);
 create index if not exists outreach_suppressions_lookup_idx
   on public.outreach_suppressions (scope, value);
 
@@ -283,7 +264,6 @@ with deduplicated as (
     coalesce(e.template_version, '') as template_version,
     e.prospect_id,
     e.event_type,
-    e.sequence_step,
     max(e.amount_paid) as amount_paid
   from public.outreach_events e
   group by
@@ -293,28 +273,24 @@ with deduplicated as (
     coalesce(e.trigger, ''),
     coalesce(e.template_version, ''),
     e.prospect_id,
-    e.event_type,
-    e.sequence_step
-),
-aggregated as (
-  select
+    e.event_type
+)
+select
   d.week_start,
   d.campaign_id,
+  c.campaign_key as campaign,
   d.segment,
   d.trigger,
   d.template_version,
   count(distinct d.prospect_id) filter (where d.event_type = 'imported') as imported,
   count(distinct d.prospect_id) filter (where d.event_type in ('eligible', 'queued')) as eligible_queued,
-  count(*) filter (where d.event_type = 'sent') as sent_messages,
-  count(distinct d.prospect_id) filter (
-    where d.event_type = 'sent' and d.sequence_step = 1
-  ) as touch_1_sent,
-  count(*) filter (where d.event_type = 'delivered') as delivered_messages,
+  count(distinct d.prospect_id) filter (where d.event_type = 'sent') as sent,
+  count(distinct d.prospect_id) filter (where d.event_type = 'delivered') as delivered,
   count(distinct d.prospect_id) filter (where d.event_type = 'positive') as positive,
   count(distinct d.prospect_id) filter (where d.event_type = 'neutral') as neutral,
   count(distinct d.prospect_id) filter (where d.event_type = 'objection') as objection,
   count(distinct d.prospect_id) filter (where d.event_type = 'opt_out') as opt_out,
-  count(*) filter (where d.event_type = 'bounced') as bounced_messages,
+  count(distinct d.prospect_id) filter (where d.event_type = 'bounced') as bounced,
   count(distinct d.prospect_id) filter (where d.event_type = 'booked') as booked,
   count(distinct d.prospect_id) filter (where d.event_type = 'baseline_completed') as baseline_completed,
   count(distinct d.prospect_id) filter (where d.event_type = 'checkout_started') as checkout_started,
@@ -323,47 +299,14 @@ aggregated as (
   count(distinct d.prospect_id) filter (where d.event_type = 'lost') as lost,
   coalesce(sum(d.amount_paid) filter (where d.event_type = 'paid'), 0)::numeric(12, 2) as paid_revenue
 from deduplicated d
+join public.outreach_campaigns c on c.id = d.campaign_id
 group by
   d.week_start,
   d.campaign_id,
+  c.campaign_key,
   d.segment,
   d.trigger,
-  d.template_version
-)
-select
-  a.week_start,
-  a.campaign_id,
-  c.campaign_key as campaign,
-  a.segment,
-  a.trigger,
-  a.template_version,
-  a.imported,
-  a.eligible_queued,
-  a.sent_messages,
-  a.touch_1_sent,
-  a.delivered_messages,
-  case
-    when a.sent_messages = 0 then null
-    else round(a.delivered_messages::numeric * 100 / a.sent_messages, 2)
-  end as delivery_rate,
-  a.positive,
-  a.neutral,
-  a.objection,
-  a.opt_out,
-  a.bounced_messages,
-  case
-    when a.sent_messages = 0 then null
-    else round(a.bounced_messages::numeric * 100 / a.sent_messages, 2)
-  end as hard_bounce_rate,
-  a.booked,
-  a.baseline_completed,
-  a.checkout_started,
-  a.paid,
-  a.refunded,
-  a.lost,
-  a.paid_revenue
-from aggregated a
-join public.outreach_campaigns c on c.id = a.campaign_id;
+  d.template_version;
 
 revoke all on table public.outreach_campaigns from public, anon, authenticated;
 revoke all on table public.outreach_companies from public, anon, authenticated;

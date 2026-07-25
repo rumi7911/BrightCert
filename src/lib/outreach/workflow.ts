@@ -432,6 +432,20 @@ const MESSAGE_EVENT_TYPES = new Set<OutreachEventType>([
   "bounced",
 ]);
 
+function messageEventKey(
+  event: NewOutreachEvent | Readonly<Record<string, string>>
+): string | undefined {
+  if (!MESSAGE_EVENT_TYPES.has(event.type as OutreachEventType)) {
+    return undefined;
+  }
+  return [
+    event.campaign.trim(),
+    event.prospect_id.trim(),
+    event.type,
+    String(event.sequence_step ?? "").trim(),
+  ].join("\u001f");
+}
+
 function validateEvent(event: NewOutreachEvent): void {
   if (!EVENT_TYPES.includes(event.type)) {
     throw new Error(`Unsupported outreach event type: ${event.type}`);
@@ -473,6 +487,15 @@ export async function appendEvent(
     : now();
   await withExclusiveFileLock(path, async () => {
     const rows = await readRowsIfPresent(path);
+    const canonicalMessageKey = messageEventKey(event);
+    if (
+      canonicalMessageKey &&
+      rows.some((row) => messageEventKey(row) === canonicalMessageKey)
+    ) {
+      throw new Error(
+        "Duplicate message event for campaign, prospect_id, type, and sequence_step"
+      );
+    }
     rows.push({
       event_id: randomUUID(),
       prospect_id: event.prospect_id.trim(),
@@ -542,6 +565,42 @@ interface FunnelAccumulator {
   paidByProspect: Map<string, number>;
 }
 
+interface ReportEvent {
+  event: Record<string, string>;
+  occurredAt: Date;
+}
+
+function canonicalReportEvents(
+  events: readonly Record<string, string>[]
+): ReportEvent[] {
+  const nonMessageEvents: ReportEvent[] = [];
+  const messageEvents = new Map<string, ReportEvent>();
+
+  for (const event of events) {
+    if (!EVENT_TYPES.includes(event.type as OutreachEventType)) continue;
+    if (
+      MESSAGE_EVENT_TYPES.has(event.type as OutreachEventType) &&
+      !["1", "2", "3"].includes(event.sequence_step)
+    ) {
+      continue;
+    }
+    const occurredAt = new Date(event.occurred_at);
+    if (Number.isNaN(occurredAt.getTime()) || !event.prospect_id) continue;
+
+    const canonicalMessageKey = messageEventKey(event);
+    if (!canonicalMessageKey) {
+      nonMessageEvents.push({ event, occurredAt });
+      continue;
+    }
+    const existing = messageEvents.get(canonicalMessageKey);
+    if (!existing || occurredAt < existing.occurredAt) {
+      messageEvents.set(canonicalMessageKey, { event, occurredAt });
+    }
+  }
+
+  return [...nonMessageEvents, ...messageEvents.values()];
+}
+
 function percentage(numerator: number, denominator: number): string {
   return denominator === 0
     ? "n/a"
@@ -562,16 +621,7 @@ export function buildWeeklyFunnel(
 ): CsvRow[] {
   const groups = new Map<string, FunnelAccumulator>();
 
-  for (const event of events) {
-    if (!EVENT_TYPES.includes(event.type as OutreachEventType)) continue;
-    if (
-      MESSAGE_EVENT_TYPES.has(event.type as OutreachEventType) &&
-      !["1", "2", "3"].includes(event.sequence_step)
-    ) {
-      continue;
-    }
-    const occurredAt = new Date(event.occurred_at);
-    if (Number.isNaN(occurredAt.getTime()) || !event.prospect_id) continue;
+  for (const { event, occurredAt } of canonicalReportEvents(events)) {
     const dimensions = {
       week_start: mondayUtc(occurredAt),
       campaign: event.campaign ?? "",

@@ -334,6 +334,49 @@ describe("outreach operator CLI", () => {
     }
   );
 
+  test("event rejects a duplicate cross-week message key without changing the store", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
+    const events = join(directory, "events.csv");
+    const prospects = join(directory, "prospects.csv");
+    const suppressions = join(directory, "suppressions.csv");
+    await atomicWriteCsv(prospects, [approvedRow()], PROSPECT_COLUMNS);
+    const baseArgs = [
+      "event",
+      "--store",
+      events,
+      "--prospects",
+      prospects,
+      "--suppressions",
+      suppressions,
+      "--prospect-id",
+      "sme-001",
+      "--type",
+      "sent",
+      "--campaign",
+      "founding-2026",
+      "--segment",
+      "sme",
+      "--sequence-step",
+      "1",
+    ];
+
+    await runCli([
+      ...baseArgs,
+      "--occurred-at",
+      "2026-07-24T10:00:00Z",
+    ]);
+    const beforeDuplicate = await readFile(events, "utf8");
+
+    await expect(
+      runCli([
+        ...baseArgs,
+        "--occurred-at",
+        "2026-07-27T10:00:00Z",
+      ])
+    ).rejects.toThrow("Duplicate message event");
+    expect(await readFile(events, "utf8")).toBe(beforeDuplicate);
+  });
+
   test("an opt-out event suppresses the canonical email and blocks a later queue", async () => {
     const directory = await mkdtemp(join(tmpdir(), "brightcert-cli-"));
     const prospects = join(directory, "prospects.csv");

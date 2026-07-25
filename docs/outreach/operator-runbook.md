@@ -169,9 +169,18 @@ The event CSV persists that field:
 event_id,prospect_id,type,campaign,segment,trigger,template_version,sequence_step,occurred_at,amount_paid
 ```
 
-Reports deduplicate message events by prospect and sequence step within each
-week. `sent_messages`, `delivered_messages`, and `bounced_messages` therefore
-count separate touches, while `touch_1_sent` counts distinct Touch 1 prospects.
+The event command rejects a second message event with the same campaign,
+prospect, event type, and sequence step, regardless of its timestamp. It exits
+without rewriting the event file. Reconcile a genuine operator mistake from
+the protected evidence; never edit or delete append-only audit history to make
+the command pass.
+
+Reports also defend against legacy or manually corrupted stores. They globally
+deduplicate each message-event key before assigning weeks and dimensions, using
+the earliest valid occurrence as canonical. `sent_messages`,
+`delivered_messages`, and `bounced_messages` therefore count separate touches
+without counting cross-week duplicates, while `touch_1_sent` counts distinct
+Touch 1 prospects.
 `delivery_rate` and `hard_bounce_rate` are message-based percentages and show
 `n/a` with no send denominator. Other event metrics remain distinct-prospect
 counts per event type/week. Reports deliberately exclude opens and open rates.
