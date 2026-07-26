@@ -133,4 +133,22 @@ describe("consented attribution", () => {
 
     expect((window as Window & { [key: string]: unknown })["ga-disable-G-YW9BG1DXPC"]).toBeUndefined();
   });
+
+  test("withdraws cleanly when Next defines a non-configurable gtag global", () => {
+    const consentChanges = vi.fn();
+    window.addEventListener("bc-consent-change", consentChanges);
+    Object.defineProperty(window, "gtag", {
+      configurable: false,
+      enumerable: true,
+      writable: true,
+      value: vi.fn(),
+    });
+
+    expect(() => writeConsent("denied")).not.toThrow();
+    expect(readConsent()).toBe("denied");
+    expect((window as Window & { gtag?: unknown }).gtag).toBeUndefined();
+    expect(consentChanges).toHaveBeenCalledOnce();
+
+    window.removeEventListener("bc-consent-change", consentChanges);
+  });
 });

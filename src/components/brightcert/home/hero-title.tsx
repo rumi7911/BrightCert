@@ -5,14 +5,19 @@ import { useEffect, useState } from "react";
 type Word = { text: string; type?: "highlight" | "underline" };
 
 const WORDS: Word[] = [
-  { text: "Get" },
-  { text: "Cyber", type: "highlight" },
-  { text: "Essentials", type: "highlight" },
-  { text: "ready" },
+  { text: "Find" },
+  { text: "out" },
+  { text: "how" },
+  { text: "ready", type: "highlight" },
+  { text: "you" },
+  { text: "are" },
   { text: "in" },
+  { text: "around", type: "underline" },
   { text: "2", type: "underline" },
-  { text: "hours", type: "underline" },
+  { text: "hours.", type: "underline" },
 ];
+
+const HERO_TITLE = "Find out how ready you are in around 2 hours.";
 
 // Per-word mask reveal for the hero H1. Each word (not each phrase) is its
 // own atomic inline-block, so the browser can still wrap the heading
@@ -28,7 +33,10 @@ export function HeroTitle() {
   }, []);
 
   return (
-    <h1 className="font-display text-[2.6rem] sm:text-[3.3rem] lg:text-[4.5rem] font-semibold leading-[1.12] tracking-[-0.03em] text-[#0F2044] mb-6">
+    <h1
+      aria-label={HERO_TITLE}
+      className="font-display text-[2.6rem] sm:text-[3.3rem] lg:text-[4.5rem] font-semibold leading-[1.12] tracking-[-0.03em] text-[#0F2044] mb-6"
+    >
       {WORDS.map((word, i) => (
         <span
           key={`${word.text}-${i}`}

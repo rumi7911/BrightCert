@@ -124,6 +124,19 @@ function removeLegacyAttributionStorage() {
   }
 }
 
+function clearAnalyticsGlobal(name: "dataLayer" | "gtag") {
+  const analyticsWindow = window as Window & {
+    dataLayer?: unknown[];
+    gtag?: unknown;
+  };
+  if (!Reflect.deleteProperty(analyticsWindow, name)) {
+    // Next's GoogleAnalytics integration defines `gtag` as writable but
+    // non-configurable in real browsers. Assignment makes that global inert
+    // without throwing and allows the rest of withdrawal to complete.
+    Reflect.set(analyticsWindow, name, undefined);
+  }
+}
+
 export function clearTrackingState() {
   (window as Window & { [GA_DISABLE_FLAG]?: boolean })[GA_DISABLE_FLAG] = true;
   deleteCookie(ATTRIBUTION_COOKIE);
@@ -132,8 +145,8 @@ export function clearTrackingState() {
   document
     .querySelectorAll('script#_next-ga, script#_next-ga-init, script[src*="googletagmanager.com/gtag/js"]')
     .forEach((script) => script.remove());
-  delete (window as Window & { dataLayer?: unknown[]; gtag?: unknown }).dataLayer;
-  delete (window as Window & { dataLayer?: unknown[]; gtag?: unknown }).gtag;
+  clearAnalyticsGlobal("dataLayer");
+  clearAnalyticsGlobal("gtag");
 }
 
 export function writeConsent(value: Consent) {

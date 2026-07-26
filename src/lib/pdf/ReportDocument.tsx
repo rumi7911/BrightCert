@@ -268,6 +268,37 @@ const GapCard = ({ gap }: { gap: { issue: string; why: string; priority: "P1" | 
   );
 };
 
+const FindingGapRow = ({
+  gap,
+}: {
+  gap: { issue: string; why: string; priority: "P1" | "P2" | "P3" };
+}) => {
+  const meta = PRIORITY_META[gap.priority];
+  return (
+    <View
+      wrap={false}
+      style={{
+        flexDirection: "row",
+        gap: 6,
+        marginTop: 6,
+        alignItems: "flex-start",
+      }}
+    >
+      <Text
+        style={[
+          styles.gapPriorityTag,
+          { backgroundColor: meta.bg, color: meta.color },
+        ]}
+      >
+        {gap.priority}
+      </Text>
+      <Text style={[styles.body, { flex: 1 }]}>
+        {gap.issue} — {gap.why}
+      </Text>
+    </View>
+  );
+};
+
 export function ReportDocument({
   orgName,
   executiveSummary,
@@ -390,12 +421,12 @@ export function ReportDocument({
 
         {controls.map((control) => {
           const section = SECTIONS.find((s) => s.id === control.section_id);
+          const [firstGap, ...remainingGaps] = control.gaps;
           return (
             <View key={control.section_id} style={{ marginBottom: 18 }}>
-              {/* Only the header + summary are kept atomic (never split across
-                  a page break) — the gap rows below flow freely, same as the
-                  Priority Action Plan page, so a control area doesn't jump as
-                  one rigid block and leave trailing whitespace behind it. */}
+              {/* Keep the header, summary and first gap together so a
+                  continuation page never starts with an orphaned gap row.
+                  Additional rows can still flow naturally across pages. */}
               <View wrap={false}>
                 <View
                   style={[
@@ -411,18 +442,11 @@ export function ReportDocument({
                   </View>
                 </View>
                 <Text style={[styles.body, { marginBottom: 8 }]}>{control.summary}</Text>
+                {firstGap && <FindingGapRow gap={firstGap} />}
               </View>
-              {control.gaps.map((gap, i) => {
-                const meta = PRIORITY_META[gap.priority];
-                return (
-                  <View key={i} wrap={false} style={{ flexDirection: "row", gap: 6, marginTop: 6, alignItems: "flex-start" }}>
-                    <Text style={[styles.gapPriorityTag, { backgroundColor: meta.bg, color: meta.color }]}>
-                      {gap.priority}
-                    </Text>
-                    <Text style={[styles.body, { flex: 1 }]}>{gap.issue} — {gap.why}</Text>
-                  </View>
-                );
-              })}
+              {remainingGaps.map((gap, i) => (
+                <FindingGapRow key={i} gap={gap} />
+              ))}
             </View>
           );
         })}
