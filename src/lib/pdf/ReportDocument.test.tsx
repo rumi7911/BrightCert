@@ -1,10 +1,7 @@
 // @vitest-environment node
 
-import { execFileSync } from "node:child_process";
-import { mkdtemp, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { renderToBuffer } from "@react-pdf/renderer";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { describe, expect, test, vi } from "vitest";
 import { parseGeminiAnalysisResult } from "@/lib/gemini/analyze";
 import type { GeminiAnalysisResult } from "@/types/assessment";
@@ -49,6 +46,33 @@ function maximumAcceptedAnalysis(): GeminiAnalysisResult {
   });
 }
 
+async function extractPdfText(pdf: Buffer) {
+  const document = await getDocument({
+    data: new Uint8Array(pdf),
+    disableFontFace: true,
+    isEvalSupported: false,
+  }).promise;
+
+  try {
+    const pages: string[] = [];
+    for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
+      const page = await document.getPage(pageNumber);
+      const content = await page.getTextContent();
+      pages.push(
+        content.items
+          .map((item) => ("str" in item ? item.str : ""))
+          .join(" ")
+      );
+    }
+    return {
+      pageCount: document.numPages,
+      text: pages.join(" ").replace(/\s+/g, " "),
+    };
+  } finally {
+    await document.destroy();
+  }
+}
+
 describe("ReportDocument maximum response layout", () => {
   test(
     "renders accepted boundary content without an unbreakable overflow warning",
@@ -66,7 +90,7 @@ describe("ReportDocument maximum response layout", () => {
       try {
         pdf = await renderToBuffer(
           <ReportDocument
-            orgName="Maximum Accepted Response Ltd"
+            orgName={textAtLength(160, "ORGANISATION BOUNDARY MARKER")}
             executiveSummary={analysis.executiveSummary}
             overallScore={analysis.overallScore}
             overallStatus={analysis.overallStatus}
@@ -86,24 +110,17 @@ describe("ReportDocument maximum response layout", () => {
         error.mockRestore();
       }
 
-      const directory = await mkdtemp(join(tmpdir(), "brightcert-pdf-max-"));
-      const pdfPath = join(directory, "maximum-response.pdf");
-      await writeFile(pdfPath, pdf);
-      const text = execFileSync("pdftotext", [pdfPath, "-"], {
-        encoding: "utf8",
-      }).replace(/\s+/g, " ");
-      const info = execFileSync("pdfinfo", [pdfPath], {
-        encoding: "utf8",
-      });
+      const extracted = await extractPdfText(pdf);
 
       expect(warnings.join("\n")).not.toMatch(
         /cannot wrap|can't wrap|bigger than available page height/i
       );
-      expect(text).toContain("PDF BOUNDARY MARKER SURVIVES");
-      expect(text).toContain(
+      expect(extracted.text).toContain("PDF BOUNDARY MARKER SURVIVES");
+      expect(extracted.text).toContain("ORGANISATION BOUNDARY MARKER");
+      expect(extracted.text).toContain(
         "Once gaps are addressed, apply for official Cyber Essentials"
       );
-      expect(Number(info.match(/^Pages:\s+(\d+)$/m)?.[1])).toBeGreaterThan(0);
+      expect(extracted.pageCount).toBeGreaterThan(0);
     },
     60_000
   );

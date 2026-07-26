@@ -3,6 +3,10 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { uploadReport, getReportSignedUrl } from "@/lib/gcs/upload";
 import { sendReportReadyEmail } from "@/lib/resend/emails";
 import { verifyAssessmentOwnership } from "@/lib/auth/assessment-ownership";
+import {
+  parsePersistedReportPayload,
+  PersistedReportPayloadError,
+} from "@/lib/pdf/report-payload";
 
 export const maxDuration = 60; // PDF generation can take up to 60 seconds
 
@@ -72,21 +76,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No control scores found" }, { status: 400 });
     }
 
+    const orgData = assessment.organisations as unknown as { name: string } | null;
+    let reportPayload;
+    try {
+      reportPayload = parsePersistedReportPayload({
+        org_name: orgData?.name ?? "Your Organisation",
+        executive_summary: assessment.executive_summary,
+        overall_score: assessment.overall_score,
+        overall_status: assessment.overall_status,
+        control_scores: controlScores,
+      });
+    } catch (error) {
+      if (error instanceof PersistedReportPayloadError) {
+        console.error("Stored report analysis failed validation:", error);
+        return NextResponse.json(
+          {
+            error:
+              "Stored assessment analysis is invalid; re-run analysis before generating the report.",
+          },
+          { status: 422 }
+        );
+      }
+      throw error;
+    }
+
     // Generate PDF
     // Dynamically import to avoid SSR issues with @react-pdf/renderer
     const { renderToBuffer } = await import("@react-pdf/renderer");
     const { createElement } = await import("react");
     const { ReportDocument } = await import("@/lib/pdf/ReportDocument");
 
-    const orgData = assessment.organisations as unknown as { name: string } | null;
-    const orgName = orgData?.name ?? "Your Organisation";
-
     const doc = createElement(ReportDocument, {
-      orgName,
-      executiveSummary: assessment.executive_summary ?? null,
-      overallScore: assessment.overall_score ?? 0,
-      overallStatus: assessment.overall_status ?? "not_ready",
-      controls: controlScores,
+      ...reportPayload,
       generatedAt: new Date().toISOString(),
     });
 
@@ -115,9 +136,9 @@ export async function POST(request: NextRequest) {
       if (authUser?.user?.email) {
         sendReportReadyEmail(
           authUser.user.email,
-          orgName,
+          reportPayload.orgName,
           assessmentId,
-          assessment.overall_score ?? 0,
+          reportPayload.overallScore,
         ).catch((err) => console.error("Report-ready email failed:", err));
       }
     }

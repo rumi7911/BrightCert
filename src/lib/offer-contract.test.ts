@@ -22,6 +22,7 @@ describe("customer-facing founding offer contract", () => {
       ...(await sourceFiles(join(process.cwd(), "src", "app"))),
       join(process.cwd(), "src", "lib", "resend", "emails.ts"),
       ...(await sourceFiles(join(process.cwd(), "public"))),
+      join(process.cwd(), "README.md"),
     ].filter((file) => [".ts", ".tsx", ".md", ".txt"].includes(extname(file)));
     const violations: string[] = [];
 
@@ -47,6 +48,7 @@ describe("customer-facing founding offer contract", () => {
     "src/app/(app)/dashboard/page.tsx",
     "src/app/(app)/assessment/[id]/results/results-view.tsx",
     "public/llms.txt",
+    "README.md",
   ])("%s states the payable VAT-inclusive price and discount basis", async (file) => {
     const text = await readFile(join(process.cwd(), file), "utf8");
 
