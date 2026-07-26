@@ -62,8 +62,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         if (assessment.status === "analysed") {
           cta = {
             title: "Your report is ready",
-            body: "All findings and the remediation roadmap, as a PDF. First 10 customers: £99 with code FOUNDING10.",
-            label: "Unlock · £199",
+            body: "All findings and the remediation roadmap, as a PDF. £99 including VAT with code FOUNDING10 — a £100 founding discount from £199.",
+            label: "Unlock · £99 including VAT",
             href: `/api/stripe/checkout?assessmentId=${assessment.id}`,
           };
         } else if (assessment.status === "paid") {

@@ -294,9 +294,20 @@ describe("outreach operator CLI", () => {
       await expect(runCli(args)).rejects.toThrow(
         "Missing required option: --sequence-step"
       );
+
+      if (type !== "sent") {
+        const sentArgs = [...args];
+        sentArgs[sentArgs.indexOf("--type") + 1] = "sent";
+        await runCli([...sentArgs, "--sequence-step", "1"]);
+      }
+
       await runCli([...args, "--sequence-step", "1"]);
 
-      expect(parseCsv(await readFile(events, "utf8"))[0]).toMatchObject({
+      expect(
+        parseCsv(await readFile(events, "utf8")).find(
+          (event) => event.type === type
+        )
+      ).toMatchObject({
         type,
         sequence_step: "1",
       });

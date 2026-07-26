@@ -323,11 +323,14 @@ npm run outreach -- report \
 ```
 
 Review the output using [SCORECARD.md](./SCORECARD.md). Message counts
-deduplicate prospect plus sequence step within the week; `touch_1_sent` is the
-distinct-prospect campaign denominator. Delivery and hard-bounce rates use
-message counts. Other funnel statuses remain distinct-prospect event counts.
-The report excludes opens/open rates. Review verbatim objections in protected
-operator notes, never in Git.
+globally deduplicate campaign, prospect, event type, and sequence step before
+weekly grouping; the earliest valid occurrence owns each message key.
+`touch_1_sent` is the distinct-prospect campaign denominator. A canonical
+delivery or bounce is counted in its matching canonical sent message's week,
+campaign, segment, trigger, and template cohort, never in a denominator-free
+outcome row. Delivery and hard-bounce rates use message counts. Other funnel
+statuses remain distinct-prospect event counts. The report excludes opens/open
+rates. Review verbatim objections in protected operator notes, never in Git.
 
 ## Retention cleanup
 

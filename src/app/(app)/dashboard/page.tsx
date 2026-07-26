@@ -131,11 +131,11 @@ function DashboardTopbar({
             asChild
             size="sm"
             className="bg-[#047857] hover:bg-[#065F46]"
-            title="First 10 customers: £99 with code FOUNDING10"
+            title="£99 including VAT with code FOUNDING10 — £100 founding discount from £199"
           >
             <CheckoutLink assessmentId={unlockAssessmentId}>
               <Lock className="h-4 w-4" />
-              Unlock report · £199
+              Unlock report · £99 including VAT
             </CheckoutLink>
           </Button>
         )}
@@ -398,12 +398,12 @@ function ReportSection({
       ) : isAnalysed ? (
         <>
           <p className="mb-2 text-center text-[11px] font-semibold text-[#059669]">
-            First 10 customers: £99 with code FOUNDING10
+            £99 including VAT with code FOUNDING10 — £100 founding discount from £199
           </p>
           <Button asChild size="sm" className="w-full">
             <CheckoutLink assessmentId={latest.id}>
               <Lock className="h-4 w-4" />
-              Unlock report · £199
+              Unlock report · £99 including VAT
             </CheckoutLink>
           </Button>
         </>

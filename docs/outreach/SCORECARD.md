@@ -15,11 +15,14 @@ npm run outreach -- report \
 
 The report groups by week, campaign, segment, trigger, and template version.
 Message metrics globally deduplicate campaign, prospect, event type, and
-`sequence_step` before grouping. The earliest valid occurrence owns the
-canonical week and dimensions, so separate touches remain separate messages
-but cross-week duplicates do not inflate cumulative sums. `touch_1_sent` is a
-distinct-prospect count; other funnel events are also distinct-prospect counts
-within event type/week. See the event rules in the
+`sequence_step` before grouping. The earliest valid occurrence owns each
+message key. Sent messages own their canonical week and dimensions; canonical
+delivery and bounce outcomes are joined back to that sent cohort. An unmatched
+or pre-send outcome is excluded, so every counted outcome has a counted sent
+denominator and both message rates remain between 0% and 100%. Separate touches
+remain separate messages, but cross-week duplicates do not inflate cumulative
+sums. `touch_1_sent` is a distinct-prospect count; other funnel events are also
+distinct-prospect counts within event type/week. See the event rules in the
 [operator runbook](./operator-runbook.md).
 
 ## Funnel definitions

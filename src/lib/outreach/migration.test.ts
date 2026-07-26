@@ -5,6 +5,8 @@ import { describe, expect, test } from "vitest";
 const INITIAL_MIGRATION = "20260725000100_outreach_operations.sql";
 const FORWARD_MIGRATION =
   "20260726000100_outreach_sequence_step_reporting.sql";
+const COHORT_MIGRATION =
+  "20260726000200_outreach_message_cohort_reporting.sql";
 
 async function migrationSql(name = INITIAL_MIGRATION) {
   try {
@@ -151,6 +153,38 @@ describe("outreach migration invariants", () => {
     );
     expect(sql).toMatch(
       /grant select on table public\.outreach_weekly_funnel to service_role/i
+    );
+  });
+
+  test("applies message outcome cohort reporting as a later forward migration", async () => {
+    const names = (await readdir(join(process.cwd(), "supabase/migrations")))
+      .filter((name) => name.endsWith(".sql"))
+      .sort();
+    const sql = await migrationSql(COHORT_MIGRATION);
+
+    expect(names.indexOf(COHORT_MIGRATION)).toBeGreaterThan(
+      names.indexOf(FORWARD_MIGRATION)
+    );
+    expect(sql).toMatch(
+      /ranked_sent_events[\s\S]*event_type = 'sent'[\s\S]*canonical_sent_events[\s\S]*canonical_rank = 1/i
+    );
+    expect(sql).toMatch(
+      /ranked_outcome_events[\s\S]*event_type in \('delivered', 'bounced'\)[\s\S]*canonical_outcome_events[\s\S]*canonical_rank = 1/i
+    );
+    expect(sql).toMatch(
+      /from canonical_outcome_events\s+outcome\s+join canonical_sent_events\s+sent\s+on sent\.campaign_id = outcome\.campaign_id\s+and sent\.prospect_id = outcome\.prospect_id\s+and sent\.sequence_step = outcome\.sequence_step/i
+    );
+    expect(sql).toMatch(
+      /select\s+sent\.campaign_id,\s*sent\.prospect_id,\s*outcome\.event_type,\s*sent\.segment,\s*sent\.trigger,\s*sent\.template_version,\s*sent\.sequence_step,\s*sent\.occurred_at/i
+    );
+    expect(sql).toMatch(
+      /create view public\.outreach_weekly_funnel\s+with \(security_invoker = true\)/i
+    );
+    expect(sql).toMatch(
+      /grant select on table public\.outreach_weekly_funnel to service_role/i
+    );
+    expect(sql).not.toMatch(
+      /(update|delete from)\s+public\.outreach_events/i
     );
   });
 

@@ -159,7 +159,9 @@ export default function CheckAnswersPage({
           By submitting, BrightCert will analyse your responses across the five Cyber Essentials control areas and generate your readiness score.
         </p>
         <p className="text-xs text-[#64748B] mb-5">
-          You can unlock the full readiness report for £199 after reviewing your score.
+          After reviewing your score, you can unlock the full readiness report for
+          £99 including VAT with code FOUNDING10 — a £100 founding discount from
+          the standard £199 price.
         </p>
         {submitError && (
           <p className="text-sm text-[#DC2626] mb-4">{submitError}</p>

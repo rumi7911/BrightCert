@@ -10,7 +10,7 @@ import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signa
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "Simple pricing for Cyber Essentials readiness. Start free, pay £199 to unlock your full report.",
+  description: "Simple pricing for Cyber Essentials readiness. Start free, then unlock your full report for £99 including VAT with code FOUNDING10 — a £100 founding discount from £199.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -23,10 +23,10 @@ const PRICING_SCHEMA = {
     {
       "@type": "Offer",
       name: "Assessment",
-      price: "199",
+      price: "99",
       priceCurrency: "GBP",
       description:
-        "Guided Cyber Essentials readiness assessment with AI-assisted scoring, gap analysis, prioritised remediation steps, and a downloadable PDF report. Free to complete; pay to unlock the full report.",
+        "Guided Cyber Essentials readiness assessment with AI-assisted scoring, gap analysis, prioritised remediation steps, and a downloadable PDF report. Free to complete; £99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199 price.",
     },
     {
       "@type": "Offer",
@@ -55,7 +55,7 @@ const PRICING_SCHEMA = {
   ],
 };
 
-// Not yet purchasable — only the £199 Assessment has a live checkout path.
+// Not yet purchasable — only the Assessment has a live checkout path.
 // Cards are shown for roadmap visibility with an inert "Coming soon" label
 // instead of a real CTA (see PRICING_SCHEMA's availability: OutOfStock above —
 // not PreOrder, since there's no mechanism to actually order these ahead).
@@ -141,11 +141,11 @@ export default function PricingPage() {
                   </p>
                   <p className="relative flex items-baseline gap-1 mt-[26px] mb-2">
                     <sup className="font-display text-2xl font-semibold -translate-y-3.5">£</sup>
-                    <span className="font-display text-[56px] sm:text-[68px] font-bold tracking-[-0.04em] leading-none">199</span>
-                    <em className="not-italic font-mono text-xs uppercase tracking-[0.1em] text-white/60 ml-2.5">one-time</em>
+                    <span className="font-display text-[56px] sm:text-[68px] font-bold tracking-[-0.04em] leading-none">99</span>
+                    <em className="not-italic font-mono text-xs uppercase tracking-[0.1em] text-white/60 ml-2.5">including VAT</em>
                   </p>
                   <p className="relative inline-flex items-center gap-1.5 rounded-full border border-[#6EE7B7]/30 bg-[#6EE7B7]/[0.08] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#6EE7B7] mb-[26px]">
-                    First 10 customers — £99 with code FOUNDING10
+                    Code FOUNDING10 · £100 founding discount from £199
                   </p>
                   <ul className="relative grid gap-[13px] mb-[30px]">
                     {[

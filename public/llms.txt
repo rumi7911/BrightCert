@@ -1,12 +1,12 @@
 # BrightCert
 
-> BrightCert is a Cyber Essentials readiness platform for UK SMEs. It guides businesses through a free, plain-English assessment across the five official Cyber Essentials control areas, then produces a readiness score, gap analysis, and prioritised remediation report (£199, one-time). BrightCert prepares businesses for certification; it does not issue the official Cyber Essentials certificate, which comes from IASME-licensed Certification Bodies.
+> BrightCert is a Cyber Essentials readiness platform for UK SMEs. It guides businesses through a free, plain-English assessment across the five official Cyber Essentials control areas, then produces a readiness score, gap analysis, and prioritised remediation report (£99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199 one-time price). BrightCert prepares businesses for certification; it does not issue the official Cyber Essentials certificate, which comes from IASME-licensed Certification Bodies.
 
 Key facts:
 - Audience: UK small and medium businesses (and MSPs supporting them) preparing for Cyber Essentials
 - The assessment: 60 plain-English questions across Boundary Firewalls & Internet Gateways, Secure Configuration, User Access Control, Malware Protection, and Security Update Management
 - Time: around 2 hours, progress can be saved
-- Cost: free to complete; the full report (score, gap analysis, prioritised P1/P2/P3 fixes, PDF) unlocks for £199 one-time
+- Cost: free to complete; the full report (score, gap analysis, prioritised P1/P2/P3 fixes, PDF) unlocks for £99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199 one-time price
 - Typical alternative: consultancy at £2,000–5,000 before gaps are known
 - Founder: Muhammad Sohaib Roomi, MSc Cyber Security with Advanced Research (Distinction), London; operated by Cognumi Ltd
 - LinkedIn: https://www.linkedin.com/company/brightcert (not to be confused with Brightcert Electricals Ltd, an unrelated Manchester electrical firm)
@@ -16,7 +16,7 @@ Key facts:
 
 - [Home](https://brightcert.co.uk/): what BrightCert does and how the assessment works
 - [How it works](https://brightcert.co.uk/how-it-works): the five-step process from assessment to report
-- [Pricing](https://brightcert.co.uk/pricing): Assessment £199 one-time, Monitor £99/month (coming soon), CE Plus Pack £499 one-time (coming soon), MSP Partner £299/month (coming soon)
+- [Pricing](https://brightcert.co.uk/pricing): Assessment £99 including VAT with code FOUNDING10 (£100 founding discount from the standard £199 one-time price), Monitor £99/month (coming soon), CE Plus Pack £499 one-time (coming soon), MSP Partner £299/month (coming soon)
 - [FAQ](https://brightcert.co.uk/faq): common questions including what BrightCert does and does not do
 - [Machine-readable pricing](https://brightcert.co.uk/pricing.md): structured pricing data
 

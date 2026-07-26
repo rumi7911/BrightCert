@@ -530,6 +530,13 @@ describe("operator stores and reporting", () => {
         sequence_step: 1 as const,
       };
 
+      if (type !== "sent") {
+        await appendEvent(store, {
+          ...canonicalEvent,
+          type: "sent",
+          occurred_at: "2026-07-24T09:59:00Z",
+        });
+      }
       await appendEvent(store, {
         ...canonicalEvent,
         occurred_at: "2026-07-24T10:00:00Z",
@@ -730,6 +737,123 @@ describe("operator stores and reporting", () => {
         bounced_messages: "0",
       }),
     ]);
+  });
+
+  test("attributes Monday delivery and bounce outcomes to the canonical Sunday sent cohort", () => {
+    const sent = importedEvent({
+      event_id: "sent-sunday",
+      type: "sent",
+      sequence_step: "1",
+      occurred_at: "2026-07-26T23:59:00Z",
+    });
+    const report = buildWeeklyFunnel([
+      {
+        ...sent,
+        event_id: "delivery-duplicate",
+        type: "delivered",
+        segment: "msp",
+        trigger: "different outcome trigger",
+        template_version: "outcome-v2",
+        occurred_at: "2026-08-03T10:00:00Z",
+      },
+      {
+        ...sent,
+        event_id: "bounce-monday",
+        type: "bounced",
+        segment: "msp",
+        trigger: "different outcome trigger",
+        template_version: "outcome-v2",
+        occurred_at: "2026-07-27T00:02:00Z",
+      },
+      {
+        ...sent,
+        event_id: "delivery-monday",
+        type: "delivered",
+        segment: "msp",
+        trigger: "different outcome trigger",
+        template_version: "outcome-v2",
+        occurred_at: "2026-07-27T00:01:00Z",
+      },
+      {
+        ...sent,
+        event_id: "bounce-duplicate",
+        type: "bounced",
+        segment: "msp",
+        trigger: "later outcome trigger",
+        template_version: "outcome-v3",
+        occurred_at: "2026-08-03T10:01:00Z",
+      },
+      sent,
+      {
+        ...sent,
+        event_id: "orphan-delivery",
+        prospect_id: "sme-999",
+        type: "delivered",
+        occurred_at: "2026-07-27T00:03:00Z",
+      },
+    ]);
+
+    expect(report).toEqual([
+      expect.objectContaining({
+        week_start: "2026-07-20",
+        campaign: "founding-2026",
+        segment: "sme",
+        trigger: "Cyber Essentials renewal",
+        template_version: "sme-v1",
+        sent_messages: "1",
+        delivered_messages: "1",
+        bounced_messages: "1",
+        delivery_rate: "100.00%",
+        hard_bounce_rate: "100.00%",
+      }),
+    ]);
+  });
+
+  test("rejects delivery and bounce outcomes without an earlier matching sent event", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "brightcert-outcomes-"));
+    const events = join(directory, "events.csv");
+    const suppressions = join(directory, "suppressions.csv");
+
+    await expect(
+      recordProspectEvent(
+        events,
+        suppressions,
+        [approvedRow()],
+        {
+          prospect_id: "sme-001",
+          type: "bounced",
+          campaign: "founding-2026",
+          segment: "sme",
+          sequence_step: 1,
+          occurred_at: "2026-07-27T00:02:00Z",
+        }
+      )
+    ).rejects.toThrow("matching prior sent event");
+    await expect(readFile(events, "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+    await expect(readFile(suppressions, "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+
+    await appendEvent(events, {
+      prospect_id: "sme-001",
+      type: "sent",
+      campaign: "founding-2026",
+      segment: "sme",
+      sequence_step: 1,
+      occurred_at: "2026-07-27T00:03:00Z",
+    });
+    await expect(
+      appendEvent(events, {
+        prospect_id: "sme-001",
+        type: "delivered",
+        campaign: "founding-2026",
+        segment: "sme",
+        sequence_step: 1,
+        occurred_at: "2026-07-27T00:02:00Z",
+      })
+    ).rejects.toThrow("matching prior sent event");
   });
 
   test("counts two different sequence steps as two messages in the same week", () => {

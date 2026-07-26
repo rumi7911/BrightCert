@@ -159,11 +159,11 @@ function UnlockCard({ assessmentId }: { assessmentId: string }) {
         ))}
       </ul>
       <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#A7F3D0] bg-[#ECFDF5] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#047857]">
-        First 10 customers — £99 with code FOUNDING10
+        £99 including VAT with code FOUNDING10 — £100 founding discount from £199
       </p>
       <div className="flex flex-col items-center gap-3 sm:flex-row">
         <Button asChild size="lg" className="w-full sm:w-auto">
-          <CheckoutLink assessmentId={assessmentId}>Unlock Full Report · £199</CheckoutLink>
+          <CheckoutLink assessmentId={assessmentId}>Unlock Full Report · £99 including VAT</CheckoutLink>
         </Button>
         <div className="flex items-center gap-2 text-sm text-[#64748B]">
           <FileText className="h-4 w-4" strokeWidth={1.5} />

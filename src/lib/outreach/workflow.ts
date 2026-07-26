@@ -431,6 +431,10 @@ const MESSAGE_EVENT_TYPES = new Set<OutreachEventType>([
   "delivered",
   "bounced",
 ]);
+const MESSAGE_OUTCOME_TYPES = new Set<OutreachEventType>([
+  "delivered",
+  "bounced",
+]);
 
 function messageEventKey(
   event: NewOutreachEvent | Readonly<Record<string, string>>
@@ -444,6 +448,49 @@ function messageEventKey(
     event.type,
     String(event.sequence_step ?? "").trim(),
   ].join("\u001f");
+}
+
+function messageCohortKey(
+  event: NewOutreachEvent | Readonly<Record<string, string>>
+): string | undefined {
+  if (!MESSAGE_EVENT_TYPES.has(event.type as OutreachEventType)) {
+    return undefined;
+  }
+  return [
+    event.campaign.trim(),
+    event.prospect_id.trim(),
+    String(event.sequence_step ?? "").trim(),
+  ].join("\u001f");
+}
+
+function hasPriorMatchingSent(
+  rows: readonly Record<string, string>[],
+  event: NewOutreachEvent,
+  occurredAt: Date
+): boolean {
+  const cohortKey = messageCohortKey(event);
+  return rows.some((row) => {
+    if (row.type !== "sent" || messageCohortKey(row) !== cohortKey) {
+      return false;
+    }
+    const sentAt = new Date(row.occurred_at);
+    return !Number.isNaN(sentAt.getTime()) && sentAt <= occurredAt;
+  });
+}
+
+function assertPriorMatchingSent(
+  rows: readonly Record<string, string>[],
+  event: NewOutreachEvent,
+  occurredAt: Date
+): void {
+  if (
+    MESSAGE_OUTCOME_TYPES.has(event.type) &&
+    !hasPriorMatchingSent(rows, event, occurredAt)
+  ) {
+    throw new Error(
+      `${event.type} requires a matching prior sent event for the same campaign, prospect_id, and sequence_step`
+    );
+  }
 }
 
 function validateEvent(event: NewOutreachEvent): void {
@@ -487,6 +534,7 @@ export async function appendEvent(
     : now();
   await withExclusiveFileLock(path, async () => {
     const rows = await readRowsIfPresent(path);
+    assertPriorMatchingSent(rows, event, occurredAt);
     const canonicalMessageKey = messageEventKey(event);
     if (
       canonicalMessageKey &&
@@ -534,6 +582,19 @@ export async function recordProspectEvent(
     );
   }
 
+  const outcomeOccurredAt = MESSAGE_OUTCOME_TYPES.has(event.type)
+    ? event.occurred_at
+      ? new Date(event.occurred_at)
+      : now()
+    : undefined;
+  if (outcomeOccurredAt) {
+    assertPriorMatchingSent(
+      await readRowsIfPresent(eventStore),
+      event,
+      outcomeOccurredAt
+    );
+  }
+
   if (event.type === "opt_out" || event.type === "bounced") {
     await addSuppression(
       suppressionStore,
@@ -554,6 +615,7 @@ export async function recordProspectEvent(
       segment: prospect.segment,
       trigger: prospect.trigger,
       template_version: prospect.template_version,
+      occurred_at: outcomeOccurredAt?.toISOString() ?? event.occurred_at,
     },
     now
   );
@@ -574,7 +636,8 @@ function canonicalReportEvents(
   events: readonly Record<string, string>[]
 ): ReportEvent[] {
   const nonMessageEvents: ReportEvent[] = [];
-  const messageEvents = new Map<string, ReportEvent>();
+  const sentEvents = new Map<string, ReportEvent>();
+  const outcomeCandidates: ReportEvent[] = [];
 
   for (const event of events) {
     if (!EVENT_TYPES.includes(event.type as OutreachEventType)) continue;
@@ -592,13 +655,45 @@ function canonicalReportEvents(
       nonMessageEvents.push({ event, occurredAt });
       continue;
     }
-    const existing = messageEvents.get(canonicalMessageKey);
-    if (!existing || occurredAt < existing.occurredAt) {
-      messageEvents.set(canonicalMessageKey, { event, occurredAt });
+    if (event.type === "sent") {
+      const cohortKey = messageCohortKey(event);
+      if (!cohortKey) continue;
+      const existing = sentEvents.get(cohortKey);
+      if (!existing || occurredAt < existing.occurredAt) {
+        sentEvents.set(cohortKey, { event, occurredAt });
+      }
+    } else {
+      outcomeCandidates.push({ event, occurredAt });
     }
   }
 
-  return [...nonMessageEvents, ...messageEvents.values()];
+  const outcomeEvents = new Map<string, ReportEvent>();
+  for (const outcome of outcomeCandidates) {
+    const cohortKey = messageCohortKey(outcome.event);
+    const sent = cohortKey ? sentEvents.get(cohortKey) : undefined;
+    if (!sent || outcome.occurredAt < sent.occurredAt) continue;
+
+    const outcomeKey = messageEventKey(outcome.event);
+    if (!outcomeKey) continue;
+    const existing = outcomeEvents.get(outcomeKey);
+    if (!existing || outcome.occurredAt < existing.occurredAt) {
+      outcomeEvents.set(outcomeKey, {
+        event: {
+          ...sent.event,
+          event_id: outcome.event.event_id,
+          type: outcome.event.type,
+          amount_paid: outcome.event.amount_paid,
+        },
+        occurredAt: sent.occurredAt,
+      });
+    }
+  }
+
+  return [
+    ...nonMessageEvents,
+    ...sentEvents.values(),
+    ...outcomeEvents.values(),
+  ];
 }
 
 function percentage(numerator: number, denominator: number): string {

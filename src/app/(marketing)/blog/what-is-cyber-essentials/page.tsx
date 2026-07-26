@@ -228,7 +228,8 @@ export default function WhatIsCyberEssentialsPage() {
               <p>
                 BrightCert is a free readiness assessment built around these same five control areas: 60
                 plain-English questions, roughly two hours, and a readiness score you see before paying anything.
-                The full scored report, with a prioritised fix list and a downloadable PDF, is a one-time £199.
+                The full scored report, with a prioritised fix list and a downloadable PDF, is £99 including VAT
+                with code FOUNDING10 — a £100 founding discount from the standard £199 price.
                 BrightCert doesn&rsquo;t issue the Cyber Essentials certificate (that always comes from an
                 IASME-licensed Certification Body); it exists to make sure you walk into that step already knowing
                 exactly where you stand.
