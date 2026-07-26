@@ -27,8 +27,9 @@ function cookieOptions(maxAge: number) {
   return `path=/; max-age=${maxAge}; samesite=lax${secure}`;
 }
 
-function deleteCookie(name: string) {
-  document.cookie = `${name}=; ${cookieOptions(0)}`;
+function deleteCookie(name: string, domain?: string) {
+  const domainPart = domain ? `; domain=${domain}` : "";
+  document.cookie = `${name}=; ${cookieOptions(0)}${domainPart}`;
 }
 
 function isValidUtmValue(value: unknown): value is string {
@@ -105,9 +106,18 @@ export function readConsent(): Consent | null {
 }
 
 function clearGoogleAnalyticsCookies() {
+  const hostname = window.location.hostname;
   document.cookie.split(";").forEach((entry) => {
     const name = entry.split("=")[0]?.trim();
-    if (name === "_ga" || name?.startsWith("_ga_")) deleteCookie(name);
+    if (name !== "_ga" && !name?.startsWith("_ga_")) return;
+    // GA's default cookie_domain="auto" scopes these to the full registrable
+    // domain with a leading dot (e.g. ".brightcert.co.uk"), not this host —
+    // a deletion assignment only overwrites a cookie that matches on name,
+    // domain, AND path, so a plain host-only delete silently no-ops and
+    // leaves the real cookie behind. Try every scope GA could have used.
+    deleteCookie(name);
+    deleteCookie(name, hostname);
+    deleteCookie(name, `.${hostname}`);
   });
 }
 
