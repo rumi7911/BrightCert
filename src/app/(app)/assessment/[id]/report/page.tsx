@@ -39,10 +39,21 @@ export default async function ReportPage({
   if (assessment.status !== "paid" && session_id) {
     try {
       const stripe = getStripe();
-      const session = await stripe.checkout.sessions.retrieve(session_id);
+      const session = await stripe.checkout.sessions.retrieve(session_id, {
+        expand: ["payment_intent.latest_charge"],
+      });
+      const paymentIntent =
+        typeof session.payment_intent === "object"
+          ? session.payment_intent
+          : null;
+      const latestCharge =
+        paymentIntent && typeof paymentIntent.latest_charge === "object"
+          ? paymentIntent.latest_charge
+          : null;
       if (
         session.payment_status === "paid" &&
-        session.metadata?.assessmentId === assessmentId
+        session.metadata?.assessmentId === assessmentId &&
+        latestCharge?.refunded === false
       ) {
         await supabase
           .from("assessments")

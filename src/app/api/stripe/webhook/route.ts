@@ -69,5 +69,66 @@ export async function POST(request: NextRequest) {
     }).catch((err) => console.error("PDF generation trigger failed:", err));
   }
 
+  if (event.type === "charge.refunded") {
+    const charge = event.data.object;
+
+    // Stripe sends charge.refunded for partial refunds too. Only a confirmed
+    // full refund should remove the customer's paid entitlement.
+    if (!charge.refunded) {
+      return NextResponse.json({ received: true });
+    }
+
+    const paymentIntentId =
+      typeof charge.payment_intent === "string"
+        ? charge.payment_intent
+        : charge.payment_intent?.id;
+
+    if (!paymentIntentId) {
+      console.error("No payment intent on fully refunded charge");
+      return NextResponse.json({ received: true });
+    }
+
+    let session;
+    try {
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: paymentIntentId,
+        limit: 1,
+      });
+      session = sessions.data[0];
+    } catch (error) {
+      console.error("Failed to resolve refunded Checkout Session:", error);
+      return NextResponse.json({ error: "Stripe lookup failed" }, { status: 500 });
+    }
+
+    const assessmentId = session?.metadata?.assessmentId;
+    if (!session || !assessmentId) {
+      console.error("No assessment Checkout Session found for fully refunded charge");
+      return NextResponse.json({ received: true });
+    }
+
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from("assessments")
+      .update({
+        status: "analysed",
+        stripe_session_id: null,
+        amount_paid: null,
+        currency: null,
+        paid_at: null,
+        // A refunded assessment returns to the analysed paywall. Mark the
+        // unlock reminder as handled so the daily cron does not email a
+        // customer asking them to pay again immediately after their refund.
+        reminder_sent_at: new Date().toISOString(),
+      })
+      .eq("id", assessmentId)
+      .eq("stripe_session_id", session.id)
+      .eq("status", "paid");
+
+    if (error) {
+      console.error("Failed to revoke refunded assessment entitlement:", error);
+      return NextResponse.json({ error: "Database update failed" }, { status: 500 });
+    }
+  }
+
   return NextResponse.json({ received: true });
 }
