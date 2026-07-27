@@ -44,3 +44,6 @@ next-env.d.ts
 # operator outreach data
 /.outreach/
 /outreach/runs/
+
+# Local brainstorming companion sessions
+/.superpowers/
