@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrightCert report redesign prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0f2044;--navy2:#08152e;--emerald:#047857;--mint:#6ee7b7;--ink:#132343;--slate:#526178;--muted:#7c899c;--line:#dce2e8;--paper:#f4f6f3;--red:#b4232d;--redbg:#fff1f1;--amber:#a4510c;--amberbg:#fff8e7;--greenbg:#eaf8f2}
+    *{box-sizing:border-box}
+    body{margin:0;background:#182131;color:var(--ink);font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .prototype-bar{position:relative;z-index:20;background:rgba(8,21,46,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);color:#fff;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .prototype-bar strong{font:600 15px "Bricolage Grotesque";letter-spacing:-.02em}
+    .prototype-bar span{font:700 9px "JetBrains Mono";letter-spacing:.13em;text-transform:uppercase;color:var(--mint)}
+    .prototype-bar p{margin:2px 0 0;color:#aebacf;font-size:11px}
+    .prototype-nav{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+    .prototype-nav a{color:#d5ddea;text-decoration:none;font:700 9px "JetBrains Mono";padding:6px 8px;border:1px solid rgba(255,255,255,.14);border-radius:5px}
+    .prototype-nav a:hover{border-color:var(--mint);color:var(--mint)}
+    .report{padding:44px 24px 80px}
+    .page{width:794px;height:1123px;margin:0 auto 42px;background:#fff;position:relative;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.32);padding:56px 58px 68px}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:42px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand-tile{width:34px;height:34px;border-radius:8px;background:#fff;display:grid;place-items:center}
+    .brand-tile img{width:25px;height:25px;object-fit:contain}
+    .wordmark{font:700 19px/1 "Bricolage Grotesque";letter-spacing:-.04em;color:var(--navy)}.wordmark em{font-style:normal;color:var(--emerald)}
+    .meta{font:700 8px/1.35 "JetBrains Mono";letter-spacing:.11em;text-transform:uppercase;color:var(--muted);text-align:right}
+    .dark .wordmark{color:#fff}.dark .wordmark em{color:var(--mint)}.dark .meta{color:#9aabc3}
+    .eyebrow{font:700 8px/1.3 "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase;color:var(--emerald)}
+    h1,h2,h3,h4{font-family:"Bricolage Grotesque",Inter,sans-serif;margin:0;letter-spacing:-.035em}
+    h1{font-size:36px;line-height:1.04;font-weight:600}h2{font-size:29px;line-height:1.08;font-weight:600}h3{font-size:17px;line-height:1.18;font-weight:600}h4{font-size:13px;line-height:1.25;font-weight:650}
+    .lead{font-size:13px;line-height:1.58;color:var(--slate)}
+    .section-rule{height:3px;width:42px;background:var(--emerald);margin:12px 0 24px}
+    .page-footer{position:absolute;left:58px;right:58px;bottom:30px;border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:center;font:600 7px/1.3 "JetBrains Mono";letter-spacing:.04em;color:#8b97aa}
+    .dark{background:linear-gradient(180deg,var(--navy) 0 35%,#fff 35%);padding-top:44px}
+    .dark .page-header{margin-bottom:62px}
+    .hero-eyebrow{font:700 8px "JetBrains Mono";letter-spacing:.16em;text-transform:uppercase;color:var(--mint);margin-bottom:13px}
+    .hero-title{color:#fff;max-width:640px;font-size:39px}
+    .hero-sub{color:#b8c5d8;font-size:12px;margin-top:17px}
+    .cover-body{margin-top:132px}
+    .metric-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:34px}
+    .metric{border-top:1px solid #aeb8c6;padding-top:10px}
+    .metric strong{display:block;font:700 28px/1 "Bricolage Grotesque";letter-spacing:-.05em}
+    .metric span{display:block;color:var(--slate);font-size:9.5px;line-height:1.4;margin-top:5px}
+    .cover-thesis{display:grid;grid-template-columns:1.15fr .85fr;gap:34px}
+    .thesis h3{font-size:20px}.thesis p{margin:10px 0 0}
+    .decision-box{background:var(--greenbg);border-left:4px solid var(--emerald);padding:18px 20px}
+    .decision-box strong{font:700 8px "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--emerald)}
+    .decision-box p{font-size:12px;line-height:1.55;margin:8px 0 0;color:#314a45}
+    .disclaimer-line{margin-top:28px;font-size:9px;color:#778398;line-height:1.5}
+    .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:34px}
+    .insight-list{margin-top:22px}
+    .insight{display:grid;grid-template-columns:32px 1fr;gap:13px;padding:15px 0;border-top:1px solid var(--line)}
+    .insight-num{font:700 11px "JetBrains Mono";color:var(--emerald)}
+    .insight p{margin:5px 0 0;font-size:11px;line-height:1.5;color:var(--slate)}
+    .implication-panel{background:var(--paper);padding:21px}
+    .implication-panel h3{font-size:18px;margin-top:8px}
+    .implication-panel p{font-size:11px;line-height:1.55;color:var(--slate)}
+    .decision-label{display:inline-block;background:var(--navy);color:#fff;padding:6px 8px;border-radius:4px;font:700 7px "JetBrains Mono";letter-spacing:.1em;text-transform:uppercase;margin-top:14px}
+    .chart{margin-top:31px}
+    .score-row{display:grid;grid-template-columns:190px 1fr 50px 84px;gap:14px;align-items:center;margin:20px 0}
+    .score-name{font-size:12px;font-weight:650}.score-track{height:9px;background:#edf0f3;position:relative}
+    .score-track:after{content:"";position:absolute;left:80%;top:-5px;height:19px;border-left:1px dashed #6f7d90}
+    .score-fill{height:100%;background:var(--amber)}.score-fill.bad{background:var(--red)}.score-fill.mid{background:#d97706}
+    .score-value{font:700 14px "Bricolage Grotesque";text-align:right}
+    .score-status{font:700 8px "JetBrains Mono";text-transform:uppercase;color:var(--red);background:var(--redbg);padding:6px 7px;text-align:center;border-radius:4px}
+    .score-status.review{color:var(--amber);background:var(--amberbg)}
+    .threshold-note{display:flex;justify-content:flex-end;font:600 8px "JetBrains Mono";color:#6f7d90;margin-top:5px}
+    .chart-takeaway{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+    .takeaway{border-top:2px solid var(--navy);padding-top:10px}.takeaway strong{font:700 19px "Bricolage Grotesque"}.takeaway p{font-size:10.5px;line-height:1.48;color:var(--slate);margin:5px 0 0}
+    .priority-legend{display:flex;gap:18px;margin-top:20px;font:700 8px "JetBrains Mono";color:var(--slate)}
+    .priority-legend span:before{content:"";display:inline-block;width:9px;height:9px;margin-right:6px;vertical-align:-1px}
+    .p1:before{background:var(--red)}.p2:before{background:#d97706}.p3:before{background:#aeb8c6}
+    .risk-row{display:grid;grid-template-columns:190px 1fr 80px;align-items:center;gap:17px;padding:16px 0;border-top:1px solid var(--line)}
+    .risk-row:last-child{border-bottom:1px solid var(--line)}
+    .risk-name strong{font-size:11px}.risk-name span{display:block;font-size:9px;color:var(--muted);margin-top:3px}
+    .stack{height:17px;display:flex;overflow:hidden}.seg1{background:var(--red)}.seg2{background:#d97706}.seg3{background:#aeb8c6}
+    .risk-counts{font:700 9px "JetBrains Mono";color:var(--slate);text-align:right}
+    .risk-callout{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
+    .callout{padding:17px 18px;background:var(--paper);border-top:3px solid var(--emerald)}
+    .callout h3{font-size:15px}.callout p{font-size:10.5px;line-height:1.5;color:var(--slate);margin:7px 0 0}
+    .prototype-note{font:700 7px "JetBrains Mono";color:var(--amber);letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px}
+    .roadmap{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .phase{border-top:4px solid var(--emerald);padding-top:14px}.phase:nth-child(2){border-color:#2f7297}.phase:nth-child(3){border-color:var(--navy)}
+    .phase-label{font:700 8px "JetBrains Mono";letter-spacing:.1em;text-transform:uppercase;color:var(--emerald)}
+    .phase:nth-child(2) .phase-label{color:#2f7297}.phase:nth-child(3) .phase-label{color:var(--navy)}
+    .phase h3{margin-top:9px}.phase ul{padding-left:16px;margin:11px 0}.phase li{font-size:10.5px;line-height:1.45;color:var(--slate);margin:6px 0}
+    .phase-meta{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;font-size:9px;line-height:1.48;color:var(--slate)}.phase-meta strong{color:var(--ink)}
+    .management-note{margin-top:31px;border-left:4px solid var(--navy);padding:3px 0 3px 17px;max-width:620px}.management-note h3{font-size:16px}.management-note p{font-size:11px;line-height:1.55;color:var(--slate);margin:6px 0 0}
+    .deep-header{background:var(--navy);margin:-56px -58px 38px;padding:44px 58px 34px;color:#fff}
+    .deep-header .page-header{margin-bottom:40px}.deep-header .wordmark{color:#fff}.deep-header .wordmark em{color:var(--mint)}.deep-title-row{display:flex;justify-content:space-between;align-items:flex-end;gap:22px}
+    .deep-header h1{font-size:31px}.score-chip{background:#fff;color:var(--red);padding:9px 12px;border-radius:5px;font:700 9px "JetBrains Mono";white-space:nowrap}
+    .management-implication{display:grid;grid-template-columns:160px 1fr;gap:28px;padding-bottom:23px;border-bottom:1px solid var(--line)}
+    .management-implication p{margin:0;font-size:12px;line-height:1.58;color:var(--slate)}
+    .finding-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px;margin-top:25px}
+    .finding{border-top:1px solid var(--line);padding-top:11px}
+    .finding-top{display:flex;gap:8px;align-items:flex-start}.priority-tag{font:700 7px "JetBrains Mono";padding:4px 5px;background:var(--redbg);color:var(--red);border-radius:3px}.priority-tag.p2tag{background:var(--amberbg);color:var(--amber)}.priority-tag.p3tag{background:#f0f2f5;color:#64748b}
+    .finding h4{font-size:12.5px}.finding p{font-size:10px;line-height:1.48;color:var(--slate);margin:7px 0 0}
+    .response-box{margin-top:25px;background:var(--paper);padding:18px 20px}
+    .response-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}.response-grid div{border-top:1px solid #b9c2cd;padding-top:8px}.response-grid strong{font:700 8px "JetBrains Mono";text-transform:uppercase;letter-spacing:.08em;color:var(--emerald)}.response-grid span{display:block;font-size:10px;line-height:1.48;margin-top:5px;color:var(--slate)}
+    .register-table{margin-top:24px}
+    .register-row{display:grid;grid-template-columns:34px 1.6fr .8fr .62fr 1.05fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);align-items:start}
+    .register-row.header{padding:8px 0;font:700 7px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .register-row .n{font:700 10px "JetBrains Mono";color:var(--red)}.register-row strong{font-size:10px;line-height:1.35}.register-row span{font-size:9px;line-height:1.42;color:var(--slate)}
+    .evidence-columns{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:26px}
+    .evidence-group{border-top:3px solid var(--emerald);padding-top:13px}.evidence-group h3{font-size:16px}.evidence-group ul{padding-left:17px}.evidence-group li{font-size:10.5px;line-height:1.52;color:var(--slate);margin:7px 0}
+    .method{margin-top:32px;padding:20px;background:var(--paper);display:grid;grid-template-columns:1fr 1fr;gap:24px}.method h4{margin-bottom:7px}.method p{font-size:9px;line-height:1.5;color:var(--slate);margin:0}
+    @media(max-width:850px){.prototype-bar{position:relative;display:block}.prototype-nav{justify-content:flex-start;margin-top:12px}.report{overflow-x:auto;padding-left:14px;padding-right:14px}.page{transform-origin:top left}}
+    @media print{body{background:#fff}.prototype-bar{display:none}.report{padding:0}.page{box-shadow:none;margin:0;break-after:page}}
+  </style>
+</head>
+<body>
+  <div class="prototype-bar">
+    <div><strong>BrightCert Decision + Delivery report</strong><p>High-fidelity design prototype using the supplied 49% assessment</p></div>
+    <div class="prototype-nav">
+      <a href="#p1">Cover</a><a href="#p2">Executive</a><a href="#p3">Profile</a><a href="#p4">Risk</a><a href="#p5">Roadmap</a><a href="#p6">Deep dive</a><a href="#p7">Register</a><a href="#p8">Evidence</a>
+    </div>
+  </div>
+  <main class="report">
+    <section class="page dark" id="p1">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Readiness review / v2 prototype<br>26 July 2026</div>
+      </div>
+      <div class="hero-eyebrow">Executive conclusion</div>
+      <h1 class="hero-title">Nine high-priority gaps make an immediate application premature.</h1>
+      <div class="hero-sub">Cyber Essentials readiness review • Sohaib • Private & confidential</div>
+      <div class="cover-body">
+        <div class="metric-strip">
+          <div class="metric"><strong>49%</strong><span>overall readiness<br>Needs fixes</span></div>
+          <div class="metric"><strong>9</strong><span>P1 gaps requiring action before applying</span></div>
+          <div class="metric"><strong>24</strong><span>findings across all five control areas</span></div>
+          <div class="metric"><strong>0/5</strong><span>control areas currently at the 80 threshold</span></div>
+        </div>
+        <div class="cover-thesis">
+          <div class="thesis">
+            <div class="eyebrow">What the assessment says</div>
+            <h3>Risk is broad, with the most immediate weakness in malware protection.</h3>
+            <p class="lead">The current answers indicate gaps in email and web protection, network and cloud exposure, software visibility, privileged access, leaver controls and supported operating systems.</p>
+          </div>
+          <div class="decision-box">
+            <strong>Primary management decision</strong>
+            <p>Pause application preparation and sponsor a focused remediation sprint, led jointly by the business owner and IT provider.</p>
+          </div>
+        </div>
+        <p class="disclaimer-line">BrightCert provides a readiness assessment based on self-reported answers. It is not an official certification decision, technical audit or guarantee of passing Cyber Essentials.</p>
+      </div>
+      <div class="page-footer"><span>BrightCert • Sohaib • Private & confidential</span><span>01 / 08</span></div>
+    </section>
+
+    <section class="page" id="p2">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile" style="background:#f4f6f3"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Executive readout<br>Decision brief</div>
+      </div>
+      <div class="eyebrow">Executive readout</div>
+      <h2 style="max-width:650px;margin-top:10px">The weakness is not one isolated control: every area contains at least one P1 gap.</h2>
+      <div class="section-rule"></div>
+      <div class="two-col">
+        <div>
+          <p class="lead">The organisation has some positive practices, including multi-factor authentication, strong passwords and a foundation for timely security updates. Those strengths are outweighed by nine high-priority gaps that expose common attack routes and make evidence of control effectiveness difficult.</p>
+          <div class="insight-list">
+            <div class="insight"><div class="insight-num">01</div><div><h3>Email and endpoint defences need immediate reinforcement.</h3><p>Malware Protection is the weakest area at 35%, with no confirmed email filtering and inconsistent automatic anti-malware updates.</p></div></div>
+            <div class="insight"><div class="insight-num">02</div><div><h3>Basic visibility and account governance are incomplete.</h3><p>Software inventory, administrator separation and staff-leaver controls are not yet dependable enough to demonstrate consistent operation.</p></div></div>
+            <div class="insight"><div class="insight-num">03</div><div><h3>The external attack surface is not sufficiently understood.</h3><p>Default network-device credentials, unknown exposed services and missing cloud network controls create preventable exposure.</p></div></div>
+          </div>
+        </div>
+        <aside class="implication-panel">
+          <div class="eyebrow">Management implication</div>
+          <h3>Treat this as a short control-establishment programme, not a checklist tidy-up.</h3>
+          <p>The priority is to create accountable, repeatable controls and retain evidence that they operate. Starting an application before closing the P1 gaps is likely to create avoidable rework.</p>
+          <span class="decision-label">Decision required</span>
+          <p><strong>Assign a named business sponsor and technical owner for a 30-day P1 remediation sprint.</strong></p>
+          <div style="border-top:1px solid #cfd6de;margin-top:18px;padding-top:14px">
+            <div class="eyebrow">Existing strengths to preserve</div>
+            <p>Multi-factor authentication • strong passwords • prompt patching foundation • clear update responsibilities</p>
+          </div>
+        </aside>
+      </div>
+      <div class="page-footer"><span>BrightCert • Sohaib • Executive decision report</span><span>02 / 08</span></div>
+    </section>
+
+    <section class="page" id="p3">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile" style="background:#f4f6f3"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Readiness profile<br>Five control areas</div>
+      </div>
+      <div class="eyebrow">Readiness profile</div>
+      <h2 style="margin-top:10px;max-width:660px">Four controls score below 60; even the strongest remains short of the readiness threshold.</h2>
+      <div class="section-rule"></div>
+      <div class="chart">
+        <div class="score-row"><div class="score-name">Boundary Firewalls & Internet Gateways</div><div class="score-track"><div class="score-fill mid" style="width:50%"></div></div><div class="score-value">50</div><div class="score-status">Needs work</div></div>
+        <div class="score-row"><div class="score-name">Secure Configuration</div><div class="score-track"><div class="score-fill mid" style="width:50%"></div></div><div class="score-value">50</div><div class="score-status">Needs work</div></div>
+        <div class="score-row"><div class="score-name">User Access Control</div><div class="score-track"><div class="score-fill bad" style="width:45%"></div></div><div class="score-value">45</div><div class="score-status">Needs work</div></div>
+        <div class="score-row"><div class="score-name">Malware Protection</div><div class="score-track"><div class="score-fill bad" style="width:35%"></div></div><div class="score-value">35</div><div class="score-status">Needs work</div></div>
+        <div class="score-row"><div class="score-name">Security Update Management</div><div class="score-track"><div class="score-fill mid" style="width:65%"></div></div><div class="score-value">65</div><div class="score-status review">Review needed</div></div>
+        <div class="threshold-note">Dashed marker = BrightCert 80-point “Ready” threshold</div>
+      </div>
+      <div class="chart-takeaway">
+        <div class="takeaway"><strong>35</strong><p>Malware Protection is the lowest-scoring area and the first remediation focus.</p></div>
+        <div class="takeaway"><strong>65</strong><p>Security Update Management is the strongest area, but unsupported systems remain a P1 concern.</p></div>
+        <div class="takeaway"><strong>30pts</strong><p>The narrowest gap to the 80-point threshold is still material and should not be described as “almost ready”.</p></div>
+      </div>
+      <div class="management-note"><h3>Interpretation</h3><p>The score pattern indicates a need to establish basic control coverage across the estate before optimising individual processes.</p></div>
+      <div class="page-footer"><span>BrightCert • Sohaib • Executive decision report</span><span>03 / 08</span></div>
+    </section>
+
+    <section class="page" id="p4">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile" style="background:#f4f6f3"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Risk concentration<br>24 validated findings</div>
+      </div>
+      <div class="eyebrow">Risk concentration</div>
+      <h2 style="margin-top:10px;max-width:660px">Nine P1 gaps span all five controls, with the largest concentration at the network boundary.</h2>
+      <div class="section-rule"></div>
+      <div class="priority-legend"><span class="p1">P1 - before applying</span><span class="p2">P2 - should fix soon</span><span class="p3">P3 - good practice</span></div>
+      <div style="margin-top:25px">
+        <div class="risk-row"><div class="risk-name"><strong>Boundary Firewalls & Internet Gateways</strong><span>5 findings</span></div><div class="stack"><div class="seg1" style="width:60%"></div><div class="seg2" style="width:40%"></div></div><div class="risk-counts">3 / 2 / 0</div></div>
+        <div class="risk-row"><div class="risk-name"><strong>Secure Configuration</strong><span>5 findings</span></div><div class="stack"><div class="seg1" style="width:20%"></div><div class="seg2" style="width:80%"></div></div><div class="risk-counts">1 / 4 / 0</div></div>
+        <div class="risk-row"><div class="risk-name"><strong>User Access Control</strong><span>5 findings</span></div><div class="stack"><div class="seg1" style="width:40%"></div><div class="seg2" style="width:60%"></div></div><div class="risk-counts">2 / 3 / 0</div></div>
+        <div class="risk-row"><div class="risk-name"><strong>Malware Protection</strong><span>5 findings</span></div><div class="stack"><div class="seg1" style="width:40%"></div><div class="seg2" style="width:40%"></div><div class="seg3" style="width:20%"></div></div><div class="risk-counts">2 / 2 / 1</div></div>
+        <div class="risk-row"><div class="risk-name"><strong>Security Update Management</strong><span>4 findings</span></div><div class="stack"><div class="seg1" style="width:25%"></div><div class="seg2" style="width:25%"></div><div class="seg3" style="width:50%"></div></div><div class="risk-counts">1 / 1 / 2</div></div>
+      </div>
+      <div class="risk-callout">
+        <div class="callout"><h3>The first sprint cannot focus on malware alone.</h3><p>Although Malware Protection is the lowest score, six of the nine P1 gaps sit in Firewalls, Secure Configuration, User Access and Updates.</p></div>
+        <div class="callout"><h3>P2 work is substantial but should follow P1 closure.</h3><p>Twelve P2 findings create the second wave of work across configuration, account governance, filtering, training and firmware.</p></div>
+      </div>
+      <div class="page-footer"><span>BrightCert • Sohaib • Executive decision report</span><span>04 / 08</span></div>
+    </section>
+
+    <section class="page" id="p5">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile" style="background:#f4f6f3"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Proposed roadmap<br>Confirm during owner review</div>
+      </div>
+      <div class="prototype-note">Prototype recommendations derived from the supplied findings</div>
+      <h2 style="max-width:650px">Sequence work to close application blockers first, then build repeatable operating evidence.</h2>
+      <div class="section-rule"></div>
+      <div class="roadmap">
+        <div class="phase">
+          <div class="phase-label">Now / 0-30 days</div><h3>Close the nine P1 gaps</h3>
+          <ul><li>Secure network-device credentials, exposed services and cloud boundaries.</li><li>Establish software visibility and separate administrator access.</li><li>Implement leaver controls, email filtering and automatic anti-malware updates.</li><li>Confirm every operating system is supported.</li></ul>
+          <div class="phase-meta"><strong>Recommended owner</strong><br>Business sponsor + IT lead/MSP<br><br><strong>Evidence</strong><br>Configuration exports, inventories, account records and control screenshots</div>
+        </div>
+        <div class="phase">
+          <div class="phase-label">Next / 31-60 days</div><h3>Complete the P2 control layer</h3>
+          <ul><li>Complete internet-connected device inventory and firewall-log review.</li><li>Standardise secure configuration and device-lock settings.</li><li>Apply least privilege, remove shared accounts and review user access.</li><li>Add web filtering, awareness training and firmware governance.</li></ul>
+          <div class="phase-meta"><strong>Recommended owner</strong><br>IT lead/MSP + People/operations<br><br><strong>Evidence</strong><br>Review logs, build standard, training record and firmware register</div>
+        </div>
+        <div class="phase">
+          <div class="phase-label">Then / 61-90 days</div><h3>Validate and prepare</h3>
+          <ul><li>Restrict mobile app sources where appropriate.</li><li>Document testing for critical security patches.</li><li>Improve staff update communications.</li><li>Run a final internal evidence review before application.</li></ul>
+          <div class="phase-meta"><strong>Recommended owner</strong><br>Business sponsor + technical owner<br><br><strong>Evidence</strong><br>Completed readiness checklist and approved exception record</div>
+        </div>
+      </div>
+      <div class="management-note"><h3>Management implication</h3><p>This plan needs named internal ownership even if an MSP performs the technical work. Recommended owners and timeframes must be confirmed with the organisation before being treated as commitments.</p></div>
+      <div class="page-footer"><span>BrightCert • Sohaib • Executive decision report</span><span>05 / 08</span></div>
+    </section>
+
+    <section class="page" id="p6">
+      <div class="deep-header">
+        <div class="page-header">
+          <div class="brand"><span class="brand-tile"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+          <div class="meta">Control deep dive / 04<br>Malware Protection</div>
+        </div>
+        <div class="deep-title-row"><div><div class="hero-eyebrow">Lowest-scoring control</div><h1>Email and endpoint defences need immediate reinforcement.</h1></div><span class="score-chip">35 / Needs work</span></div>
+      </div>
+      <div class="management-implication"><div><div class="eyebrow">Management implication</div><h3 style="margin-top:8px">Common attack routes remain insufficiently controlled.</h3></div><p>The current answers indicate that malicious email, unsafe browsing and inconsistent endpoint protection could bypass otherwise positive password and access practices. Leadership should treat filtering and automatic protection updates as immediate control-establishment work.</p></div>
+      <div class="finding-grid">
+        <div class="finding"><div class="finding-top"><span class="priority-tag">P1</span><h4>No confirmed email filtering</h4></div><p>Malicious attachments and phishing links are not consistently detected or blocked before reaching users.</p></div>
+        <div class="finding"><div class="finding-top"><span class="priority-tag">P1</span><h4>Anti-malware updates are inconsistent</h4></div><p>Some devices may not receive current protection automatically, leaving known threats insufficiently controlled.</p></div>
+        <div class="finding"><div class="finding-top"><span class="priority-tag p2tag">P2</span><h4>No confirmed web filtering</h4></div><p>Users may reach known malicious sites without a preventative browser or network control.</p></div>
+        <div class="finding"><div class="finding-top"><span class="priority-tag p2tag">P2</span><h4>Awareness training is inconsistent</h4></div><p>Staff may not reliably recognise phishing, suspicious downloads or other common malware routes.</p></div>
+        <div class="finding"><div class="finding-top"><span class="priority-tag p3tag">P3</span><h4>Mobile app-source restrictions are uncertain</h4></div><p>Business-used mobile devices may allow software from unapproved sources.</p></div>
+      </div>
+      <div class="response-box">
+        <div class="prototype-note">Prototype action recommendation</div>
+        <h3>Establish layered email, web and endpoint protection, then retain operating evidence.</h3>
+        <div class="response-grid">
+          <div><strong>Recommended owner</strong><span>Internal IT lead or MSP/IT provider</span></div>
+          <div><strong>Timeframe</strong><span>P1 controls in 0-30 days; P2/P3 in 31-90 days</span></div>
+          <div><strong>Evidence required</strong><span>Email-filter policy, endpoint compliance report, web-filter configuration and training record</span></div>
+        </div>
+      </div>
+      <div class="page-footer"><span>Readiness assessment - not official certification</span><span>06 / 08</span></div>
+    </section>
+
+    <section class="page" id="p7">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile" style="background:#f4f6f3"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Prioritised action register<br>P1 actions</div>
+      </div>
+      <div class="prototype-note">Prototype owners, timeframes and evidence - confirm during review</div>
+      <h2 style="margin-top:8px">The first action register turns nine blockers into accountable work.</h2>
+      <div class="section-rule"></div>
+      <div class="register-table">
+        <div class="register-row header"><span>#</span><span>Action</span><span>Recommended owner</span><span>When</span><span>Evidence required</span></div>
+        <div class="register-row"><span class="n">01</span><strong>Replace default firewall/router administrator passwords</strong><span>MSP / IT lead</span><span>0-7d</span><span>Change record and current admin-control screenshot</span></div>
+        <div class="register-row"><span class="n">02</span><strong>Identify and approve every internet-exposed service</strong><span>MSP / IT lead</span><span>0-14d</span><span>External-service register with owner and purpose</span></div>
+        <div class="register-row"><span class="n">03</span><strong>Apply cloud network security groups or equivalent controls</strong><span>Cloud admin / MSP</span><span>0-14d</span><span>Rule export and approved network diagram</span></div>
+        <div class="register-row"><span class="n">04</span><strong>Create a complete software inventory</strong><span>Internal IT lead</span><span>0-30d</span><span>Device/software inventory export and review date</span></div>
+        <div class="register-row"><span class="n">05</span><strong>Separate administrator and everyday user accounts</strong><span>Internal IT lead</span><span>0-30d</span><span>Privileged-account register and sample account evidence</span></div>
+        <div class="register-row"><span class="n">06</span><strong>Implement a staff-leaver access-removal process</strong><span>Business + HR + IT</span><span>0-30d</span><span>Approved leaver checklist and completed sample</span></div>
+        <div class="register-row"><span class="n">07</span><strong>Enable malicious-email filtering</strong><span>Email admin / MSP</span><span>0-14d</span><span>Filtering policy and configuration screenshot</span></div>
+        <div class="register-row"><span class="n">08</span><strong>Enforce automatic anti-malware updates across all devices</strong><span>MSP / IT lead</span><span>0-14d</span><span>Endpoint compliance dashboard/report</span></div>
+        <div class="register-row"><span class="n">09</span><strong>Confirm every operating system is supported</strong><span>Internal IT lead</span><span>0-30d</span><span>OS inventory with vendor-support status</span></div>
+      </div>
+      <div class="page-footer"><span>BrightCert • Sohaib • Delivery & evidence appendix</span><span>07 / 08</span></div>
+    </section>
+
+    <section class="page" id="p8">
+      <div class="page-header">
+        <div class="brand"><span class="brand-tile" style="background:#f4f6f3"><img src="https://brightcert.co.uk/logo-mark.png" alt=""></span><span class="wordmark">Bright<em>Cert</em></span></div>
+        <div class="meta">Evidence & method<br>Preparation guidance</div>
+      </div>
+      <div class="eyebrow">Evidence checklist</div>
+      <h2 style="margin-top:10px;max-width:650px">The final readiness review should test whether controls operate, not merely whether policies exist.</h2>
+      <div class="section-rule"></div>
+      <div class="evidence-columns">
+        <div class="evidence-group"><h3>Required for the first review</h3><ul><li>Network-device credential-change record</li><li>Approved external-service and cloud-rule register</li><li>Current software and supported-OS inventory</li><li>Privileged-account list and leaver procedure</li><li>Email-filter and endpoint-protection configuration</li><li>Evidence that automatic anti-malware updates are operating</li></ul></div>
+        <div class="evidence-group"><h3>Supporting operating evidence</h3><ul><li>Firewall-log review record</li><li>Secure device-build standard and sample checklist</li><li>User-access review and account-removal evidence</li><li>Web-filter configuration and staff-training record</li><li>Network firmware inventory and review date</li><li>Patch-testing and security-update communication records</li></ul></div>
+      </div>
+      <div class="method">
+        <div><h4>Assessment basis</h4><p>This prototype uses the scores, summaries and 24 findings contained in the supplied BrightCert PDF dated 26 July 2026. Recommended owners, timeframes, evidence and management wording are design-prototype enhancements and must be confirmed by the organisation.</p></div>
+        <div><h4>Limitations</h4><p>The assessment is based on self-reported answers. BrightCert has not performed a technical audit, vulnerability scan or official certification assessment. This checklist is preparation guidance, not an official Certification Body evidence request.</p></div>
+      </div>
+      <div class="decision-box" style="margin-top:28px"><strong>Official next step</strong><p>After the gaps are addressed and evidence has been internally reviewed, apply for official Cyber Essentials through an IASME-licensed Certification Body.</p></div>
+      <div class="page-footer"><span>BrightCert • Readiness assessment - not official certification</span><span>08 / 08</span></div>
+    </section>
+  </main>
+</body>
+</html>
