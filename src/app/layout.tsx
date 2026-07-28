@@ -29,7 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://brightcert.co.uk"),
-  alternates: { canonical: "./" },
+  alternates: { canonical: "/" },
   title: {
     default: "BrightCert | Cyber Essentials Readiness for UK SMEs",
     template: "%s | BrightCert",
