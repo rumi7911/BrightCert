@@ -4,7 +4,7 @@ Last reconciled: 28 July 2026, 22:00 BST
 
 Reconciled by: Codex
 
-Snapshot base: `main` / `origin/main` at `457fdc6`
+Integrated coordination commit: `df5b771`
 
 ## Production
 
@@ -18,7 +18,7 @@ Snapshot base: `main` / `origin/main` at `457fdc6`
 
 | Workstream | Branch | State | Ownership boundary |
 |---|---|---|---|
-| Coordination bootstrap | `codex/agent-coordination` | In progress in an isolated worktree | Coordination files and `AGENTS.md` only |
+| Coordination bootstrap | `codex/agent-coordination` | Integrated into `main` at `df5b771` | Coordination files and `AGENTS.md` only |
 | SEO growth and indexing | `codex/seo-growth` | Large uncommitted change set | Do not edit or stage from another worktree |
 | Production report redesign | `codex/production-report-redesign` | Clean at `d33e62d` | Treat as the report implementation branch |
 | Main working tree | `main` | Dirty with owner/previous-agent changes | Do not work in, reset, stage, or clean |
@@ -47,12 +47,11 @@ them in another task's commit without an explicit reconciliation.
 
 ## Immediate priorities
 
-1. Land this coordination protocol so both agents receive the same rules.
-2. Reconcile and preserve dirty-main work without destructive cleanup.
-3. Verify, commit, and push `codex/seo-growth`.
-4. Review and integrate `codex/production-report-redesign`.
-5. Complete the remaining deployed PDF/report verification.
-6. Begin deterministic assessment work only from a clean, agreed integration
+1. Reconcile and preserve dirty-main work without destructive cleanup.
+2. Verify, commit, and push `codex/seo-growth`.
+3. Review and integrate `codex/production-report-redesign`.
+4. Complete the remaining deployed PDF/report verification.
+5. Begin deterministic assessment work only from a clean, agreed integration
    base.
 
 ## Known constraints
