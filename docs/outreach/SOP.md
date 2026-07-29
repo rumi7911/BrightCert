@@ -11,15 +11,22 @@ Git-ignored `.outreach/` or `outreach/runs/` paths.
 
 ## Roles
 
-| Role | Responsibility |
-|---|---|
-| Owner/founder | Approves launch, LIA and copy; sends manually; handles replies/calls; verifies payment evidence |
-| Outreach operator | Researches, validates, verifies, queues, records outcomes, reports, suppresses, and runs retention review |
-| Legal/privacy reviewer | Reviews the draft LIA/privacy/process where required; does not delegate approval to the CLI |
-| Technical owner | Verifies production, database, authentication, email-domain, payment, and incident gates |
+| Role | Assigned person | Responsibility |
+|---|---|---|
+| Owner/founder | Muhammad Sohaib Roomi | Approves launch, LIA and copy; sends manually; handles replies/calls; verifies payment evidence |
+| Outreach operator | Muhammad Sohaib Roomi | Researches, validates, verifies, queues, records outcomes, reports, suppresses, and runs retention review |
+| Data owner | Muhammad Sohaib Roomi | Owns rights requests, retention decisions, objection handling, and personal-data incident response |
+| Legal/privacy reviewer | Muhammad Sohaib Roomi (self-review) | Reviews the draft LIA/privacy/process where required; does not delegate approval to the CLI |
+| Technical owner | Muhammad Sohaib Roomi | Verifies production, database, authentication, email-domain, payment, and incident gates |
+| Sending pause/resume authority | Muhammad Sohaib Roomi | Pauses immediately on any threshold or suspected incident and authorises resumption only after recorded corrective evidence |
 
 One person may hold several roles, but each approval and evidence item must
 remain explicit.
+
+The owner confirmed on 26 July 2026 that
+`muhammad@brightcert.co.uk` and `hello@brightcert.co.uk` will be monitored each
+business day, every reply stops later touches, and objections and opt-outs are
+processed the same day.
 
 ## Pre-flight: no-go until complete
 
