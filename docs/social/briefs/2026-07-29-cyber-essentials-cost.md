@@ -26,13 +26,13 @@
 
 | Page | Job | Visible copy | Visual direction |
 |---:|---|---|---|
-| 1 | Hook | Cyber Essentials costs £320 to £600 + VAT in 2026. Here is the exact fee for your team size. | Navy cover, large £320 to £600, emerald accent |
-| 2 | Direct answer | The official assessment fee is tiered by employee count. Preparation time and remediation are separate costs. | Off-white answer page with three-part budget line |
-| 3 | First fee | 0 to 9 employees. Micro organisation. £320 + VAT. | Large £320 with one highlighted employee dot group |
-| 4 | Second fee | 10 to 49 employees. Small organisation. £440 + VAT. | Large £440 with a wider employee dot group |
-| 5 | Third fee | 50 to 249 employees. Medium organisation. £500 + VAT. | Large £500 with a medium employee dot group |
-| 6 | Fourth fee | 250 or more employees. Large organisation. £600 + VAT. | Large £600 with the fullest employee dot group |
-| 7 | CTA | Budget separately for the certification fee, preparation time and remediation. Read the full cost guide. BrightCert helps organisations prepare for Cyber Essentials. It does not issue certification. | Navy close, three numbered budget lines and one CTA |
+| 1 | Hook | Cyber Essentials costs £320 to £600 + VAT in 2026. Here is the exact fee for your team size. | Navy cover, oversized price range and emerald progression |
+| 2 | Direct answer | The four official fee bands: 0 to 9, £320 + VAT; 10 to 49, £440 + VAT; 50 to 249, £500 + VAT; 250 or more, £600 + VAT. | Off-white rising four-step fee diagram |
+| 3 | Cost one | The official assessment fee is set by IASME and based on total employee count. VAT is added when you apply. | Navy editorial split with employee-count to fee-band relationship |
+| 4 | Cost two | Preparation time covers defining scope, gathering technical details and completing the official questionnaire. | Off-white three-step preparation sequence |
+| 5 | Cost three | Remediation depends on the gaps preparation uncovers. Examples include missing MFA, unsupported software and loose access controls. | Navy editorial issue list with oversized FIX motif |
+| 6 | Summary | Plan for the official fee, preparation time and remediation. | Emerald three-line budget summary |
+| 7 | CTA | Read the complete 2026 cost guide. BrightCert helps organisations prepare for Cyber Essentials. It does not issue certification. | Off-white close with one emerald CTA |
 
 ## Founder LinkedIn post
 
@@ -98,14 +98,19 @@ certification.
 
 1. Navy cover stating that Cyber Essentials costs between £320 and £600 plus
    VAT in 2026, with a prompt to find the fee for each team size.
-2. The official assessment fee is based on employee count. Preparation time
-   and remediation should be budgeted separately.
-3. Micro organisations with 0 to 9 employees pay £320 plus VAT.
-4. Small organisations with 10 to 49 employees pay £440 plus VAT.
-5. Medium organisations with 50 to 249 employees pay £500 plus VAT.
-6. Large organisations with 250 or more employees pay £600 plus VAT.
-7. Closing page advising organisations to budget for the assessment fee,
-   preparation and remediation, with BrightCert's readiness-only disclaimer.
+2. Warm off-white fee-band diagram showing 0 to 9 employees at £320 plus VAT,
+   10 to 49 at £440 plus VAT, 50 to 249 at £500 plus VAT and 250 or more at
+   £600 plus VAT.
+3. Navy page explaining that IASME sets the assessment fee according to total
+   employee count.
+4. Warm off-white page showing the three preparation activities: define scope,
+   gather technical details and complete the official questionnaire.
+5. Navy page explaining remediation with examples of missing MFA, unsupported
+   software and loose access controls.
+6. Emerald summary page advising organisations to budget for the official fee,
+   preparation time and remediation.
+7. Closing page linking to the complete cost guide and showing BrightCert's
+   readiness-only disclaimer.
 
 ## Approval
 
@@ -115,4 +120,3 @@ certification.
 - [x] Exact readiness disclaimer included.
 - [ ] Muhammad has reviewed and approved the claims and publishing copy.
 - [ ] Publishing date has been selected.
-
