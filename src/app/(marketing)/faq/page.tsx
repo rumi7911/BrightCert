@@ -36,7 +36,7 @@ const FAQS: FaqItem[] = [
   },
   {
     q: "What do I get after the assessment?",
-    a: "You receive a readiness score, control-by-control analysis, gap findings, and prioritised remediation steps. You can unlock the full report and PDF download for £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price.",
+    a: "You receive a readiness score, control-by-control analysis, gap findings, and prioritised remediation steps. You can unlock the full report and PDF download for £99 including VAT with code FOUNDING10, for the first 10 customers — a £100 founding discount from the standard £199 price.",
   },
   {
     q: "What are the five Cyber Essentials control areas?",

@@ -180,7 +180,10 @@ uncertain, block the send rather than improvise.
   completed remediation in around two hours, artificial scarcity, or an
   unverified cohort/customer count.
 - [ ] SME price, if present, is exactly £99 including VAT through the existing
-  £100 `FOUNDING10` discount from £199.
+  £100 `FOUNDING10` discount from £199, and states that the code is limited to
+  the first 10 customers. That cap is a real Stripe limit, not a scarcity
+  device, and quoting the price without it risks advertising a price the
+  recipient can no longer obtain.
 - [ ] Inbox, suppression store, and event history show no reply, objection,
   bounce, customer, loss, or closure.
 - [ ] Daily cap and pause rules in [SOP.md](./SOP.md) still permit the send.

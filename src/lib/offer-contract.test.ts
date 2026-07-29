@@ -16,23 +16,50 @@ async function sourceFiles(root: string): Promise<string[]> {
   return nested.flat();
 }
 
+// Customer-facing copy may state the FOUNDING10 redemption cap, because that
+// cap is real and verifiable in Stripe (coupon ZXdXak08, max_redemptions 10).
+// Disclosing a limit that genuinely exists is the opposite of the artificial
+// scarcity banned by SOP.md and EMAIL-SEQUENCES.md. What stays banned is
+// urgency and countdown language we cannot substantiate — see those documents.
+const ARTIFICIAL_SCARCITY =
+  /limited\s+(?:cohort|places?|offer|time|availability)|(?:places?|spots?|spaces?|seats?)\s+(?:left|remaining)|only\s+\d+\s+(?:left|remaining|places?|spots?)|ending\s+soon|act\s+fast|hurry|while\s+stocks\s+last/i;
+
+// Wherever the discounted price is quoted, the cap must be quoted with it.
+// Without this, the site could advertise £99 indefinitely while the code has
+// stopped working — the failure this contract exists to prevent.
+const CAP_DISCLOSURE = /first\s+(?:10|ten)\s+customers?/i;
+
 describe("customer-facing founding offer contract", () => {
-  test("contains no limited-cohort or first-customer scarcity copy", async () => {
-    const files = [
+  async function customerFacingFiles() {
+    return [
       ...(await sourceFiles(join(process.cwd(), "src", "app"))),
       join(process.cwd(), "src", "lib", "resend", "emails.ts"),
       ...(await sourceFiles(join(process.cwd(), "public"))),
       join(process.cwd(), "README.md"),
     ].filter((file) => [".ts", ".tsx", ".md", ".txt"].includes(extname(file)));
+  }
+
+  test("contains no artificial scarcity or urgency copy", async () => {
     const violations: string[] = [];
 
-    for (const file of files) {
+    for (const file of await customerFacingFiles()) {
+      if (ARTIFICIAL_SCARCITY.test(await readFile(file, "utf8"))) {
+        violations.push(file.replace(`${process.cwd()}/`, ""));
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
+
+  test("discloses the FOUNDING10 cap wherever the discounted price appears", async () => {
+    const violations: string[] = [];
+
+    for (const file of await customerFacingFiles()) {
       const text = await readFile(file, "utf8");
-      if (
-        /first\s+(?:10|ten)\s+customers?|limited\s+(?:cohort|places?|offer)|places?\s+(?:left|remaining)/i.test(
-          text
-        )
-      ) {
+      if (!/FOUNDING10/.test(text)) continue;
+      // Configuration and comments may name the code without quoting a price.
+      if (!/£99/.test(text)) continue;
+      if (!CAP_DISCLOSURE.test(text)) {
         violations.push(file.replace(`${process.cwd()}/`, ""));
       }
     }

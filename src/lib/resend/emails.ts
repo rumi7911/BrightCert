@@ -82,7 +82,7 @@ export async function sendWelcomeEmail(email: string, orgName: string): Promise<
         <td style="padding:6px 0;vertical-align:top;">
           <span style="display:inline-block;width:20px;height:20px;background:${EMERALD};color:#fff;border-radius:50%;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">3</span>
         </td>
-        <td style="padding:6px 0;font-size:14px;color:${SLATE};line-height:1.5;">Unlock your full PDF report and remediation roadmap for £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price</td>
+        <td style="padding:6px 0;font-size:14px;color:${SLATE};line-height:1.5;">Unlock your full PDF report and remediation roadmap for £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price, for the first 10 customers</td>
       </tr>
     </table>
     <a href="https://brightcert.co.uk/dashboard"
@@ -165,8 +165,8 @@ export async function sendUnlockReminderEmail(
       <p style="margin:4px 0 0;font-size:14px;color:${SLATE};">Overall readiness score</p>
     </div>
     <p style="margin:0 0 12px;font-size:14px;color:${SLATE};line-height:1.6;">
-      Unlock the full report for £99 including VAT with code FOUNDING10 to see your prioritised
-      remediation roadmap (P1/P2/P3) and step-by-step guidance for each control area.
+      Unlock the full report for £99 including VAT with code FOUNDING10, for the first 10 customers,
+      to see your prioritised remediation roadmap (P1/P2/P3) and step-by-step guidance for each control area.
     </p>
     <p style="margin:0 0 20px;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${EMERALD};">
       £100 founding discount from the standard £199 price

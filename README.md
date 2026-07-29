@@ -26,7 +26,7 @@ Built for the **Build with Gemini XPRIZE** hackathon.
 
 1. A UK business completes a 60-question, plain-English readiness assessment covering all five Cyber Essentials control areas.
 2. Gemini analyses the responses and returns a readiness score, a plain-English explanation of every gap, and a prioritised list of what to fix first, for each control area and overall.
-3. The assessment itself is free. Unlocking the full report (detailed findings, remediation steps, downloadable PDF) is £99 including VAT with code `FOUNDING10`, a £100 founding discount from the standard £199 price.
+3. The assessment itself is free. Unlocking the full report (detailed findings, remediation steps, downloadable PDF) is £99 including VAT with code `FOUNDING10`, a £100 founding discount from the standard £199 price, available to the first 10 customers.
 
 BrightCert doesn't issue the official Cyber Essentials certificate itself; that step is completed through an [IASME](https://iasme.co.uk)-licensed Certification Body once a business is ready to apply.
 

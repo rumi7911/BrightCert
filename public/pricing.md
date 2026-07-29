@@ -5,6 +5,7 @@ All prices in GBP. UK product. Last updated: 28 July 2026.
 ## Assessment
 - Payable founding price: £99 including VAT with code FOUNDING10
 - Discount: £100 founding discount from the standard £199 one-time price
+- Availability: the FOUNDING10 code is limited to the first 10 customers; after that the price is £199
 - The assessment itself is free to complete; payment unlocks the full report
 - Includes: guided readiness assessment across all five Cyber Essentials control areas (60 questions, ~2 hours), AI-assisted scoring and gap analysis, prioritised P1/P2/P3 remediation steps, downloadable PDF report
 

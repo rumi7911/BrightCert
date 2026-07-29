@@ -41,7 +41,7 @@ export const SITE_PAGES = {
     path: "/pricing",
     title: "Cyber Essentials Readiness Assessment Pricing | BrightCert",
     description:
-      "Start BrightCert's Cyber Essentials readiness assessment free, then unlock the full gap analysis and remediation report for £99 including VAT with FOUNDING10.",
+      "Start your Cyber Essentials readiness assessment free, then unlock the full gap analysis and report for £99 including VAT with FOUNDING10 — first 10 customers.",
     indexable: true,
     lastModified: "2026-07-28",
   },
