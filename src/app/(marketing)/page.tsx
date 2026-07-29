@@ -134,13 +134,19 @@ const COMPARE_ROWS = [
 ];
 
 export default async function HomePage() {
-  const supabase = createAdminClient();
-  const { count: assessmentCount } = await supabase
-    .from("assessments")
-    .select("id", { count: "exact", head: true });
+  let assessmentCount = 0;
 
-  const showCount = (assessmentCount ?? 0) >= SOCIAL_PROOF_THRESHOLD;
-  const pillLabel = showCount ? getAssessmentCountLabel(assessmentCount ?? 0) : SOCIAL_PROOF_FALLBACK;
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const supabase = createAdminClient();
+    const { count } = await supabase
+      .from("assessments")
+      .select("id", { count: "exact", head: true });
+
+    assessmentCount = count ?? 0;
+  }
+
+  const showCount = assessmentCount >= SOCIAL_PROOF_THRESHOLD;
+  const pillLabel = showCount ? getAssessmentCountLabel(assessmentCount) : SOCIAL_PROOF_FALLBACK;
 
   return (
     <div className="bg-[#F3F4EC]">
