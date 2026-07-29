@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Sibling task worktrees live inside the repository root, so linting from
+    // the main worktree would otherwise walk every other agent's branch and
+    // report their findings as if they were ours.
+    ".worktrees/**",
   ]),
 ]);
 
