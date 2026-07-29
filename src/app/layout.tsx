@@ -4,15 +4,21 @@ import { Inter, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { AnalyticsConsent } from "@/components/brightcert/analytics-consent";
 import "./globals.css";
 
+// Brand faces use `swap` (also the next/font default) so the brand typography
+// is always eventually shown. `optional` gives the browser roughly 100ms and
+// then keeps the fallback for the whole page view without ever swapping, so a
+// first-time visitor on a slow connection would never see Inter or Bricolage —
+// which DESIGN-SYSTEM.md specifies as brand tokens. The layout-shift cost is
+// accepted here deliberately; see the mono face below for the other trade.
 const inter = Inter({
   subsets: ["latin"],
-  display: "optional",
+  display: "swap",
   variable: "--font-inter",
 });
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  display: "optional",
+  display: "swap",
   variable: "--font-bricolage",
   weight: ["500", "600", "700", "800"],
 });
@@ -20,6 +26,10 @@ const bricolage = Bricolage_Grotesque({
 // Homepage-only mono texture (eyebrows, badges, quiz meta) — loaded globally
 // since fonts must be registered at the root, but only referenced via
 // `font-mono` on the homepage today.
+//
+// Kept on `optional`: this face carries small decorative labels rather than
+// brand identity or reading copy, so silently falling back costs little and
+// avoids shifting the eyebrow/badge rows that sit above the fold.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "optional",
