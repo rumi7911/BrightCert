@@ -8,12 +8,12 @@ export function LogoMark({ className = "h-8 w-8", light = false }: { className?:
   if (light) {
     return (
       <span className={cn("inline-flex items-center justify-center rounded-[8px] bg-white", className)}>
-        <Image src="/logo-mark.png" alt="" width={512} height={512} aria-hidden className="h-[72%] w-[72%] object-contain" />
+        <Image src="/logo-mark.png" alt="" width={512} height={512} sizes="64px" aria-hidden className="h-[72%] w-[72%] object-contain" />
       </span>
     );
   }
   return (
-    <Image src="/logo-mark.png" alt="" width={512} height={512} aria-hidden className={cn("object-contain", className)} />
+    <Image src="/logo-mark.png" alt="" width={512} height={512} sizes="64px" aria-hidden className={cn("object-contain", className)} />
   );
 }
 

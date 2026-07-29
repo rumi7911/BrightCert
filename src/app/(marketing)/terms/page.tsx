@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
+import { metadataFor, SITE_PAGES } from "@/lib/seo/registry";
 
-export const metadata: Metadata = {
-  title: "Terms of Service",
-  description:
-    "The terms governing your use of BrightCert, operated by Cognumi Ltd.",
-};
+export const metadata: Metadata = metadataFor(SITE_PAGES.terms);
 
 export default function TermsPage() {
   return (

@@ -5,18 +5,20 @@ import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
-import { ArticleHeader, ArticleProse, ShortAnswer, ArticleFaqList, ArticleDisclaimer, ArticleFinalCta } from "@/components/brightcert/article-kit";
+import {
+  ArticleHeader,
+  ArticleProse,
+  ShortAnswer,
+  ArticleFaqList,
+  ArticleDisclaimer,
+  ArticleFinalCta,
+  ArticleRelatedLinks,
+} from "@/components/brightcert/article-kit";
+import { articleStructuredData, ARTICLES, metadataFor } from "@/lib/seo/registry";
 
-const TITLE = "What Is Cyber Essentials? A Plain-English Guide";
-const DESCRIPTION =
-  "Cyber Essentials explained without the jargon: what it checks, how certification actually works, what it costs, and how to prepare, with sources.";
-const PUBLISHED = "2026-07-19";
+const ARTICLE = ARTICLES.whatIsCyberEssentials;
 
-export const metadata: Metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: "/blog/what-is-cyber-essentials" },
-};
+export const metadata: Metadata = metadataFor(ARTICLE);
 
 const CONTROLS = [
   {
@@ -65,7 +67,11 @@ const FAQS = [
   },
   {
     q: "What's the difference between Cyber Essentials and Cyber Essentials Plus?",
-    a: "Standard Cyber Essentials is a self-assessment reviewed by a Certification Body. Cyber Essentials Plus adds an independent technical audit of your actual systems and costs roughly 4-8x more.",
+    a: "Standard Cyber Essentials is a self-assessment reviewed by a Certification Body. Cyber Essentials Plus adds an independent technical audit of your systems. Standard fees are fixed by organisation size; Plus pricing is quoted by the provider for your scope.",
+  },
+  {
+    q: "What changed in Cyber Essentials v3.3?",
+    a: "Requirements v3.3 took effect on 27 April 2026 with the Danzell question set. It includes clearer scoping and cloud-service guidance, and requires multi-factor authentication for cloud services where the service makes MFA available.",
   },
 ];
 
@@ -73,17 +79,7 @@ export default function WhatIsCyberEssentialsPage() {
   return (
     <div className="bg-[#F3F4EC]">
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: TITLE,
-          description: DESCRIPTION,
-          datePublished: PUBLISHED,
-          dateModified: PUBLISHED,
-          author: { "@type": "Person", name: "Muhammad Sohaib Roomi" },
-          publisher: { "@type": "Organization", name: "BrightCert" },
-          mainEntityOfPage: "https://brightcert.co.uk/blog/what-is-cyber-essentials",
-        }}
+        data={articleStructuredData(ARTICLE)}
       />
       <JsonLd
         data={{
@@ -104,7 +100,7 @@ export default function WhatIsCyberEssentialsPage() {
           <div className="max-w-3xl mx-auto px-4">
             <ArticleHeader
               title="What is Cyber Essentials? A plain-English guide"
-              byline="By Muhammad Sohaib Roomi, founder of BrightCert · Updated July 2026"
+              article={ARTICLE}
             />
 
             <ShortAnswer>
@@ -112,7 +108,8 @@ export default function WhatIsCyberEssentialsPage() {
               <strong>National Cyber Security Centre (NCSC)</strong>{" "}and delivered through <strong>IASME</strong>,
               that checks your business against five basic technical controls: firewalls, secure configuration,
               patching, user access, and malware protection. Most businesses complete it as a self-assessment
-              questionnaire reviewed by a Certification Body, typically for <strong>£330–£500+VAT</strong>.
+              questionnaire reviewed by a Certification Body. In 2026, the official fee is{" "}
+              <strong>£320–£600 + VAT</strong> based on organisation size.
               It&rsquo;s the baseline standard UK government contracts and increasingly clients and insurers ask
               for as proof you&rsquo;ve got the fundamentals covered.
             </ShortAnswer>
@@ -144,6 +141,19 @@ export default function WhatIsCyberEssentialsPage() {
                 That matters because it means Cyber Essentials isn&rsquo;t a product any one company sells.
                 It&rsquo;s a fixed, published standard. The same five controls, the same requirements, regardless
                 of which Certification Body reviews you.
+              </p>
+
+              <h2 className="pt-4 text-xl font-bold text-[#0F2044]">The current 2026 requirements</h2>
+              <p>
+                Cyber Essentials requirements <strong>v3.3</strong> took effect on{" "}
+                <strong>27 April 2026</strong> with the Danzell question set. If you apply now, use the current
+                Danzell questions and v3.3 requirements rather than an older Willow checklist or saved answer set.
+              </p>
+              <p>
+                One practical point for SMEs is multi-factor authentication. Where a cloud service makes MFA
+                available, v3.3 requires it to be enabled for users of that service. Scope also needs to account
+                for cloud services, remote workers and personally owned devices that can access organisational
+                data or services.
               </p>
 
               <h2 className="pt-4 text-xl font-bold text-[#0F2044]">The five things it actually checks</h2>
@@ -188,12 +198,12 @@ export default function WhatIsCyberEssentialsPage() {
                 </li>
                 <li>
                   <strong className="text-[#0F2044]">Fix what&rsquo;s missing.</strong>{" "}This is the actual security
-                  work: a proper firewall, MFA, current antivirus, and so on. What it costs depends entirely on
-                  your starting point.
+                  work: a properly configured firewall, MFA for cloud services where available, supported
+                  software and suitable malware protection. What it costs depends on your starting point.
                 </li>
                 <li>
                   <strong className="text-[#0F2044]">Complete the self-assessment</strong>{" "}and pay the IASME
-                  certification fee: £330–£500+VAT depending on company size. A Certification Body reviews your
+                  certification fee: £320–£600 + VAT depending on company size. A Certification Body reviews your
                   answers and issues the certificate if they meet the requirements.
                 </li>
                 <li>
@@ -236,6 +246,7 @@ export default function WhatIsCyberEssentialsPage() {
               </p>
             </ArticleProse>
 
+            <ArticleRelatedLinks currentPath={ARTICLE.path} />
             <ArticleFaqList items={FAQS} />
 
             <ArticleDisclaimer>
@@ -249,12 +260,21 @@ export default function WhatIsCyberEssentialsPage() {
               </a>{" "}
               ·{" "}
               <a
-                href="https://iasme.co.uk/cyber-essentials/"
+                href="https://iasme.co.uk/cyber-essentials/frequently-asked-questions/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                IASME: Cyber Essentials
+                IASME: Cyber Essentials pricing FAQ
+              </a>
+              {" "}·{" "}
+              <a
+                href="https://www.ncsc.gov.uk/cyberessentials/resources"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:no-underline"
+              >
+                NCSC: Cyber Essentials v3.3 resources
               </a>
               . Verified July 2026.
             </ArticleDisclaimer>

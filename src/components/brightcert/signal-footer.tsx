@@ -23,6 +23,7 @@ const RESOURCES_LINKS: FooterLink[] = [
 ];
 
 const COMPANY_LINKS: FooterLink[] = [
+  { label: "About", href: "/about" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
   { label: "Cookie Settings", action: "cookie-settings" },

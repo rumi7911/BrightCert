@@ -4,22 +4,24 @@ import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
-import { ArticleHeader, ArticleProse, ShortAnswer, ArticleFaqList, ArticleDisclaimer, ArticleFinalCta } from "@/components/brightcert/article-kit";
+import {
+  ArticleHeader,
+  ArticleProse,
+  ShortAnswer,
+  ArticleFaqList,
+  ArticleDisclaimer,
+  ArticleFinalCta,
+  ArticleRelatedLinks,
+} from "@/components/brightcert/article-kit";
+import { articleStructuredData, ARTICLES, metadataFor } from "@/lib/seo/registry";
 
-const TITLE = "Cyber Essentials vs Cyber Essentials Plus";
-const DESCRIPTION =
-  "The real difference between Cyber Essentials and Cyber Essentials Plus: verification method, cost, timeline, and which one your business actually needs.";
-const PUBLISHED = "2026-07-19";
+const ARTICLE = ARTICLES.ceVsCePlus;
 
-export const metadata: Metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: "/blog/ce-vs-ce-plus" },
-};
+export const metadata: Metadata = metadataFor(ARTICLE);
 
 const COMPARE_ROWS = [
   { label: "Verification method", ce: "Self-assessment questionnaire", plus: "Self-assessment + independent technical audit" },
-  { label: "Typical cost (small business)", ce: "£330–£500 + VAT", plus: "£1,500–£3,000 + VAT" },
+  { label: "Pricing", ce: "£320–£600 + VAT by organisation size", plus: "Provider quote based on scope and device sample" },
   { label: "Typical timeline", ce: "Days to ~2 weeks", plus: "4–8 weeks" },
   { label: "Can apply directly?", ce: "Yes", plus: "No: requires a current standard certificate first" },
   { label: "If a non-compliance is found", ce: "Correct and resubmit", plus: "30 days to remediate before you can pass" },
@@ -36,7 +38,7 @@ const FAQS = [
   },
   {
     q: "How much more does Cyber Essentials Plus cost?",
-    a: "Roughly 4–8x the standard certification fee, typically £1,500–£3,000+VAT versus £330–£500+VAT, because Plus requires real assessor time testing your actual systems rather than a questionnaire review.",
+    a: "There is no single official Cyber Essentials Plus fee. Standard Cyber Essentials costs £320 to £600 + VAT by organisation size. A Certification Body quotes Plus based on scope, device sample, complexity and retest terms because it requires hands-on technical testing.",
   },
   {
     q: "Does BrightCert prepare you for Cyber Essentials Plus?",
@@ -48,17 +50,7 @@ export default function CeVsCePlusPage() {
   return (
     <div className="bg-[#F3F4EC]">
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: TITLE,
-          description: DESCRIPTION,
-          datePublished: PUBLISHED,
-          dateModified: PUBLISHED,
-          author: { "@type": "Person", name: "Muhammad Sohaib Roomi" },
-          publisher: { "@type": "Organization", name: "BrightCert" },
-          mainEntityOfPage: "https://brightcert.co.uk/blog/ce-vs-ce-plus",
-        }}
+        data={articleStructuredData(ARTICLE)}
       />
       <JsonLd
         data={{
@@ -79,7 +71,7 @@ export default function CeVsCePlusPage() {
           <div className="max-w-3xl mx-auto px-4">
             <ArticleHeader
               title={<>Cyber Essentials vs Cyber Essentials Plus: what&rsquo;s actually different?</>}
-              byline="By Muhammad Sohaib Roomi, founder of BrightCert · Updated July 2026"
+              article={ARTICLE}
               related={{ href: "/blog/what-is-cyber-essentials", label: "plain-English Cyber Essentials guide" }}
             />
 
@@ -87,9 +79,9 @@ export default function CeVsCePlusPage() {
               Both certify the same five technical controls, but Cyber Essentials is a self-assessment
               questionnaire your business fills in and a Certification Body reviews, while Cyber Essentials
               Plus adds an independent technical audit: an assessor actually scans and tests your systems
-              rather than taking your word for it. Plus costs roughly <strong>4–8x more</strong> (£1,500–£3,000+VAT
-              vs £330–£500+VAT), takes <strong>4–8 weeks</strong>{" "}instead of days, and you can&rsquo;t apply for
-              it until you already hold standard Cyber Essentials.
+              rather than taking your word for it. Standard Cyber Essentials uses official fees of{" "}
+              <strong>£320–£600 + VAT</strong>. Plus is provider-priced for your scope, typically takes longer,
+              and you can&rsquo;t apply for it until you already hold standard Cyber Essentials.
             </ShortAnswer>
 
             <ArticleProse>
@@ -103,6 +95,11 @@ export default function CeVsCePlusPage() {
                 Both certifications assess the same five NCSC-defined control areas: firewalls, secure
                 configuration, security update management, user access control, and malware protection. Nothing
                 about <em>what&rsquo;s</em>{" "}being checked changes between the two, only <em>how</em>.
+              </p>
+              <p>
+                Applications started from 27 April 2026 use Cyber Essentials requirements v3.3 and the Danzell
+                question set. That includes the current multi-factor authentication wording for cloud services.
+                The same version applies before the additional Plus verification work.
               </p>
               <p>
                 <strong className="text-[#0F2044]">Cyber Essentials (standard):</strong>{" "}You complete a
@@ -202,6 +199,7 @@ export default function CeVsCePlusPage() {
               <ReadinessTeaser />
             </div>
 
+            <ArticleRelatedLinks currentPath={ARTICLE.path} />
             <ArticleFaqList items={FAQS} />
 
             <ArticleDisclaimer>
@@ -221,6 +219,15 @@ export default function CeVsCePlusPage() {
                 className="underline hover:no-underline"
               >
                 NCSC: Cyber Essentials overview
+              </a>
+              {" "}·{" "}
+              <a
+                href="https://www.ncsc.gov.uk/cyberessentials/resources"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:no-underline"
+              >
+                NCSC: Cyber Essentials v3.3 resources
               </a>
               . Verified July 2026.
             </ArticleDisclaimer>

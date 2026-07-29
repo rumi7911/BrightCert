@@ -7,12 +7,9 @@ import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { GlowLink } from "@/components/brightcert/glow-link";
 import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signal-primitives";
+import { metadataFor, SITE_PAGES } from "@/lib/seo/registry";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description: "Simple pricing for Cyber Essentials readiness. Start free, then unlock your full report for £99 including VAT with code FOUNDING10 — a £100 founding discount from £199.",
-  alternates: { canonical: "/pricing" },
-};
+export const metadata: Metadata = metadataFor(SITE_PAGES.pricing);
 
 const PRICING_SCHEMA = {
   "@context": "https://schema.org",

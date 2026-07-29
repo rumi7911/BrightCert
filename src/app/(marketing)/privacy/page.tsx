@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
+import { metadataFor, SITE_PAGES } from "@/lib/seo/registry";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "How BrightCert (Cognumi Ltd) collects, uses, and protects your personal data.",
-};
+export const metadata: Metadata = metadataFor(SITE_PAGES.privacy);
 
 export default function PrivacyPage() {
   return (

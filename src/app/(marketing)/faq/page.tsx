@@ -8,13 +8,9 @@ import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { GlowLink } from "@/components/brightcert/glow-link";
 import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signal-primitives";
 import { FaqAccordion, type FaqItem } from "@/components/brightcert/faq-accordion";
+import { metadataFor, SITE_PAGES } from "@/lib/seo/registry";
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description:
-    "Frequently asked questions about BrightCert: what it is, what Cyber Essentials is, how long the assessment takes, what you get, and how certification works.",
-  alternates: { canonical: "/faq" },
-};
+export const metadata: Metadata = metadataFor(SITE_PAGES.faq);
 
 // Copy is verbatim from COPY.md (FAQ Page section)
 const FAQS: FaqItem[] = [

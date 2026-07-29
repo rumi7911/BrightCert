@@ -1,6 +1,6 @@
 # Pricing — BrightCert (brightcert.co.uk)
 
-All prices in GBP. UK product. Last updated: 16 July 2026.
+All prices in GBP. UK product. Last updated: 28 July 2026.
 
 ## Assessment
 - Payable founding price: £99 including VAT with code FOUNDING10
@@ -29,4 +29,4 @@ All prices in GBP. UK product. Last updated: 16 July 2026.
 ## Notes
 - No free tier beyond the free-to-complete assessment; no trial needed (the assessment is the trial)
 - Payment: card via Stripe Checkout at brightcert.co.uk
-- BrightCert provides readiness preparation only; official Cyber Essentials certification is issued by IASME-licensed Certification Bodies (typically ~£320+VAT, paid separately to a Certification Body)
+- BrightCert provides readiness preparation only; official Cyber Essentials certification is issued by IASME-licensed Certification Bodies and paid separately. Current standard assessment fees are £320 + VAT for 0–9 employees, £440 + VAT for 10–49, £500 + VAT for 50–249, and £600 + VAT for 250 or more.

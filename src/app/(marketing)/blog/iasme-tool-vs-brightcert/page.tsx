@@ -4,18 +4,20 @@ import { ReadinessTeaser } from "@/components/brightcert/readiness-teaser";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
-import { ArticleHeader, ArticleProse, ShortAnswer, ArticleFaqList, ArticleDisclaimer, ArticleFinalCta } from "@/components/brightcert/article-kit";
+import {
+  ArticleHeader,
+  ArticleProse,
+  ShortAnswer,
+  ArticleFaqList,
+  ArticleDisclaimer,
+  ArticleFinalCta,
+  ArticleRelatedLinks,
+} from "@/components/brightcert/article-kit";
+import { articleStructuredData, ARTICLES, metadataFor } from "@/lib/seo/registry";
 
-const TITLE = "IASME's Free Readiness Tool vs BrightCert";
-const DESCRIPTION =
-  "What's the difference between IASME's free Cyber Essentials Readiness Tool and BrightCert's scored assessment? An honest, side-by-side comparison.";
-const PUBLISHED = "2026-07-19";
+const ARTICLE = ARTICLES.iasmeToolVsBrightcert;
 
-export const metadata: Metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: "/blog/iasme-tool-vs-brightcert" },
-};
+export const metadata: Metadata = metadataFor(ARTICLE);
 
 const COMPARE_ROWS: { label: string; iasme: string; brightcert: string }[] = [
   { label: "Cost to complete", iasme: "Free", brightcert: "Free" },
@@ -45,23 +47,17 @@ const FAQS = [
     q: "Does BrightCert replace the need for IASME's Readiness Tool?",
     a: "Not necessarily. If you've already got a clear picture from IASME's tool, you can go straight into a BrightCert assessment. They're not sequential requirements, just two different types of output.",
   },
+  {
+    q: "Are these the official Danzell assessment questions?",
+    a: "IASME's formal Danzell self-assessment question set is the current certification application. The Readiness Tool and BrightCert are preparation tools, not substitutes for that official questionnaire. BrightCert maps readiness questions to the five control areas without reproducing the official question set verbatim.",
+  },
 ];
 
 export default function IasmeVsBrightCertPage() {
   return (
     <div className="bg-[#F3F4EC]">
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: TITLE,
-          description: DESCRIPTION,
-          datePublished: PUBLISHED,
-          dateModified: PUBLISHED,
-          author: { "@type": "Person", name: "Muhammad Sohaib Roomi" },
-          publisher: { "@type": "Organization", name: "BrightCert" },
-          mainEntityOfPage: "https://brightcert.co.uk/blog/iasme-tool-vs-brightcert",
-        }}
+        data={articleStructuredData(ARTICLE)}
       />
       <JsonLd
         data={{
@@ -82,7 +78,7 @@ export default function IasmeVsBrightCertPage() {
           <div className="max-w-3xl mx-auto px-4">
             <ArticleHeader
               title={<>IASME&rsquo;s free Cyber Essentials Readiness Tool vs BrightCert: what&rsquo;s the difference?</>}
-              byline="By Muhammad Sohaib Roomi, founder of BrightCert · Updated July 2026"
+              article={ARTICLE}
               related={{ href: "/blog/what-is-cyber-essentials", label: "plain-English Cyber Essentials guide" }}
             />
 
@@ -115,6 +111,13 @@ export default function IasmeVsBrightCertPage() {
                 tool tells you what to do about it or points you to guidance. It&rsquo;s completely free, and
                 it&rsquo;s the same organisation that will eventually certify you, so nothing about your prep is
                 off-brand from what the real assessment expects.
+              </p>
+              <p>
+                For applications started from 27 April 2026, the formal self-assessment uses the Danzell question
+                set and Cyber Essentials requirements v3.3. IASME&rsquo;s Readiness Tool and BrightCert both help
+                you prepare, but neither is the formal Danzell application and neither issues the certificate.
+                Under v3.3, multi-factor authentication must be enabled for users of cloud services where the
+                service makes MFA available.
               </p>
 
               <h2 className="pt-4 text-xl font-bold text-[#0F2044]">What it doesn&rsquo;t give you</h2>
@@ -230,16 +233,17 @@ export default function IasmeVsBrightCertPage() {
               </p>
             </ArticleProse>
 
+            <ArticleRelatedLinks currentPath={ARTICLE.path} />
             <ArticleFaqList items={FAQS} />
 
             <ArticleDisclaimer>
               <a
-                href="https://iasme.co.uk/articles/introducing-the-cyber-essentials-readiness-tool/"
+                href="https://iasme.co.uk/cyber-essentials/frequently-asked-questions/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:no-underline"
               >
-                IASME: Introducing the Cyber Essentials Readiness Tool
+                IASME: current Readiness Tool and certification guidance
               </a>{" "}
               ·{" "}
               <a
@@ -249,6 +253,15 @@ export default function IasmeVsBrightCertPage() {
                 className="underline hover:no-underline"
               >
                 NCSC: Cyber Essentials help &amp; resources
+              </a>
+              {" "}·{" "}
+              <a
+                href="https://iasme.co.uk/cyber-essentials/preview-the-self-assessment-questions-for-cyber-essentials/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:no-underline"
+              >
+                IASME: current Danzell self-assessment questions
               </a>
               . Verified July 2026.
             </ArticleDisclaimer>

@@ -7,17 +7,20 @@ export function Reveal({
   children,
   className,
   delay = 0,
+  immediate = false,
   as: Tag = "div",
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
+  immediate?: boolean;
   as?: "div" | "section" | "li" | "span";
 }) {
   const ref = useRef<HTMLElement | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(immediate);
 
   useEffect(() => {
+    if (immediate) return;
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -31,7 +34,7 @@ export function Reveal({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [immediate]);
 
   return (
     <Tag

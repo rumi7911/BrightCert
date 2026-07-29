@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo, LogoMark } from "@/components/brightcert/logo";
 import { AssessmentProgress } from "@/components/brightcert/assessment-progress";
 import { GatedGaEvent } from "@/components/brightcert/ga-event";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
 
 // Focused questionnaire chrome: no sidebar, no workspace nav — just brand,
 // section progress, and a way out. Answers save on Continue, so exiting is safe.

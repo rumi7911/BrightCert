@@ -6,13 +6,13 @@ import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   variable: "--font-inter",
 });
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   variable: "--font-bricolage",
   weight: ["500", "600", "700", "800"],
 });
@@ -22,34 +22,33 @@ const bricolage = Bricolage_Grotesque({
 // `font-mono` on the homepage today.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   variable: "--font-jetbrains-mono",
   weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://brightcert.co.uk"),
-  alternates: { canonical: "/" },
   title: {
-    default: "BrightCert | Cyber Essentials Readiness for UK SMEs",
+    default: "Cyber Essentials Readiness Assessment for UK SMEs | BrightCert",
     template: "%s | BrightCert",
   },
   description:
-    "AI-powered Cyber Essentials readiness assessment for UK small and medium businesses. Understand your gaps, get a score, unlock a practical remediation report.",
+    "Assess your Cyber Essentials readiness in around two hours. Get a score, identify gaps and unlock a practical remediation report for your UK SME.",
   keywords: ["Cyber Essentials", "UK SME", "cyber security", "compliance", "NCSC", "readiness assessment"],
   openGraph: {
     type: "website",
     locale: "en_GB",
     url: "https://brightcert.co.uk",
     siteName: "BrightCert",
-    title: "BrightCert | Cyber Essentials Readiness for UK SMEs",
-    description: "Find out how ready you are in around 2 hours.",
+    title: "Cyber Essentials Readiness Assessment for UK SMEs | BrightCert",
+    description: "Find out how ready you are for Cyber Essentials in around two hours.",
     images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Find out how ready you are in around 2 hours." }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BrightCert | Cyber Essentials Readiness for UK SMEs",
-    description: "Find out how ready you are in around 2 hours.",
+    title: "Cyber Essentials Readiness Assessment for UK SMEs | BrightCert",
+    description: "Find out how ready you are for Cyber Essentials in around two hours.",
     images: ["/og.jpg"],
   },
 };
@@ -77,7 +76,13 @@ export default function RootLayout({
                   "BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports. BrightCert does not issue official Cyber Essentials certification.",
                 email: "hello@brightcert.co.uk",
                 foundingDate: "2026",
-                founder: { "@type": "Person", name: "Muhammad Sohaib Roomi" },
+                founder: {
+                  "@type": "Person",
+                  "@id": "https://brightcert.co.uk/about#person",
+                  name: "Muhammad Sohaib Roomi",
+                  url: "https://brightcert.co.uk/about",
+                  sameAs: ["https://www.linkedin.com/in/muhammad-sohaib-roomi"],
+                },
                 parentOrganization: { "@type": "Organization", name: "Cognumi Ltd" },
                 areaServed: { "@type": "Country", name: "United Kingdom" },
               },

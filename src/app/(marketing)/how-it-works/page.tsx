@@ -8,12 +8,9 @@ import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { GlowLink } from "@/components/brightcert/glow-link";
 import { Tag, SectionTitle, Mark, BTN_GLOW } from "@/components/brightcert/signal-primitives";
 import { HowItWorksRail, type RailStep } from "@/components/brightcert/how-it-works-rail";
+import { metadataFor, SITE_PAGES } from "@/lib/seo/registry";
 
-export const metadata: Metadata = {
-  title: "How It Works",
-  description: "Step-by-step guide to using BrightCert for Cyber Essentials readiness assessment.",
-  alternates: { canonical: "/how-it-works" },
-};
+export const metadata: Metadata = metadataFor(SITE_PAGES.howItWorks);
 
 const HOW_TO_SCHEMA = {
   "@context": "https://schema.org",

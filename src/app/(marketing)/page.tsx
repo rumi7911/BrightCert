@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Check, ClipboardList, Code2, Home as HomeIcon, HelpCircle, ListChecks, PoundSterling, ShieldCheck, Terminal, TrendingUp } from "lucide-react";
 import { JsonLd } from "@/components/brightcert/json-ld";
 import { Reveal } from "@/components/brightcert/reveal";
@@ -6,7 +8,6 @@ import { PoweredByMarquee } from "@/components/brightcert/powered-by-marquee";
 import { SOCIAL_PROOF_THRESHOLD, SOCIAL_PROOF_FALLBACK, getAssessmentCountLabel } from "@/components/brightcert/social-proof-badge";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
-import { Preloader } from "@/components/brightcert/home/preloader";
 import { ScrollProgress } from "@/components/brightcert/scroll-progress";
 import { HeroTitle } from "@/components/brightcert/home/hero-title";
 import { HeroQuiz } from "@/components/brightcert/home/hero-quiz";
@@ -19,6 +20,9 @@ import { MagneticLink } from "@/components/brightcert/magnetic-link";
 import { GlowLink } from "@/components/brightcert/glow-link";
 import { BTN_GHOST, BTN_GLOW, Tag, SectionTitle } from "@/components/brightcert/signal-primitives";
 import { createAdminClient } from "@/lib/supabase/server";
+import { metadataFor, SITE_PAGES } from "@/lib/seo/registry";
+
+export const metadata: Metadata = metadataFor(SITE_PAGES.home);
 
 // Live count is a light server read — cache for 5 minutes rather than
 // hitting Supabase on every landing page visit.
@@ -163,7 +167,6 @@ export default async function HomePage() {
         }}
       />
 
-      <Preloader />
       <ScrollProgress />
       <SignalNav />
 
@@ -178,7 +181,7 @@ export default async function HomePage() {
 
           <div className="relative max-w-[1180px] mx-auto px-4 grid grid-cols-1 lg:grid-cols-[1.06fr_0.94fr] gap-10 lg:gap-16 items-center">
             <div>
-              <Reveal>
+              <div>
                 <span className="inline-flex items-center gap-2.5 rounded-full border border-[#0F2044]/[0.12] bg-white px-4 py-2.5 mb-7 font-mono text-xs text-[#475569] shadow-[0_4px_14px_-6px_rgba(15,32,68,0.15)]">
                   <span className="relative flex h-[7px] w-[7px] shrink-0">
                     {showCount && (
@@ -188,17 +191,17 @@ export default async function HomePage() {
                   </span>
                   {pillLabel}
                 </span>
-              </Reveal>
+              </div>
 
               <HeroTitle />
 
-              <Reveal delay={200}>
+              <div>
                 <p className="text-[#475569] text-[1.02rem] sm:text-[1.1rem] leading-[1.7] max-w-[50ch] mb-9">
                   BrightCert guides UK SMEs through a plain-English readiness assessment, highlights what needs attention, and creates a practical report before you apply for certification.
                 </p>
-              </Reveal>
+              </div>
 
-              <Reveal delay={280}>
+              <div>
                 <div className="flex flex-wrap gap-3.5 mb-[34px]">
                   <GlowLink href="/assessment/new" className={BTN_GLOW}>
                     <span>Start your assessment</span>
@@ -208,9 +211,9 @@ export default async function HomePage() {
                     <span>See how it works</span>
                   </MagneticLink>
                 </div>
-              </Reveal>
+              </div>
 
-              <Reveal delay={340}>
+              <div>
                 <ul className="flex flex-wrap gap-x-6 gap-y-2.5">
                   {["No payment to start", "Plain English, no jargon", "Pay only to unlock your report"].map((tick) => (
                     <li key={tick} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[#475569]">
@@ -219,10 +222,10 @@ export default async function HomePage() {
                     </li>
                   ))}
                 </ul>
-              </Reveal>
+              </div>
             </div>
 
-            <Reveal delay={180} className="relative">
+            <div className="relative">
               <HeroQuiz />
 
               <div
@@ -256,7 +259,7 @@ export default async function HomePage() {
                   <span className="block font-mono text-[11px] text-[#64748B]">2 quick fixes</span>
                 </div>
               </div>
-            </Reveal>
+            </div>
           </div>
 
           <Reveal delay={400} className="mt-[70px] sm:mt-[90px] lg:mt-[110px] border-y border-[#0F2044]/[0.07] bg-white/40">
@@ -726,6 +729,15 @@ export default async function HomePage() {
                   Outside BrightCert, I run <strong className="text-[#0F2044]">Cognumi</strong>, building AI-managed operations and security-focused automation for service businesses. BrightCert brings that same approach, plain-English analysis backed by real security research, to Cyber Essentials preparation.
                 </p>
               </Reveal>
+              <Reveal delay={480}>
+                <Link
+                  href="/about"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#047857] underline hover:no-underline"
+                >
+                  Read about the founder and review methodology
+                  <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden />
+                </Link>
+              </Reveal>
             </div>
           </div>
         </section>
@@ -771,7 +783,7 @@ export default async function HomePage() {
                   <h2 className="font-display font-semibold text-[clamp(2.2rem,5.2vw,4rem)] leading-[1.04] tracking-[-0.03em] text-white mb-[22px]">
                     Find out how ready
                     <br />
-                    your business <span className="text-[#6EE7B7]">really</span> is
+                    {" "}your business <span className="text-[#6EE7B7]">really</span> is
                   </h2>
                   <p className="text-white/70 text-[clamp(1rem,1.5vw,1.14rem)] max-w-[52ch] mx-auto mb-[38px]">
                     Complete your Cyber Essentials readiness assessment, review your score, and unlock a practical report showing exactly what to fix next.

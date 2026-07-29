@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AppSidebar, type SidebarLatest } from "@/components/brightcert/app-sidebar";
 import { GatedGaEvent } from "@/components/brightcert/ga-event";
 import { createClient } from "@/lib/supabase/server";
@@ -8,6 +9,10 @@ const SIDEBAR_VERDICTS: Record<OverallStatus, string> = {
   nearly_ready: "Nearly ready",
   needs_fixes: "Not yet ready",
   not_ready: "Not ready",
+};
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
 };
 
 // Signal & Paper app frame: dark collapsible rail + paper canvas, sections

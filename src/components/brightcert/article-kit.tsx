@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { GlowLink } from "@/components/brightcert/glow-link";
 import { BTN_GLOW } from "@/components/brightcert/signal-primitives";
+import { ARTICLES, type ArticleMeta } from "@/lib/seo/registry";
 
 // Shared presentational pieces reused across the 4 blog articles. Each
 // article's actual body prose/tables/lists stay bespoke per page — only the
@@ -15,13 +16,24 @@ export function ArticleProse({ children }: { children: React.ReactNode }) {
 
 export function ArticleHeader({
   title,
-  byline,
+  article,
   related,
 }: {
   title: React.ReactNode;
-  byline: string;
+  article: ArticleMeta;
   related?: { href: string; label: string };
 }) {
+  const published = new Date(`${article.datePublished}T12:00:00Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const reviewed = new Date(`${article.lastModified}T12:00:00Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <>
       <Link href="/blog" className="bc-focus inline-flex items-center gap-1.5 text-sm font-medium text-[#059669] hover:underline">
@@ -30,7 +42,17 @@ export function ArticleHeader({
       </Link>
 
       <h1 className="mt-6 font-display text-3xl md:text-[2.75rem] font-bold text-[#0F2044] leading-[1.1]">{title}</h1>
-      <p className="mt-4 text-sm text-[#64748B]">{byline}</p>
+      <p className="mt-4 text-sm leading-relaxed text-[#64748B]">
+        By{" "}
+        <Link href="/about" rel="author" className="font-semibold text-[#047857] underline hover:no-underline">
+          Muhammad Sohaib Roomi
+        </Link>
+        , founder and reviewer at BrightCert
+        <span aria-hidden> · </span>
+        Published {published}
+        <span aria-hidden> · </span>
+        Reviewed {reviewed}
+      </p>
       {related && (
         <p className="mt-2 text-sm text-[#94A3B8]">
           Part of our{" "}
@@ -40,6 +62,39 @@ export function ArticleHeader({
         </p>
       )}
     </>
+  );
+}
+
+export function ArticleRelatedLinks({ currentPath }: { currentPath: ArticleMeta["path"] }) {
+  const articles = Object.values(ARTICLES);
+  const hub = ARTICLES.whatIsCyberEssentials;
+  const related =
+    currentPath === hub.path
+      ? articles.filter((article) => article.path !== currentPath).slice(0, 3)
+      : [
+          hub,
+          ...articles.filter((article) => article.path !== currentPath && article.path !== hub.path).slice(0, 2),
+        ];
+
+  return (
+    <aside className="mt-12 rounded-[20px] border border-[#0F2044]/[0.08] bg-white p-6" aria-labelledby="related-guides">
+      <h2 id="related-guides" className="font-display text-xl font-bold text-[#0F2044]">
+        Continue with related Cyber Essentials guides
+      </h2>
+      <ul className="mt-4 grid gap-3">
+        {related.map((article) => (
+          <li key={article.path}>
+            <Link
+              href={article.path}
+              className="group inline-flex items-start gap-2 font-semibold leading-snug text-[#047857] underline hover:no-underline"
+            >
+              <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              {article.shortTitle}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </aside>
   );
 }
 

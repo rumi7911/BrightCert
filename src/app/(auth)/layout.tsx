@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/brightcert/logo";
@@ -23,6 +24,10 @@ const TRUST_POINTS = [
 
 const DISCLAIMER =
   "BrightCert provides readiness assessment. It does not issue official Cyber Essentials certification.";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
