@@ -35,7 +35,7 @@ const HOME_FAQS: FaqItem[] = [
   },
   {
     q: "Do I need to pay before starting the assessment?",
-    a: "No. You can complete the full assessment first. The report unlock is £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price.",
+    a: "No. You can complete the full assessment first. The report unlock is £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price, limited to the first 10 customers.",
   },
   {
     q: "How long does the assessment take?",
@@ -77,7 +77,7 @@ const HOME_HOW_STEPS: RailStep[] = [
   {
     num: "04",
     title: "Unlock your full report",
-    body: "Pay £99 including VAT with code FOUNDING10 when you're ready — a £100 founding discount from £199 — and unlock detailed gap analysis, remediation actions and a preparation summary.",
+    body: "Pay £99 including VAT with code FOUNDING10 when you're ready — a £100 founding discount from £199, for the first 10 customers — and unlock detailed gap analysis, remediation actions and a preparation summary.",
     tag: "PDF · shareable with your team",
   },
 ];
@@ -160,7 +160,7 @@ export default async function HomePage() {
           "@type": "Product",
           name: "BrightCert Cyber Essentials Readiness Assessment",
           description:
-            "Guided Cyber Essentials readiness assessment for UK SMEs: 60 plain-English questions across the five official control areas, a readiness score, gap analysis, and a prioritised remediation report. Free to complete; the full report unlocks for £99 including VAT with code FOUNDING10, a £100 founding discount from £199.",
+            "Guided Cyber Essentials readiness assessment for UK SMEs: 60 plain-English questions across the five official control areas, a readiness score, gap analysis, and a prioritised remediation report. Free to complete; the full report unlocks for £99 including VAT with code FOUNDING10, a £100 founding discount from £199 limited to the first 10 customers.",
           brand: { "@id": "https://brightcert.co.uk/#organization" },
           url: "https://brightcert.co.uk",
           offers: {
@@ -456,7 +456,7 @@ export default async function HomePage() {
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                   </GlowLink>
                   <p className="font-mono text-[11.5px] leading-[1.7] text-white/55 max-w-[44ch]">
-                    Complete the assessment first. Unlock the report for £99 including VAT with code FOUNDING10 — a £100 founding discount from £199.
+                    Complete the assessment first. Unlock the report for £99 including VAT with code FOUNDING10 — a £100 founding discount from £199, for the first 10 customers.
                   </p>
                 </div>
               </Reveal>
@@ -504,7 +504,7 @@ export default async function HomePage() {
                     <em className="not-italic font-mono text-xs uppercase tracking-[0.1em] text-white/60 ml-2.5">including VAT</em>
                   </p>
                   <p className="relative inline-flex items-center gap-1.5 rounded-full border border-[#6EE7B7]/30 bg-[#6EE7B7]/[0.08] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#6EE7B7] mb-[26px]">
-                    Code FOUNDING10 · £100 founding discount from £199
+                    Code FOUNDING10 · £100 off £199 · first 10 customers
                   </p>
                   <ul className="relative grid gap-[13px] mb-[30px]">
                     {[

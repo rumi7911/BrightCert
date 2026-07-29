@@ -161,7 +161,7 @@ export default function CheckAnswersPage({
         <p className="text-xs text-[#64748B] mb-5">
           After reviewing your score, you can unlock the full readiness report for
           £99 including VAT with code FOUNDING10 — a £100 founding discount from
-          the standard £199 price.
+          the standard £199 price, for the first 10 customers.
         </p>
         {submitError && (
           <p className="text-sm text-[#DC2626] mb-4">{submitError}</p>

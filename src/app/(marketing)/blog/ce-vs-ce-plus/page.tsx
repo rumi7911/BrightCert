@@ -180,7 +180,8 @@ export default function CeVsCePlusPage() {
               <p>
                 BrightCert prepares you for <strong>standard Cyber Essentials</strong>, a free readiness
                 assessment across the same five control areas, with a scored gap report for £99 including VAT
-                using code FOUNDING10 — a £100 founding discount from the standard £199 price — that tells you
+                using code FOUNDING10 — a £100 founding discount from the standard £199 price, for the first
+                10 customers — that tells you
                 what to fix before you apply. It&rsquo;s built for the self-assessment route, not the Plus
                 technical audit, since Plus is inherently something only an accredited assessor can carry out on
                 your live systems.

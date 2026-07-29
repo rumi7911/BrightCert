@@ -30,7 +30,7 @@ const FEE_BANDS = CYBER_ESSENTIALS_FEE_BANDS.map((band) => ({
 const BUDGET_ROWS = [
   { item: "IASME certification fee", cost: "£320–£600 + VAT" },
   { item: "Pre-assessment gap analysis (consultant)", cost: "£750–£1,500" },
-  { item: "Or: BrightCert readiness report", cost: "£99 including VAT with FOUNDING10", highlight: true },
+  { item: "Or: BrightCert readiness report", cost: "£99 including VAT with FOUNDING10 (first 10 customers)", highlight: true },
   { item: "Remediation (firewall, MFA, AV licensing, etc.)", cost: "Varies by starting point" },
 ];
 
@@ -224,7 +224,7 @@ export default function CyberEssentialsCostPage() {
                 issue the certificate), but the £750–£1,500 people spend just finding out where they stand before
                 they even apply. BrightCert&rsquo;s readiness assessment is free to complete, and the full scored
                 gap report, the same kind of findings a consultant&rsquo;s gap analysis produces, is{" "}
-                <strong>£99 including VAT with code FOUNDING10</strong>, a £100 founding discount from the
+                <strong>£99 including VAT with code FOUNDING10</strong> for the first 10 customers, a £100 founding discount from the
                 standard £199 price.
               </p>
             </ArticleProse>

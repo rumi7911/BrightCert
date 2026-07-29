@@ -23,7 +23,7 @@ const PRICING_SCHEMA = {
       price: "99",
       priceCurrency: "GBP",
       description:
-        "Guided Cyber Essentials readiness assessment with AI-assisted scoring, gap analysis, prioritised remediation steps, and a downloadable PDF report. Free to complete; £99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199 price.",
+        "Guided Cyber Essentials readiness assessment with AI-assisted scoring, gap analysis, prioritised remediation steps, and a downloadable PDF report. Free to complete; £99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199 price, limited to the first 10 customers.",
     },
     {
       "@type": "Offer",
@@ -142,7 +142,7 @@ export default function PricingPage() {
                     <em className="not-italic font-mono text-xs uppercase tracking-[0.1em] text-white/60 ml-2.5">including VAT</em>
                   </p>
                   <p className="relative inline-flex items-center gap-1.5 rounded-full border border-[#6EE7B7]/30 bg-[#6EE7B7]/[0.08] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#6EE7B7] mb-[26px]">
-                    Code FOUNDING10 · £100 founding discount from £199
+                    Code FOUNDING10 · £100 off £199 · first 10 customers
                   </p>
                   <ul className="relative grid gap-[13px] mb-[30px]">
                     {[

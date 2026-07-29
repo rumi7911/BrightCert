@@ -159,7 +159,7 @@ function UnlockCard({ assessmentId }: { assessmentId: string }) {
         ))}
       </ul>
       <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#A7F3D0] bg-[#ECFDF5] px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#047857]">
-        £99 including VAT with code FOUNDING10 — £100 founding discount from £199
+        £99 including VAT with code FOUNDING10 — £100 founding discount from £199, first 10 customers
       </p>
       <div className="flex flex-col items-center gap-3 sm:flex-row">
         <Button asChild size="lg" className="w-full sm:w-auto">

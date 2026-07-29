@@ -113,8 +113,12 @@ reviewed Clay rows to that exact path. For each row, confirm:
 - [ ] approved LIA covers source, segment, purpose, and channel;
 - [ ] right segment and template version from
   [EMAIL-SEQUENCES.md](./EMAIL-SEQUENCES.md);
-- [ ] no certification, guarantee, two-hour remediation, scarcity, cohort
-  count, or booking-link claim;
+- [ ] no certification, guarantee, two-hour remediation, artificial scarcity,
+  urgency, unverified cohort count, or booking-link claim. Stating the real
+  `FOUNDING10` redemption cap ("first 10 customers") is permitted and expected
+  wherever the £99 price appears, because that cap is verifiable in Stripe;
+  what is banned is any limit, countdown, or customer count we cannot
+  substantiate;
 - [ ] exactly one reply CTA and the privacy/opt-out wording; and
 - [ ] `human_approved_at` reflects the actual review.
 

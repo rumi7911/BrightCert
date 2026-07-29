@@ -32,7 +32,9 @@ async function createCheckoutUrl(assessmentId: string): Promise<string> {
       assessmentId,
     },
     // Founding-customer offer: promo codes (e.g. FOUNDING10) created in the
-    // Stripe dashboard can be entered at checkout.
+    // Stripe dashboard can be entered at checkout. FOUNDING10 is capped at 10
+    // redemptions in Stripe, and the site copy states that limit — if the cap
+    // changes, update the copy too or we advertise a price nobody can get.
     allow_promotion_codes: true,
     success_url: `${appUrl}/assessment/${assessmentId}/report?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${appUrl}/assessment/${assessmentId}/results`,

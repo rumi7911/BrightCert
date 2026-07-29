@@ -24,7 +24,7 @@ const COMPARE_ROWS: { label: string; iasme: string; brightcert: string }[] = [
   { label: "Built by", iasme: "IASME (the official Delivery Partner)", brightcert: "BrightCert" },
   { label: "Numerical score", iasme: "No", brightcert: "Yes: 0–100%, overall + per control area" },
   { label: "Prioritised fix list", iasme: "No: generic guidance per “no” answer", brightcert: "Yes: P1/P2/P3" },
-  { label: "Output format", iasme: "On-screen plan, downloadable/printable", brightcert: "Full PDF report (£99 including VAT with FOUNDING10)" },
+  { label: "Output format", iasme: "On-screen plan, downloadable/printable", brightcert: "Full PDF report (£99 including VAT with FOUNDING10, first 10 customers)" },
   { label: "Shareable with a third party", iasme: "Informal notes only", brightcert: "Formal report, built to hand over" },
   { label: "Covers the 5 official control areas", iasme: "Yes", brightcert: "Yes" },
   { label: "Time to complete", iasme: "Self-paced", brightcert: "~2 hours" },
@@ -37,7 +37,7 @@ const FAQS = [
   },
   {
     q: "Do I have to pay for BrightCert's assessment to see my results?",
-    a: "No, the assessment and your overall readiness score are free. The full report with per-gap explanations, the prioritised fix list, and the PDF download is £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price.",
+    a: "No, the assessment and your overall readiness score are free. The full report with per-gap explanations, the prioritised fix list, and the PDF download is £99 including VAT with code FOUNDING10 — a £100 founding discount from the standard £199 price, limited to the first 10 customers.",
   },
   {
     q: "Can I use both tools?",
@@ -89,7 +89,7 @@ export default function IasmeVsBrightCertPage() {
               rank what to fix first, and doesn&rsquo;t give you a document you can hand to a director or an IT
               provider. BrightCert adds a scored gap analysis (0–100% across the five control areas) and a
               prioritised, shareable report for £99 including VAT with code FOUNDING10 after a free assessment,
-              a £100 founding discount from the standard £199 price.
+              a £100 founding discount from the standard £199 price, for the first 10 customers.
             </ShortAnswer>
 
             <ArticleProse>
@@ -173,7 +173,8 @@ export default function IasmeVsBrightCertPage() {
               </ul>
               <p>
                 The assessment itself is free to complete, same as IASME&rsquo;s tool. The scored report and PDF
-                are £99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199 price.
+                are £99 including VAT with code FOUNDING10, a £100 founding discount from the standard £199
+                price, for the first 10 customers.
               </p>
             </ArticleProse>
 
