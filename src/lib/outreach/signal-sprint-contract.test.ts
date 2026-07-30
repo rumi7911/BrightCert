@@ -127,4 +127,39 @@ describe("integrated signal sprint contract", () => {
     expect(text).toContain("relative to owner-set T0");
     expect(text).toContain("does not authorise publication");
   });
+
+  test("canonical operator and social docs link the sprint without replacing their controls", async () => {
+    const files = new Map(
+      await Promise.all(
+        [
+          "docs/outreach/30-DAY-CALENDAR.md",
+          "docs/outreach/SCORECARD.md",
+          "docs/outreach/operator-runbook.md",
+          "docs/social/README.md",
+        ].map(
+          async (file) =>
+            [file, await readFile(join(root, file), "utf8")] as const
+        )
+      )
+    );
+
+    expect(files.get("docs/outreach/30-DAY-CALENDAR.md")).toContain(
+      "30-prospect integrated signal sprint gate"
+    );
+    expect(files.get("docs/outreach/SCORECARD.md")).toContain(
+      "two relevant human replies"
+    );
+    expect(files.get("docs/outreach/SCORECARD.md")).toContain(
+      "does not replace the 8% positive-reply rule"
+    );
+    expect(files.get("docs/outreach/operator-runbook.md")).toContain(
+      ".outreach/signal-sprint-alignment.csv"
+    );
+    expect(files.get("docs/outreach/operator-runbook.md")).toContain(
+      "never an eligibility authority"
+    );
+    expect(files.get("docs/social/README.md")).toContain(
+      "sprints/2026-07-30-integrated-signal-sprint.md"
+    );
+  });
 });

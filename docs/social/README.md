@@ -84,6 +84,18 @@ Every final page must include:
 11. Publish the PNG sequence on Instagram with page-level accessibility text.
 12. Record results after 72 hours and seven days.
 
+## Integrated signal sprint overlay
+
+The relative publishing/contact overlay is
+[2026-07-30-integrated-signal-sprint.md](./sprints/2026-07-30-integrated-signal-sprint.md).
+It coordinates founder education with private trigger themes but does not
+replace the [12-week calendar](./12-WEEK-CALENDAR.md), claim review, founder
+approval, platform QA, or manual publishing controls.
+
+The overlay never names prospects, proves post exposure, automates engagement,
+or authorises outreach. If its timing conflicts with a source check or a due
+email follow-up, the existing source and outreach controls win.
+
 ## Publishing and attribution
 
 - Educational carousels have one CTA: read the complete guide.
@@ -123,4 +135,3 @@ YYYY-MM-DD-topic-linkedin.pdf
 YYYY-MM-DD-topic-slide-01.png
 YYYY-MM-DD-topic-derivative.png
 ```
-

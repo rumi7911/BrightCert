@@ -111,6 +111,24 @@ matches Stripe plus application entitlement.
   evidence workflow, price understanding, checkout, and entitlement before
   increasing volume.
 
+### Integrated signal sprint learning gate
+
+At exactly 30 Touch 1 prospects, weighted 24 SME / 6 MSP, require:
+
+- two relevant human replies; and
+- at least one booked conversation or assessment start.
+
+A relevant reply is a human response about the Cyber Essentials need, its
+timing, the BrightCert offer, or the proposed next step. Automated replies,
+out-of-office notices, bounces, opt-outs, and bare unsubscribe responses do not
+count. A substantive objection may count as relevant message-learning evidence
+but is not a positive reply and still stops the sequence.
+
+This gate does not replace the 8% positive-reply rule, existing sample-size
+caution, the 25/50 checkpoints, or any safety or launch control. Missing the
+gate pauses the next cohort for trigger and account-selection review; it never
+justifies more volume.
+
 These rules guide an owner decision; they do not override legal, provider,
 privacy, or launch gates.
 

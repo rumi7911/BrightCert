@@ -36,6 +36,24 @@ Put live input and output beneath `.outreach/` or `outreach/runs/`; both are
 ignored by Git. Live files may contain personal data and must not be committed.
 The tracked example uses only reserved `.test` domains and fictitious details.
 
+### Integrated signal sprint alignment
+
+The optional sprint alignment file is private planning data and is never an eligibility authority.
+Create a header-only private file from the tracked fictitious template:
+
+```sh
+mkdir -p .outreach
+umask 077
+head -n 1 outreach/templates/signal-sprint-alignment.example.csv \
+  > .outreach/signal-sprint-alignment.csv
+chmod 600 .outreach/signal-sprint-alignment.csv
+```
+
+Populate it only after the canonical prospect row exists. Do not copy the
+fictitious example rows, private posts, profile-view claims, sensitive traits,
+or inferred exposure. The canonical prospect file, suppression store, event
+history, queue checks, and current Companies House result remain authoritative.
+
 The prospect contract is:
 
 ```text

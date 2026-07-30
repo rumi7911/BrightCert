@@ -65,6 +65,19 @@ Pause under [SOP.md](./SOP.md) if any safety threshold fires. If delivery is
 healthy but relevance is weak, continue only with an approved targeting or
 message adjustment, changing one variable.
 
+### 30-prospect integrated signal sprint gate
+
+When the approved integrated sprint is active, continue from the unchanged
+25-send checkpoint to exactly 30 Touch 1 prospects, weighted 24 SME / 6 MSP.
+Apply the additional learning gate in
+[INTEGRATED-SIGNAL-SPRINT.md](./INTEGRATED-SIGNAL-SPRINT.md) before releasing
+prospect 31.
+
+This does not replace the 25- or 50-prospect checkpoints, the 8% positive-reply
+decision rule, the daily aggregate message caps, or any safety pause. Social
+activity never makes a row eligible and a delayed post never creates extra
+send capacity.
+
 ## Week 2: reach and review the first 50
 
 Continue at 10–15 aggregate messages/day, never above 20 total messages/day.
