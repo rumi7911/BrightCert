@@ -82,6 +82,12 @@ const PRIORITY_META = {
   P3: { color: SLATE, bg: LIGHT, border: BORDER, label: "P3 — Worth addressing" },
 } as const;
 
+const EFFORT_META = {
+  Low: { color: "#065F46", bg: "#ECFDF5", border: "#A7F3D0" },
+  Medium: { color: "#92400E", bg: "#FFFBEB", border: "#FDE68A" },
+  High: { color: "#B91C1C", bg: "#FEF2F2", border: "#FECACA" },
+} as const;
+
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Inter",
@@ -173,6 +179,56 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     marginRight: 6,
   },
+  remediationActionHeader: {
+    borderWidth: 1,
+    borderRadius: 7,
+    padding: 10,
+    marginTop: 8,
+    marginBottom: 6,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  remediationActionTitle: {
+    flex: 1,
+    fontSize: 10,
+    fontWeight: 700,
+    color: NAVY,
+    lineHeight: 1.4,
+  },
+  effortPill: {
+    fontSize: 8,
+    fontWeight: 700,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 4,
+  },
+  remediationStepRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    marginBottom: 6,
+    paddingLeft: 4,
+  },
+  remediationStepNumber: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: "#E2E8F0",
+    color: NAVY,
+    fontSize: 8,
+    fontWeight: 700,
+    textAlign: "center",
+    paddingTop: 4,
+  },
+  remediationStepText: {
+    flex: 1,
+    fontSize: 9,
+    color: SLATE,
+    lineHeight: 1.5,
+    paddingTop: 2,
+  },
   // Next steps
   stepRow: { flexDirection: "row", gap: 12, alignItems: "flex-start", marginBottom: 14 },
   stepNumber: {
@@ -232,7 +288,7 @@ type ReportDocumentProps = {
 };
 
 const Disclaimer = () => (
-  <View style={styles.disclaimerBox}>
+  <View wrap={false} style={styles.disclaimerBox}>
     <Text style={[styles.disclaimerText, { fontWeight: 700, marginBottom: 4, color: NAVY }]}>
       Readiness assessment — not official certification
     </Text>
@@ -242,14 +298,26 @@ const Disclaimer = () => (
   </View>
 );
 
-const Footer = ({ orgName, date }: { orgName: string; date: string }) => (
-  <View style={styles.footer} fixed>
-    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-      <Text>BrightCert Readiness Report — {orgName} — {date}</Text>
-      <Text render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`} />
+const Footer = ({ orgName, date }: { orgName: string; date: string }) => {
+  const footerOrgName =
+    orgName.length > 72 ? `${orgName.slice(0, 69).trimEnd()}...` : orgName;
+
+  return (
+    <View style={styles.footer} fixed>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={{ flex: 1, paddingRight: 12 }}>
+          BrightCert Readiness Report — {footerOrgName} — {date}
+        </Text>
+        <Text
+          style={{ width: 64, textAlign: "right" }}
+          render={({ pageNumber, totalPages }) =>
+            `Page ${pageNumber} of ${totalPages}`
+          }
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const SectionHeading = ({ title, break: pageBreak }: { title: string; break?: boolean }) => (
   <View break={pageBreak}>
@@ -261,7 +329,17 @@ const SectionHeading = ({ title, break: pageBreak }: { title: string; break?: bo
 const GapCard = ({ gap }: { gap: { issue: string; why: string; priority: "P1" | "P2" | "P3" } }) => {
   const meta = PRIORITY_META[gap.priority];
   return (
-    <View style={[styles.gapCard, { backgroundColor: meta.bg, borderColor: meta.border, borderLeftColor: meta.color }]}>
+    <View
+      wrap={false}
+      style={[
+        styles.gapCard,
+        {
+          backgroundColor: meta.bg,
+          borderColor: meta.border,
+          borderLeftColor: meta.color,
+        },
+      ]}
+    >
       <Text style={[styles.gapIssue, { color: meta.color }]}>{gap.issue}</Text>
       <Text style={styles.gapWhy}>{gap.why}</Text>
     </View>
@@ -295,6 +373,64 @@ const FindingGapRow = ({
       <Text style={[styles.body, { flex: 1 }]}>
         {gap.issue} — {gap.why}
       </Text>
+    </View>
+  );
+};
+
+const RemediationStepRow = ({
+  index,
+  step,
+}: {
+  index: number;
+  step: string;
+}) => (
+  <View wrap={false} style={styles.remediationStepRow}>
+    <Text style={styles.remediationStepNumber}>{index}</Text>
+    <Text style={styles.remediationStepText}>{step}</Text>
+  </View>
+);
+
+const RemediationAction = ({
+  action,
+}: {
+  action: { title: string; steps: string[]; effort: string };
+}) => {
+  const effort =
+    action.effort === "Low" ||
+    action.effort === "Medium" ||
+    action.effort === "High"
+      ? action.effort
+      : "Medium";
+  const effortMeta = EFFORT_META[effort];
+  const [firstStep, ...remainingSteps] = action.steps;
+
+  return (
+    <View style={{ marginBottom: 12 }}>
+      <View wrap={false}>
+        <View
+          style={[
+            styles.remediationActionHeader,
+            {
+              backgroundColor: effortMeta.bg,
+              borderColor: effortMeta.border,
+            },
+          ]}
+        >
+          <Text style={styles.remediationActionTitle}>{action.title}</Text>
+          <Text
+            style={[
+              styles.effortPill,
+              { backgroundColor: "#FFFFFF", color: effortMeta.color },
+            ]}
+          >
+            {effort} effort
+          </Text>
+        </View>
+        {firstStep && <RemediationStepRow index={1} step={firstStep} />}
+      </View>
+      {remainingSteps.map((step, index) => (
+        <RemediationStepRow key={index} index={index + 2} step={step} />
+      ))}
     </View>
   );
 };
@@ -446,6 +582,94 @@ export function ReportDocument({
               </View>
               {remainingGaps.map((gap, i) => (
                 <FindingGapRow key={i} gap={gap} />
+              ))}
+            </View>
+          );
+        })}
+
+        <Footer orgName={orgName} date={date} />
+      </Page>
+
+      {/* ── Remediation actions ────────────────────────────────────── */}
+      <Page size="A4" style={styles.page}>
+        <SectionHeading title="Remediation Action Plan" />
+
+        {controls.map((control) => {
+          const section = SECTIONS.find((s) => s.id === control.section_id);
+          const [firstAction, ...remainingActions] = control.remediation;
+
+          return (
+            <View key={control.section_id} style={{ marginBottom: 20 }}>
+              {firstAction ? (
+                <View wrap={false}>
+                  <View
+                    style={[
+                      styles.areaHeaderBand,
+                      {
+                        backgroundColor: STATUS_BG[control.status],
+                        borderWidth: 1,
+                        borderColor: STATUS_BORDER[control.status],
+                      },
+                    ]}
+                  >
+                    <Text style={styles.areaHeaderTitle}>
+                      {section?.title ?? `Area ${control.section_id}`}
+                    </Text>
+                    <View
+                      style={[
+                        styles.areaHeaderPill,
+                        { backgroundColor: "#FFFFFF" },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.areaHeaderPillText,
+                          { color: STATUS_COLORS[control.status] },
+                        ]}
+                      >
+                        {control.remediation.length}{" "}
+                        {control.remediation.length === 1
+                          ? "action"
+                          : "actions"}
+                      </Text>
+                    </View>
+                  </View>
+                  <RemediationAction action={firstAction} />
+                </View>
+              ) : (
+                <View
+                  wrap={false}
+                  style={[
+                    styles.areaHeaderBand,
+                    {
+                      backgroundColor: STATUS_BG[control.status],
+                      borderWidth: 1,
+                      borderColor: STATUS_BORDER[control.status],
+                    },
+                  ]}
+                >
+                  <Text style={styles.areaHeaderTitle}>
+                    {section?.title ?? `Area ${control.section_id}`}
+                  </Text>
+                  <View
+                    style={[
+                      styles.areaHeaderPill,
+                      { backgroundColor: "#FFFFFF" },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.areaHeaderPillText,
+                        { color: STATUS_COLORS[control.status] },
+                      ]}
+                    >
+                      No actions
+                    </Text>
+                  </View>
+                </View>
+              )}
+              {remainingActions.map((action, index) => (
+                <RemediationAction key={index} action={action} />
               ))}
             </View>
           );
