@@ -1,0 +1,6 @@
+cohort_id,prospect_id,content_theme,content_item_id,content_published_at,linkedin_engagement_status,linkedin_engagement_at,first_touch_target_date,operator_notes
+signal_sprint_01,sme-example-001,requirement_urgency,ce-requirement-timing,,not_reviewed,,,Fictitious tender-requirement schema example
+signal_sprint_01,sme-example-002,requirement_urgency,ce-requirement-timing,,no_natural_action,,,Fictitious customer-assurance schema example
+signal_sprint_01,sme-example-003,requirement_urgency,ce-requirement-timing,,connection_existing,,,Fictitious supply-chain schema example
+signal_sprint_01,sme-example-004,readiness_before_certification,readiness-before-certification,,connection_requested,,,Fictitious renewal schema example
+signal_sprint_01,msp-example-001,evidence_before_action,msp-one-client-workflow,,useful_comment,,,Fictitious MSP service schema example
