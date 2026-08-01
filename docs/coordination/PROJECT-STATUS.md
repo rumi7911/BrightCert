@@ -33,7 +33,8 @@ was deployed, while local inspection made it look shipped.
 | PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; production retest still open |
 | Launch evidence backup | `claude/evidence-backup` | Integrated at `7a13d6c` | Complete |
 | Production report redesign | `codex/production-report-redesign` | **Do not integrate** | 111 files; rejected by `codex/report-redesign-review` at `67b646a` |
-| Reminder evidence | `claude/reminder-dry-run-evidence`, `codex/reminder-evidence-integration` | Unmerged | Now unblocked; see below |
+| Reminder dry-run evidence | `claude/reminder-dry-run-evidence` | Integrated at `112f9d7` | Complete |
+| Reminder evidence integration | `codex/reminder-evidence-integration` | Unmerged | Collides with `LAUNCH-GATE.md` only, which is now committed — re-check before merging |
 | Preview build fallback | `codex/preview-build-supabase-fallback` | Unmerged, largely redundant | Same patch-id as work already integrated via `codex/seo-growth` |
 | Review records | `claude/seo-growth-review`, `codex/report-redesign-review` | Unmerged, 1 file each | Review documents only |
 
@@ -52,8 +53,9 @@ visible rather than ignored so it is not forgotten.
 
 `docs/outreach/REMINDER-DRY-RUN-2026-07-28.md` is now committed, and the blob
 is byte-identical to the copies on the three reminder branches. The untracked
-copy that previously made those merges abort is gone, so
-`claude/reminder-dry-run-evidence` can now be merged.
+copy that previously made those merges abort is gone, which unblocked
+`claude/reminder-dry-run-evidence` — merged at `112f9d7`, bringing only its
+handoff, since the identical blob merged without conflict.
 
 ## Launch status
 
@@ -75,8 +77,7 @@ copy that previously made those merges abort is gone, so
    unaffected.
 2. Run the sandbox paid/unpaid/refunded PDF retest and record it in a dated
    evidence document, then close the final launch-gate row.
-3. Merge `claude/reminder-dry-run-evidence`, now unblocked.
-4. Decide whether the promo-video source is committed or discarded.
+3. Decide whether the promo-video source is committed or discarded.
 
 ## Known constraints
 
