@@ -1,58 +1,82 @@
 # BrightCert project status
 
-Last reconciled: 28 July 2026, 22:00 BST
+Last reconciled: 1 August 2026, 20:05 BST
 
-Reconciled by: Codex
+Reconciled by: Claude Code
 
-Integrated coordination commit: `df5b771`
+Integrated coordination commit: `7a13d6c`
 
 ## Production
 
 - `https://brightcert.co.uk` resolves to Vercel deployment
-  `dpl_D6WUFkvQcBzPEyCcSbzLXAfmdhSp`.
-- The deployment is Ready and was built from `main` commit `457fdc6`.
+  `dpl_A18AAu1X89XgnoBPtqX8fQyotawV`
+  (`brightcert-74yqsevwb`), Ready, created 1 August 2026 19:58 BST.
+- Local `main`, `origin/main` and the deployed build are all `7a13d6c`.
+- Live checks after deploy: homepage HTTP 200; `/pricing` states the
+  `FOUNDING10` cap 10 times; emitted `@font-face` blocks are Inter 7×`swap`,
+  Bricolage Grotesque 12×`swap`, JetBrains Mono 18×`optional`, matching the
+  intended split exactly.
 - Hosting-plan changes are deferred until after the hackathon by owner
   decision.
+
+Before claiming anything is live, check
+`git rev-list --left-right --count origin/main...main`. Between 30 July and
+1 August, `main` sat 17 commits ahead of `origin/main` and none of that work
+was deployed, while local inspection made it look shipped.
 
 ## Active work
 
 | Workstream | Branch | State | Ownership boundary |
 |---|---|---|---|
-| Coordination bootstrap | `codex/agent-coordination` | Integrated into `main` at `df5b771` | Coordination files and `AGENTS.md` only |
-| SEO growth and indexing | `codex/seo-growth` | Large uncommitted change set | Do not edit or stage from another worktree |
-| Production report redesign | `codex/production-report-redesign` | Clean at `d33e62d` | Treat as the report implementation branch |
-| Main working tree | `main` | Dirty with owner/previous-agent changes | Do not work in, reset, stage, or clean |
+| Social infographic system | `codex/social-infographic-system` | Integrated at `47515ea` | Complete |
+| Integrated signal sprint | `codex/integrated-signal-sprint` | Integrated at `aaf55a4` | Four founder drafts held at `Status: Founder review` |
+| PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; production retest still open |
+| Launch evidence backup | `claude/evidence-backup` | Integrated at `7a13d6c` | Complete |
+| Production report redesign | `codex/production-report-redesign` | **Do not integrate** | 111 files; rejected by `codex/report-redesign-review` at `67b646a` |
+| Reminder evidence | `claude/reminder-dry-run-evidence`, `codex/reminder-evidence-integration` | Unmerged | Now unblocked; see below |
+| Preview build fallback | `codex/preview-build-supabase-fallback` | Unmerged, largely redundant | Same patch-id as work already integrated via `codex/seo-growth` |
+| Review records | `claude/seo-growth-review`, `codex/report-redesign-review` | Unmerged, 1 file each | Review documents only |
 
 ## Dirty-main preservation boundary
 
-The main working tree currently contains modifications or untracked work in:
+**This boundary is largely resolved as of `7a13d6c`.** The launch-gate record,
+the LIA sign-off, and seven evidence documents that previously existed only as
+uncommitted working-tree content are now committed. Untracked files fell from
+474 to 1.
 
-- Claude and agent configuration
-- Outreach launch-gate, LIA, SOP, rehearsal, verification, and founder-script
-  evidence
-- PDF report source and tests
-- Local tooling, output, temporary, and video directories
+What remains uncommitted in `main`: the authored promo-video source under
+`videos/brightcert-promo/` (`STORYBOARD.md`, `SCRIPT.md`, `DESIGN.md`,
+`compositions/*.html`, and the small JSON files). Its generated media is now
+ignored. This is a deliberate owner decision, not an oversight — it is left
+visible rather than ignored so it is not forgotten.
 
-These files have mixed ownership. No agent may assume authorship or include
-them in another task's commit without an explicit reconciliation.
+`docs/outreach/REMINDER-DRY-RUN-2026-07-28.md` is now committed, and the blob
+is byte-identical to the copies on the three reminder branches. The untracked
+copy that previously made those merges abort is gone, so
+`claude/reminder-dry-run-evidence` can now be merged.
 
 ## Launch status
 
-- The working-tree launch gate records 33 of 34 rows verified.
-- The only recorded open row is the production PDF/report retest.
-- The reminder rehearsal is documented and independently corroborated, but the
-  evidence remains uncommitted in dirty `main`.
-- Working-tree launch evidence is not integrated project history until it is
-  reviewed and committed.
+- The launch gate records **33 of 34 rows verified**, and that record is now
+  committed rather than living in a dirty working tree.
+- The only open row is the production PDF/report retest, marked
+  `owner action required`. The renderer repair is now deployed; closing the row
+  needs one sandbox paid PDF generation/download plus locked unpaid/refunded
+  access checks against the deployed build.
+- That retest is blocked on credentials, not on code: no `sk_test_` key exists
+  in `.env.local` and the Stripe CLI has no config, so no agent on this machine
+  can reach test mode.
 
 ## Immediate priorities
 
-1. Reconcile and preserve dirty-main work without destructive cleanup.
-2. Verify, commit, and push `codex/seo-growth`.
-3. Review and integrate `codex/production-report-redesign`.
-4. Complete the remaining deployed PDF/report verification.
-5. Begin deterministic assessment work only from a clean, agreed integration
-   base.
+1. Delete the **test-mode** Stripe webhook endpoint. Stripe auto-disables it on
+   4 August. Owner-only: Stripe API keys are mode-scoped, live mode cannot
+   enumerate test-mode objects, and the live-mode endpoint is healthy and
+   unaffected.
+2. Run the sandbox paid/unpaid/refunded PDF retest and record it in a dated
+   evidence document, then close the final launch-gate row.
+3. Merge `claude/reminder-dry-run-evidence`, now unblocked.
+4. Decide whether the promo-video source is committed or discarded.
 
 ## Known constraints
 
@@ -62,3 +86,8 @@ them in another task's commit without an explicit reconciliation.
 - UK English is required.
 - Production writes and external communications require explicit owner
   instruction.
+- The desktop shell exposes no `node`/`npm` on `PATH`, and Homebrew's Node 25
+  has a broken `llhttp` dylib link. Use
+  `/opt/homebrew/Cellar/node@20/20.20.2/bin`.
+- `vercel ls` writes its status table to **stderr**; redirect with `2>&1` or
+  a grep on stdout will never match.
