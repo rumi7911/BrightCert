@@ -1,24 +1,44 @@
 # Legitimate Interests Assessment: founding-customer outreach
 
-> **DRAFT — OWNER/LEGAL REVIEW REQUIRED BEFORE FIRST SEND**
+> **APPROVED WITH CONTROLS**
 >
-> This operating record is not legal advice and is not evidence of approval.
+> This operating record is not legal advice. The owner completed a documented
+> self-review and approved the controls on 26 July 2026.
 
 | Record | Value |
 |---|---|
-| Controller | BrightCert |
-| Processing owner | ____________________ |
-| Assessment date | ____________________ |
-| Campaign/version | ____________________ |
-| Reviewer | ____________________ |
-| Review date | ____________________ |
-| Decision | ☐ approved ☐ approved with controls ☐ rejected |
-| Owner/legal sign-off | ____________________ |
-| Next review/trigger | ____________________ |
+| Controller | Cognumi Ltd, trading as BrightCert |
+| Processing owner | Muhammad Sohaib Roomi |
+| Assessment date | 26 July 2026 |
+| Campaign/version | `founding_pilot_2026`; `sme-v1` and `msp-v1` |
+| Reviewer | Muhammad Sohaib Roomi (self-review) |
+| Review date | 26 July 2026 |
+| Decision | ☒ approved with controls ☐ approved ☐ rejected |
+| Owner/legal sign-off | Muhammad Sohaib Roomi, owner approval provided 26 July 2026 |
+| Guidance evidence date | 26 July 2026 |
+| Next review/trigger | Day 30 review, or earlier if the audience, sources, channel, offer, tooling, retention, or applicable guidance changes |
 
 The owner must complete and approve this record before setting any prospect's
 `lia_status` to `approved`. Reassess it if the audience, data sources, channels,
 offer, tooling, retention, or applicable guidance changes.
+
+## Current guidance check
+
+The draft was rechecked on 26 July 2026 against the ICO's:
+
+- [business-to-business marketing guidance](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/business-to-business-marketing/);
+- [legitimate-interests guidance](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/lawful-basis/legitimate-interests/), last updated 23 March 2026;
+- [guidance on applying and documenting the three-part test](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/lawful-basis/legitimate-interests/how-do-we-apply-legitimate-interests-in-practice/); and
+- [guidance on respecting direct-marketing preferences and suppression](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/direct-marketing-guidance/respect-peoples-preferences/).
+
+The current guidance supports the controls used here: corporate-subscriber
+verification, a documented purpose/necessity/balancing assessment, sender
+identity and a valid opt-out address, privacy information no later than the
+first communication, an unconditional stop when a named contact objects, and a
+minimal suppression record rather than later re-contact. The B2B marketing
+guidance is marked by the ICO as under review following the Data (Use and
+Access) Act, so a material guidance update triggers reassessment before further
+sends.
 
 ## Scope
 
