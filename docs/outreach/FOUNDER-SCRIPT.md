@@ -21,7 +21,8 @@ If the person asks what happens after the baseline:
 
 > The guided baseline and reviewed action plan are free. After that, the
 > permanent report and evidence-workspace unlock is optional. It is £99
-> including VAT with the existing £100 `FOUNDING10` discount from £199.
+> including VAT with the existing £100 `FOUNDING10` discount from £199, and
+> that discount is for the first 10 customers.
 
 End with one question:
 
@@ -72,7 +73,8 @@ pilot is the one-client, founder-assisted workflow above.
 
 > The guided baseline and reviewed action plan are free. The optional permanent
 > report and evidence-workspace unlock is £99 including VAT with the existing
-> £100 `FOUNDING10` discount from £199.
+> £100 `FOUNDING10` discount from £199, and that discount is for the first 10
+> customers.
 
 ## Non-negotiable guardrails
 
@@ -80,15 +82,18 @@ pilot is the one-client, founder-assisted workflow above.
 - Never say remediation, certification or full readiness is completed in two
   hours. The approved statement is: “Find out how ready you are in around two
   hours.”
-- Never invent a deadline, cohort count, customer count, remaining place or
-  other scarcity claim.
+- Never invent a deadline, cohort count, remaining place or other scarcity
+  claim. Stating the real `FOUNDING10` redemption cap ("first 10 customers")
+  is permitted and expected wherever the £99 price is spoken, because that cap
+  is verifiable in Stripe; what is banned is any limit, countdown or customer
+  count we cannot substantiate.
 - Never describe the displayed Monitor, CE Plus Pack or MSP Partner plans as
   purchasable until their checkout paths are live and verified.
 - Never quote stale user, customer, conversion or revenue figures.
 - Use one CTA at a time. A reply is the primary outreach CTA; do not invent a
   public booking link.
 - Keep the founding price exact: £99 including VAT through the existing £100
-  `FOUNDING10` discount from £199.
+  `FOUNDING10` discount from £199, for the first 10 customers.
 - If a prospect asks for legal, certification or technical assurance outside
   this scope, answer honestly or follow up after checking; do not improvise.
 

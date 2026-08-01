@@ -29,6 +29,22 @@ const ARTIFICIAL_SCARCITY =
 // stopped working — the failure this contract exists to prevent.
 const CAP_DISCLOSURE = /first\s+(?:10|ten)\s+customers?/i;
 
+// Copy that reaches a prospect but lives outside the app bundle. These are
+// listed by name rather than by sweeping `docs/`, because most of that tree is
+// internal: evidence records like LAUNCH-GATE.md and VERIFICATION-*.md quote
+// £99 while describing the offer, and handoffs plus the vendored skill library
+// under `.agents/skills/` discuss scarcity tactics as a subject. Sweeping the
+// directory would demand cap disclosure in audit trails and fail on documents
+// that merely name the rule — noise that would get the guard disabled.
+//
+// Add a file here when its words are said or sent to a customer.
+const CUSTOMER_FACING_DOCS = [
+  "docs/outreach/FOUNDER-SCRIPT.md", // spoken to prospects on calls
+  "docs/outreach/EMAIL-SEQUENCES.md", // sme-v1/msp-v1 sent to prospects
+  "docs/outreach/SOP.md", // carries the pre-send copy checklist
+  ".agents/product-marketing.md", // positioning source that seeds generated copy
+];
+
 describe("customer-facing founding offer contract", () => {
   async function customerFacingFiles() {
     return [
@@ -36,6 +52,7 @@ describe("customer-facing founding offer contract", () => {
       join(process.cwd(), "src", "lib", "resend", "emails.ts"),
       ...(await sourceFiles(join(process.cwd(), "public"))),
       join(process.cwd(), "README.md"),
+      ...CUSTOMER_FACING_DOCS.map((file) => join(process.cwd(), file)),
     ].filter((file) => [".ts", ".tsx", ".md", ".txt"].includes(extname(file)));
   }
 
