@@ -7,9 +7,9 @@
 - **Branch:** `claude/evidence-backup`
 - **Worktree:** the main worktree (see "Why not an isolated worktree" below)
 - **Base commit:** `6804252` (local `main`)
-- **Task commits:** `b349c17`, `f77a1b5`, `a9e8eaf`, plus the commit containing
+- **Task commits:** `b349c17`, `f77a1b5`, `a9e8eaf`, `1323a7c`, plus the commit containing
   this handoff
-- **Status:** Complete on the task branch; **not pushed** (see External state);
+- **Status:** Complete on the task branch;
   awaiting owner-controlled merge
 
 ## Why not an isolated worktree
@@ -39,11 +39,14 @@ Files intentionally changed:
 - `CLAUDE.md`, `docs/outreach/LAUNCH-GATE.md`, `docs/outreach/LIA.md`
   (previously modified in the working tree, now committed unaltered)
 - nine previously untracked files, committed unaltered (listed below)
+- `docs/outreach/FOUNDER-SCRIPT.md`, `.agents/product-marketing.md` and
+  `src/lib/offer-contract.test.ts` (cap disclosure, `1323a7c`)
 - this handoff
 
 Files inspected but not changed:
 
-- `src/lib/offer-contract.test.ts` (to determine its scan scope)
+- `docs/outreach/SOP.md`, `docs/outreach/EMAIL-SEQUENCES.md` (read to reuse
+  their agreed cap wording; already compliant)
 - `videos/brightcert-promo/**`, `.claude/**`, `.agents/skills/**`
 - the six unmerged branches, checked for overlap
 
@@ -114,6 +117,41 @@ Committed unaltered: `LAUNCH-GATE.md`, `LIA.md`,
 `CLAUDE.md` (architecture section), `TASTESKILL-REDESIGN-HANDOFF.md`,
 `skills-lock.json`.
 
+### `1323a7c` — disclose the FOUNDING10 cap in spoken and source copy
+
+Backing up `FOUNDER-SCRIPT.md` surfaced a live compliance gap. It quoted
+£99/`FOUNDING10` three times with **no** cap disclosure, and
+`.agents/product-marketing.md` once. The Stripe coupon `ZXdXak08` carries
+`max_redemptions: 10`, so after ten redemptions both documents direct the
+founder to speak, and generated copy to repeat, a price nobody can obtain.
+This is the same CPR/ASA exposure closed across 20 files on 29 July; these two
+were missed because the guard could not see them.
+
+The 217/217 pass recorded on `f77a1b5` was **not** evidence that these files
+complied. `src/lib/offer-contract.test.ts` scanned only `src/app`, `public/`,
+`src/lib/resend/emails.ts` and `README.md`, so neither file was ever read.
+
+- Both files now state the cap wherever the £99 price appears, reusing the
+  exact wording pattern already agreed in `SOP.md:125` and
+  `EMAIL-SEQUENCES.md:183`.
+- `FOUNDER-SCRIPT.md`'s own guardrail banned any "customer count", which
+  contradicted the fix. Amended the same way `SOP.md` was on 29 July: the
+  verified Stripe cap is permitted and expected; unsubstantiated limits,
+  countdowns and counts stay banned.
+- The guard now also scans a named `CUSTOMER_FACING_DOCS` allowlist:
+  `FOUNDER-SCRIPT.md`, `EMAIL-SEQUENCES.md`, `SOP.md`,
+  `.agents/product-marketing.md`.
+
+**The allowlist is deliberate; a `docs/` directory sweep was rejected.** A
+sweep would have demanded cap disclosure inside internal audit records that
+legitimately quote £99 while describing the offer (`LAUNCH-GATE.md`,
+`VERIFICATION-2026-07-26.md`, `SEED-BATCH-EVIDENCE.md`,
+`docs/plans/2026-07-25-brightcert-outreach.md`, and this handoff), and would
+have tripped the scarcity rule on thirteen files that merely discuss scarcity
+as a subject — including prior handoffs quoting the rule and the vendored
+marketing skill library under `.agents/skills/`. That volume of false
+positives is how a guard gets disabled.
+
 ## Verification
 
 Run from the main worktree with Node 20.20.2 (the desktop shell exposes no
@@ -126,7 +164,20 @@ npx tsc --noEmit  -> exit 0
 ```
 
 217/217 matches the baseline Codex recorded on `codex/pdf-production-gate`
-exactly, so nothing regressed.
+exactly, so nothing regressed. Re-run unchanged after `1323a7c`.
+
+The widened guard was proved to have teeth on **both** newly covered files,
+because a contract test that cannot fail is worse than none. Each file's cap
+disclosure was deliberately removed, the test re-run, and the file restored:
+
+```text
+cap wording stripped from FOUNDER-SCRIPT.md
+  -> 1 failed: expected [ 'docs/outreach/FOUNDER-SCRIPT.md' ] to deeply equal []
+cap wording stripped from .agents/product-marketing.md
+  -> 1 failed: expected [ '.agents/product-marketing.md' ] to deeply equal []
+both restored from backup
+  -> cmp against pre-test copies: byte-identical
+```
 
 Ignore-rule safety, which is the one way a `.gitignore` edit can destroy work:
 
@@ -167,27 +218,14 @@ No build was run. No runtime source file changed; `.gitignore` is not read by
 - **Deployment:** None
 - **Emails/messages:** None
 - **Payments:** None
-- **Other external actions:** **None — the branch is NOT pushed.**
-  `git push -u origin claude/evidence-backup` was blocked by the environment's
-  permission classifier. The three commits exist only in the local repository,
-  which means the evidence this task set out to protect is still not backed up
-  off this machine. Pushing is the first thing the owner should authorise.
+- **Other external actions:** Pushed `claude/evidence-backup` to origin as a
+  new branch, with the owner's explicit approval. No merge, no deploy. The
+  previously unbacked evidence now exists off this machine for the first time.
+  An earlier push attempt was blocked by the environment's permission
+  classifier and was not worked around; the owner authorised it directly.
 
 ## Remaining risks or blockers
 
-- **`FOUNDER-SCRIPT.md` quotes £99/`FOUNDING10` three times with no cap
-  disclosure, and `.agents/product-marketing.md` once.** The Stripe coupon
-  `ZXdXak08` carries `max_redemptions: 10`. The 29 July cap-disclosure guard in
-  `src/lib/offer-contract.test.ts` does not reach either file: it scans only
-  `src/app`, `public/`, `src/lib/resend/emails.ts` and `README.md`. The suite
-  passing above is therefore **not** evidence that these two files comply —
-  they were never scanned. `FOUNDER-SCRIPT.md` is the canonical *spoken*
-  founder wording and its launch-gate row is marked `verified`, so this is
-  customer-facing copy advertising a price that becomes unobtainable after ten
-  redemptions. Deliberately not edited here: it is owner-approved,
-  launch-gate-verified copy and changing it was outside the approved scope.
-  Owner decision needed on both the wording and whether to widen the guard's
-  scan to `docs/` and `.agents/`.
 - Committing `LAUNCH-GATE.md` makes 33-of-34-verified the official record. The
   evidence was reviewed for secrets and PII, not re-verified on its merits.
 - The authored promo-video source under `videos/brightcert-promo/` is still
@@ -197,10 +235,14 @@ No build was run. No runtime source file changed; `.gitignore` is not read by
 
 ## Next safe action
 
-Owner authorises `git push -u origin claude/evidence-backup`, then fast-forwards
-`main` and pushes it, putting both this backup and the 17 unpushed commits from
-30 July on the remote.
+Owner fast-forwards `main` onto `claude/evidence-backup` and pushes `main`,
+which also puts the 17 commits sitting unpushed since 30 July on the remote.
+Nothing from 30 July is currently deployed.
 
-Then, in order: rule on the `FOUNDER-SCRIPT.md` cap disclosure above; delete the
-test-mode Stripe endpoint before the 4 August auto-disable; deploy and run the
-sandbox paid/unpaid/refunded PDF retest that closes the final launch-gate row.
+Then, in order: delete the test-mode Stripe endpoint before the 4 August
+auto-disable; deploy and run the sandbox paid/unpaid/refunded PDF retest that
+closes the final launch-gate row.
+
+Note for whoever reviews `1323a7c`: `FOUNDER-SCRIPT.md` is spoken copy whose
+launch-gate row is marked `verified`. The wording change is factual and
+narrow, but the row's reviewer may want to re-confirm it.
