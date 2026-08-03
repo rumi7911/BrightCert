@@ -1,10 +1,12 @@
 # BrightCert project status
 
-Last reconciled: 1 August 2026, 20:05 BST
+Last reconciled: 3 August 2026, 21:55 BST
 
 Reconciled by: Claude Code
 
-Integrated coordination commit: `7a13d6c`
+Integrated coordination commit: `a1afe13`, plus the PDF retest record on
+`claude/pdf-production-retest` (this file's own branch — update the SHA on
+merge).
 
 ## Production
 
@@ -30,7 +32,8 @@ was deployed, while local inspection made it look shipped.
 |---|---|---|---|
 | Social infographic system | `codex/social-infographic-system` | Integrated at `47515ea` | Complete |
 | Integrated signal sprint | `codex/integrated-signal-sprint` | Integrated at `aaf55a4` | Four founder drafts held at `Status: Founder review` |
-| PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; production retest still open |
+| PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; retest closed 3 Aug on `claude/pdf-production-retest` |
+| PDF sandbox retest | `claude/pdf-production-retest` | Documentation only; no application code changed | Closes the final launch-gate row. Conflicts with `codex/reminder-evidence-integration` on `LAUNCH-GATE.md` |
 | Launch evidence backup | `claude/evidence-backup` | Integrated at `7a13d6c` | Complete |
 | Production report redesign | `codex/production-report-redesign` | **Do not integrate** | 111 files; rejected by `codex/report-redesign-review` at `67b646a` |
 | Reminder dry-run evidence | `claude/reminder-dry-run-evidence` | Integrated at `112f9d7` | Complete |
@@ -59,25 +62,45 @@ handoff, since the identical blob merged without conflict.
 
 ## Launch status
 
-- The launch gate records **33 of 34 rows verified**, and that record is now
-  committed rather than living in a dirty working tree.
-- The only open row is the production PDF/report retest, marked
-  `owner action required`. The renderer repair is now deployed; closing the row
-  needs one sandbox paid PDF generation/download plus locked unpaid/refunded
-  access checks against the deployed build.
-- That retest is blocked on credentials, not on code: no `sk_test_` key exists
-  in `.env.local` and the Stripe CLI has no config, so no agent on this machine
-  can reach test mode.
+- The launch gate records **all 34 rows verified** — 27 `verified` and 7
+  `verified (sandbox)`. No row remains `owner action required` or
+  `operator action required`.
+- The final open row, the PDF/report retest, was closed on 3 August 2026. Full
+  sandbox lifecycle passed on commit `a1afe13` (identical to `origin/main` and
+  to the live deployment): unpaid locked, paid generating a valid 14-page PDF
+  with the certification disclaimer intact, refunded revoking access. Evidence:
+  [PDF-SANDBOX-RETEST-2026-08-03.md](../outreach/PDF-SANDBOX-RETEST-2026-08-03.md).
+- **Recorded deviation:** that row asked for the lifecycle "on the deployed
+  build" and it ran against `next dev` on the same commit, because a sandbox run
+  cannot target production without repointing live checkout at test keys. The
+  renderer itself is unaffected by the difference (CDN fonts, dynamic import in
+  both modes); Vercel cold-start against `maxDuration = 60` remains untested. A
+  preview deployment with test-mode keys would close the residue.
+- The seven `verified (sandbox)` rows are all payment-related and stay sandbox
+  until a first real customer payment.
 
 ## Immediate priorities
 
-1. Delete the **test-mode** Stripe webhook endpoint. Stripe auto-disables it on
-   4 August. Owner-only: Stripe API keys are mode-scoped, live mode cannot
-   enumerate test-mode objects, and the live-mode endpoint is healthy and
-   unaffected.
-2. Run the sandbox paid/unpaid/refunded PDF retest and record it in a dated
-   evidence document, then close the final launch-gate row.
-3. Decide whether the promo-video source is committed or discarded.
+1. Fix the **triple PDF generation** race. Every purchase currently triggers
+   three concurrent renders and three `reports` rows, because the existence
+   guard in `src/app/api/reports/generate/route.ts:56-66` reads before any
+   concurrent insert lands. A unique index on `reports.assessment_id` plus an
+   upsert closes it. Not a correctness bug; a cost and noise bug.
+2. Bundle the four Inter `.woff` files locally. `ReportDocument.tsx:16-32`
+   fetches them from jsdelivr at render time, putting a third-party CDN in the
+   critical path of a paid deliverable.
+3. Decide on report retention. Nothing deletes a GCS object — not the refund
+   handler, not row cleanup — so report PDFs persist indefinitely with no
+   deletion path. Needs a decision under UK GDPR storage limitation.
+4. Owner-directed, do not start without instruction: log download/delivery
+   events for chargeback evidence, add immediate-supply consent at checkout, and
+   tighten terms §4. The last two are customer-facing legal copy.
+5. Decide whether the promo-video source is committed or discarded.
+
+The test-mode Stripe webhook endpoint that Stripe was due to auto-disable on
+4 August is no longer tracked as a priority: the outcome of deleting it and the
+outcome of letting it auto-disable are the same, and live-mode delivery is
+unaffected either way.
 
 ## Known constraints
 
