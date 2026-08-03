@@ -213,12 +213,12 @@ export default async function ReportPage({
         <p className="text-xs text-[#64748B] mt-4">
           Find an IASME Certification Body at{" "}
           <a
-            href="https://iasme.co.uk/cyber-essentials/certified-assessors/"
+            href="https://iasme.co.uk/cyber-essentials/find-a-certification-body/"
             target="_blank"
             rel="noopener noreferrer"
             className="bc-focus text-[#047857] hover:underline"
           >
-            iasme.co.uk/cyber-essentials/certified-assessors
+            iasme.co.uk/cyber-essentials/find-a-certification-body
           </a>
         </p>
       </div>

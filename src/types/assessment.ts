@@ -16,6 +16,27 @@ export type RemediationStep = {
   effort: "Low" | "Medium" | "High";
 };
 
+export type RecommendedOwner =
+  | "business_owner_director"
+  | "internal_it_lead"
+  | "msp_it_provider"
+  | "operations_compliance"
+  | "hr_people"
+  | "shared_business_it";
+
+export type ActionTimeframe =
+  | "days_0_30"
+  | "days_31_60"
+  | "days_61_90"
+  | "ongoing";
+
+export type V2RemediationAction = RemediationStep & {
+  priority: "P1" | "P2" | "P3";
+  recommendedOwner: RecommendedOwner;
+  timeframe: ActionTimeframe;
+  evidenceRequired: string[];
+};
+
 export type ControlScore = {
   sectionId: 1 | 2 | 3 | 4 | 5;
   score: number;
@@ -25,11 +46,28 @@ export type ControlScore = {
   remediation: RemediationStep[];
 };
 
+export type ControlScoreV2 = Omit<ControlScore, "remediation"> & {
+  headline: string;
+  managementImplication: string;
+  remediation: V2RemediationAction[];
+};
+
 export type GeminiAnalysisResult = {
   controls: ControlScore[];
   overallScore: number;
   overallStatus: OverallStatus;
   executiveSummary: string;
+};
+
+export type GeminiAnalysisV2Result = {
+  analysisVersion: 2;
+  reportHeadline: string;
+  executiveSummary: string;
+  primaryDecision: string;
+  keyStrengths: string[];
+  overallScore: number;
+  overallStatus: OverallStatus;
+  controls: ControlScoreV2[];
 };
 
 export const SCORE_STATUS_MAP: Record<OverallStatus, {
