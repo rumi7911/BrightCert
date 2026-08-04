@@ -82,6 +82,11 @@ extends the approved ICP and LIA before research.
 The trigger must be current, relevant to the contact's role, supported by a
 public business-context URL, and summarised without inference beyond the source.
 
+For *how* to find these — the sources, the order to check things in, and the
+expected throughput — see
+[TRIGGER-RESEARCH-METHOD.md](./TRIGGER-RESEARCH-METHOD.md). This document sets
+the standard; that one is the method for meeting it.
+
 | Strength | Examples | Decision |
 |---|---|---|
 | Strong | Live tender/framework requires or scores Cyber Essentials; published certification expiry/renewal; customer or supply-chain requirement naming Cyber Essentials; dated contract deadline | Eligible if all other gates pass |
