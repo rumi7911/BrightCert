@@ -14,6 +14,13 @@ production deployment `brightcert-g6znupt9a` at the time of the run.
 treating this as a production verification.** The lifecycle ran against a local
 production-equivalent code path, not against the deployed Vercel build.
 
+> **Update, 4 August 2026:** the render half of that deviation is closed against
+> the deployed build — see
+> [`PDF-DEPLOYED-VERIFICATION-2026-08-04.md`](./PDF-DEPLOYED-VERIFICATION-2026-08-04.md).
+> The document this file tested has since been replaced by the redesigned report
+> at `292263a`; the Stripe webhook → generate chain remains verified only
+> locally.
+
 ---
 
 ## Environment
@@ -154,6 +161,26 @@ What remains genuinely untested on Vercel:
 preview deployment configured with test-mode Stripe keys, with
 `stripe listen --forward-to <preview-url>`. That exercises the real serverless
 runtime without touching production checkout.
+
+### Closed, 4 August 2026 — by a different route
+
+The preview approach above turned out not to be available: `vercel env ls` shows
+the Preview environment carries only `INTERNAL_API_SECRET` and `CRON_SECRET`, so
+a preview deployment has no Stripe, Supabase or GCS credentials to run against.
+
+The render half of the gap was closed instead by invoking the deployed
+production function directly through its shared-secret caller path, on the
+redesigned document at `292263a`. See
+[`PDF-DEPLOYED-VERIFICATION-2026-08-04.md`](./PDF-DEPLOYED-VERIFICATION-2026-08-04.md).
+
+Both bullets under "what remains genuinely untested on Vercel" are now resolved,
+though the second is resolved by removal rather than by test: the redesign
+embeds the six typefaces from `public/fonts`, so there is no longer any outbound
+call to the jsdelivr CDN at render time. Cold-start behaviour was measured at
+14.5 s against the `maxDuration = 60` ceiling.
+
+What is still untested on Vercel after 4 August is the **Stripe webhook →
+generate chain** end to end, because that run bypassed Stripe entirely.
 
 ---
 

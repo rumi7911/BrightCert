@@ -1,23 +1,27 @@
 # BrightCert project status
 
-Last reconciled: 3 August 2026, 21:55 BST
+Last reconciled: 4 August 2026, 21:20 BST
 
 Reconciled by: Claude Code
 
-Integrated coordination commit: `a1afe13`, plus the PDF retest record on
-`claude/pdf-production-retest` (this file's own branch — update the SHA on
-merge).
+Integrated coordination commit: `292263a`.
 
 ## Production
 
 - `https://brightcert.co.uk` resolves to Vercel deployment
-  `dpl_A18AAu1X89XgnoBPtqX8fQyotawV`
-  (`brightcert-74yqsevwb`), Ready, created 1 August 2026 19:58 BST.
-- Local `main`, `origin/main` and the deployed build are all `7a13d6c`.
-- Live checks after deploy: homepage HTTP 200; `/pricing` states the
-  `FOUNDING10` cap 10 times; emitted `@font-face` blocks are Inter 7×`swap`,
-  Bricolage Grotesque 12×`swap`, JetBrains Mono 18×`optional`, matching the
-  intended split exactly.
+  `dpl_2UYyGxx8LXfLaQYp1cWewma82jSs`
+  (`brightcert-1gqw0cx65`), Ready, created 4 August 2026 20:59 BST.
+- Local `main`, `origin/main` and the deployed build are all `292263a`.
+- **The report PDF customers receive changed on 4 August.** The redesigned
+  document is live: 24 pages, ~3.7 MB, six typefaces embedded from
+  `public/fonts` rather than fetched from jsdelivr at render time. Verified
+  through the deployed serverless function, not just locally —
+  `docs/outreach/PDF-DEPLOYED-VERIFICATION-2026-08-04.md`.
+- Deploy identity was confirmed by byte-matching all six `public/fonts` assets
+  against local `292263a`, because `vercel inspect` carries no git SHA and
+  timing alone cannot rule out a stale alias.
+- Earlier live checks still hold: homepage HTTP 200; `/pricing` states the
+  `FOUNDING10` cap 10 times.
 - Hosting-plan changes are deferred until after the hackathon by owner
   decision.
 
@@ -33,9 +37,10 @@ was deployed, while local inspection made it look shipped.
 | Social infographic system | `codex/social-infographic-system` | Integrated at `47515ea` | Complete |
 | Integrated signal sprint | `codex/integrated-signal-sprint` | Integrated at `aaf55a4` | Four founder drafts held at `Status: Founder review` |
 | PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; retest closed 3 Aug on `claude/pdf-production-retest` |
-| PDF sandbox retest | `claude/pdf-production-retest` | Documentation only; no application code changed | Closes the final launch-gate row. Conflicts with `codex/reminder-evidence-integration` on `LAUNCH-GATE.md` |
+| PDF sandbox retest | `claude/pdf-production-retest` | Integrated at `6b3d800` | Closed the final launch-gate row. Conflicts with `codex/reminder-evidence-integration` on `LAUNCH-GATE.md` |
 | Launch evidence backup | `claude/evidence-backup` | Integrated at `7a13d6c` | Complete |
-| Production report redesign | `codex/production-report-redesign` | **Do not integrate** | 111 files; rejected by `codex/report-redesign-review` at `67b646a` |
+| Report redesign wiring | `claude/report-redesign-wiring` | **Integrated at `292263a`, deployed** | Ported the redesign's visual half only. `src/lib/gemini/analyze.ts` and `prompts.ts` are the untouched seam for future v2 work — do not overwrite `public/fonts/*` or `src/lib/gemini/analyze-v2.ts` |
+| Production report redesign | `codex/production-report-redesign` | **Do not integrate** | 111 files; rejected by `codex/report-redesign-review` at `67b646a`. Its design is now live via `claude/report-redesign-wiring`; its *lifecycle* blockers stand and were deliberately not ported |
 | Reminder dry-run evidence | `claude/reminder-dry-run-evidence` | Integrated at `112f9d7` | Complete |
 | Reminder evidence integration | `codex/reminder-evidence-integration` | Unmerged | Collides with `LAUNCH-GATE.md` only, which is now committed — re-check before merging |
 | Preview build fallback | `codex/preview-build-supabase-fallback` | Unmerged, largely redundant | Same patch-id as work already integrated via `codex/seo-growth` |
@@ -70,12 +75,20 @@ handoff, since the identical blob merged without conflict.
   to the live deployment): unpaid locked, paid generating a valid 14-page PDF
   with the certification disclaimer intact, refunded revoking access. Evidence:
   [PDF-SANDBOX-RETEST-2026-08-03.md](../outreach/PDF-SANDBOX-RETEST-2026-08-03.md).
-- **Recorded deviation:** that row asked for the lifecycle "on the deployed
-  build" and it ran against `next dev` on the same commit, because a sandbox run
-  cannot target production without repointing live checkout at test keys. The
-  renderer itself is unaffected by the difference (CDN fonts, dynamic import in
-  both modes); Vercel cold-start against `maxDuration = 60` remains untested. A
-  preview deployment with test-mode keys would close the residue.
+- **Recorded deviation — render half closed 4 August 2026.** That row asked for
+  the lifecycle "on the deployed build" and it ran against `next dev`. A preview
+  deployment could not close it: Preview carries only `INTERNAL_API_SECRET` and
+  `CRON_SECRET`, so it has no Stripe, Supabase or GCS credentials. Closed
+  instead by invoking the deployed production function through its
+  shared-secret caller path on `292263a` — HTTP 200 in 14.5 s, 24-page
+  3,860,209-byte PDF with five embedded font subsets, textually identical to
+  the local render except the date. Cold start is therefore measured, and the
+  CDN dependency is gone rather than tested. Evidence:
+  [PDF-DEPLOYED-VERIFICATION-2026-08-04.md](../outreach/PDF-DEPLOYED-VERIFICATION-2026-08-04.md).
+- **Still open:** the Stripe webhook → generate chain has never run on the
+  deployed build. The 4 August run bypassed Stripe entirely, and the 3 August
+  run was local. Also note the 3 August evidence describes a 14-page ~250 KB
+  document that is no longer what ships.
 - The seven `verified (sandbox)` rows are all payment-related and stay sandbox
   until a first real customer payment.
 
@@ -85,17 +98,32 @@ handoff, since the identical blob merged without conflict.
    three concurrent renders and three `reports` rows, because the existence
    guard in `src/app/api/reports/generate/route.ts:56-66` reads before any
    concurrent insert lands. A unique index on `reports.assessment_id` plus an
-   upsert closes it. Not a correctness bug; a cost and noise bug.
-2. Bundle the four Inter `.woff` files locally. `ReportDocument.tsx:16-32`
-   fetches them from jsdelivr at render time, putting a third-party CDN in the
-   critical path of a paid deliverable.
-3. Decide on report retention. Nothing deletes a GCS object — not the refund
+   upsert closes it. Not a correctness bug; a cost and noise bug — and since
+   4 August each of those three renders produces a ~3.7 MB document rather than
+   a ~250 KB one, so it now costs three times a much larger render.
+2. **Subset the six embedded typefaces.** Superseded the old "bundle Inter
+   locally" item, which shipped at `292263a` — fonts now load from
+   `public/fonts`, and the jsdelivr dependency is gone. The cost of that fix is
+   size: the PDF went from 250,964 to ~3.86 MB, entirely font data, and the
+   deployed render takes 14.5 s against `maxDuration = 60`. Subsetting to the
+   glyphs actually used should recover most of both.
+3. Verify the **Stripe webhook → generate chain on the deployed build**. The
+   4 August verification invoked the route directly via its shared-secret path,
+   so the webhook trigger has still only ever been exercised against
+   `next dev`. This is the last untested link in the paid lifecycle.
+4. Decide on report retention. Nothing deletes a GCS object — not the refund
    handler, not row cleanup — so report PDFs persist indefinitely with no
-   deletion path. Needs a decision under UK GDPR storage limitation.
-4. Owner-directed, do not start without instruction: log download/delivery
+   deletion path. Four orphaned objects remain in the bucket, one
+   (`527184e7-…`) with no matching assessment row. Needs a decision under UK
+   GDPR storage limitation.
+5. Owner-directed, do not start without instruction: log download/delivery
    events for chargeback evidence, add immediate-supply consent at checkout, and
    tighten terms §4. The last two are customer-facing legal copy.
-5. Decide whether the promo-video source is committed or discarded.
+6. Click-verify the `find-a-certification-body` IASME link shipped at `292263a`,
+   and spot-check the four pages linking to IASME's
+   `frequently-asked-questions/`. IASME 403s automated requests, so neither
+   could be confirmed by fetching.
+7. Decide whether the promo-video source is committed or discarded.
 
 The test-mode Stripe webhook endpoint that Stripe was due to auto-disable on
 4 August is no longer tracked as a priority: the outcome of deleting it and the
