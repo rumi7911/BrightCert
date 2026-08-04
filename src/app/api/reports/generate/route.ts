@@ -4,9 +4,9 @@ import { uploadReport, getReportSignedUrl } from "@/lib/gcs/upload";
 import { sendReportReadyEmail } from "@/lib/resend/emails";
 import { verifyAssessmentOwnership } from "@/lib/auth/assessment-ownership";
 import {
-  parsePersistedReportPayload,
+  parsePersistedReportInput,
   PersistedReportPayloadError,
-} from "@/lib/pdf/report-payload";
+} from "@/lib/pdf/report/report-input";
 
 export const maxDuration = 60; // PDF generation can take up to 60 seconds
 
@@ -77,15 +77,19 @@ export async function POST(request: NextRequest) {
     }
 
     const orgData = assessment.organisations as unknown as { name: string } | null;
-    let reportPayload;
+    const generatedAt = new Date().toISOString();
+    let reportInput;
     try {
-      reportPayload = parsePersistedReportPayload({
-        org_name: orgData?.name ?? "Your Organisation",
-        executive_summary: assessment.executive_summary,
-        overall_score: assessment.overall_score,
-        overall_status: assessment.overall_status,
-        control_scores: controlScores,
-      });
+      reportInput = parsePersistedReportInput(
+        {
+          org_name: orgData?.name ?? "Your Organisation",
+          executive_summary: assessment.executive_summary,
+          overall_score: assessment.overall_score,
+          overall_status: assessment.overall_status,
+          control_scores: controlScores,
+        },
+        generatedAt
+      );
     } catch (error) {
       if (error instanceof PersistedReportPayloadError) {
         console.error("Stored report analysis failed validation:", error);
@@ -100,19 +104,11 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
-    // Generate PDF
-    // Dynamically import to avoid SSR issues with @react-pdf/renderer
-    const { renderToBuffer } = await import("@react-pdf/renderer");
-    const { createElement } = await import("react");
-    const { ReportDocument } = await import("@/lib/pdf/ReportDocument");
-
-    const doc = createElement(ReportDocument, {
-      ...reportPayload,
-      generatedAt: new Date().toISOString(),
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pdfBuffer = await renderToBuffer(doc as any);
+    // Generate PDF. renderValidatedReport dynamically imports
+    // @react-pdf/renderer and the document together, so the Font.register
+    // side effect in brand-tokens and the renderer share one module instance.
+    const { renderValidatedReport } = await import("@/lib/pdf/render-report");
+    const pdfBuffer = await renderValidatedReport(reportInput);
 
     // Upload to Google Cloud Storage
     const gcsUrl = await uploadReport(Buffer.from(pdfBuffer), assessmentId);
@@ -136,9 +132,9 @@ export async function POST(request: NextRequest) {
       if (authUser?.user?.email) {
         sendReportReadyEmail(
           authUser.user.email,
-          reportPayload.orgName,
+          reportInput.orgName,
           assessmentId,
-          reportPayload.overallScore,
+          reportInput.overallScore,
         ).catch((err) => console.error("Report-ready email failed:", err));
       }
     }
