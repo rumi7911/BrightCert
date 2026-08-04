@@ -13,7 +13,12 @@ const nextConfig: NextConfig = {
   // runtime: if that default ever narrows, every paid PDF render fails with
   // ENOENT and no test would catch it first. Keep in step with brand-tokens.ts.
   outputFileTracingIncludes: {
-    "/api/reports/generate": ["./public/fonts/**/*"],
+    "/api/reports/generate": [
+      "./public/fonts/**/*",
+      // Same reasoning as the fonts: BrandHeader.tsx reads this off disk via a
+      // runtime `process.cwd()` path that tracing cannot follow.
+      "./public/logo-mark-report.png",
+    ],
   },
   async redirects() {
     return [

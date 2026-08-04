@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { uploadReport, getReportSignedUrl } from "@/lib/gcs/upload";
 import { sendReportReadyEmail } from "@/lib/resend/emails";
 import { verifyAssessmentOwnership } from "@/lib/auth/assessment-ownership";
+import { claimReportGeneration } from "@/lib/reports/claim";
 import {
   parsePersistedReportInput,
   PersistedReportPayloadError,
@@ -49,19 +50,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Assessment not paid" }, { status: 403 });
     }
 
-    // Check if a report already exists — tolerate duplicates (pick newest) so a
-    // second concurrent trigger short-circuits instead of generating again.
+    // Cheap early exit for the common case: a finished report already exists.
+    // An empty gcs_url is a claim marker, not a finished report — see the
+    // claim block below — so it must not short-circuit here.
+    //
     // The stored gcs_url is a 7-day signed URL that goes stale, so regenerate
     // a fresh one from the (deterministic) object path rather than reusing it.
     const { data: existingReport } = await supabase
       .from("reports")
-      .select("id")
+      .select("id, gcs_url")
       .eq("assessment_id", assessmentId)
-      .order("generated_at", { ascending: false })
-      .limit(1)
       .maybeSingle();
 
-    if (existingReport) {
+    if (existingReport?.gcs_url) {
       return NextResponse.json({ url: await getReportSignedUrl(assessmentId) });
     }
 
@@ -104,20 +105,51 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
-    // Generate PDF. renderValidatedReport dynamically imports
-    // @react-pdf/renderer and the document together, so the Font.register
-    // side effect in brand-tokens and the renderer share one module instance.
-    const { renderValidatedReport } = await import("@/lib/pdf/render-report");
-    const pdfBuffer = await renderValidatedReport(reportInput);
+    // Claim the right to render before doing any expensive work.
+    //
+    // Three callers race here on every purchase — the Stripe webhook, the
+    // report page's fire-and-forget trigger, and the page poller. The previous
+    // check-then-act guard read before any of their inserts had landed, so all
+    // three passed it and rendered. The unique index on reports.assessment_id
+    // (migration 20260804000100) turns this insert into the mutex: exactly one
+    // caller inserts the claim row, the rest conflict.
+    const claim = await claimReportGeneration(supabase, assessmentId, generatedAt);
 
-    // Upload to Google Cloud Storage
-    const gcsUrl = await uploadReport(Buffer.from(pdfBuffer), assessmentId);
+    if (claim.outcome === "already-complete") {
+      return NextResponse.json({ url: await getReportSignedUrl(assessmentId) });
+    }
 
-    // Save report URL to database
-    await supabase.from("reports").insert({
-      assessment_id: assessmentId,
-      gcs_url: gcsUrl,
-    });
+    if (claim.outcome === "in-progress") {
+      // Another caller holds a live claim. Both real callers are
+      // fire-and-forget and the report page polls for readiness, so reporting
+      // "not finished yet" is cheaper and truer than rendering a second copy.
+      return NextResponse.json({ status: "generating" }, { status: 202 });
+    }
+
+    let pdfBuffer: Buffer;
+    let gcsUrl: string;
+
+    try {
+      // Generate PDF. renderValidatedReport dynamically imports
+      // @react-pdf/renderer and the document together, so the Font.register
+      // side effect in brand-tokens and the renderer share one module instance.
+      const { renderValidatedReport } = await import("@/lib/pdf/render-report");
+      pdfBuffer = Buffer.from(await renderValidatedReport(reportInput));
+
+      // Upload to Google Cloud Storage
+      gcsUrl = await uploadReport(pdfBuffer, assessmentId);
+    } catch (error) {
+      // Release the claim, or the empty row would block every future attempt
+      // until it aged past the stale window.
+      await supabase.from("reports").delete().eq("id", claim.reportId);
+      throw error;
+    }
+
+    // Publishing the real gcs_url is what marks the report finished.
+    await supabase
+      .from("reports")
+      .update({ gcs_url: gcsUrl, generated_at: new Date().toISOString() })
+      .eq("id", claim.reportId);
 
     // Send report-ready email (fire-and-forget)
     const { data: profile } = await supabase

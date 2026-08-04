@@ -82,13 +82,19 @@ export default async function ReportPage({
   // A report row existing just means the PDF was generated at some point —
   // the stored gcs_url is a 7-day signed URL that goes stale, so it's never
   // read directly. A fresh one is generated below on every load instead.
-  const { data: report } = await supabase
+  // An empty gcs_url is a generation claim, not a finished report
+  // (src/lib/reports/claim.ts). getReportSignedUrl signs the deterministic
+  // object path without checking that the object exists, so treating a claim
+  // as ready would hand the customer a live-looking download link to nothing.
+  const { data: reportRow } = await supabase
     .from("reports")
-    .select("id")
+    .select("id, gcs_url")
     .eq("assessment_id", assessmentId)
     .order("generated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  const report = reportRow?.gcs_url ? reportRow : null;
 
   // If no report yet, kick off generation (idempotent — route checks for existing report).
   // Internal secret marks this as a trusted server-to-server call — this is a
