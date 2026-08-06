@@ -26,103 +26,48 @@ Every row sourced this way arrives with `trigger`, `trigger_evidence_url` and
 evidence. What remains is ordinary verification work — Companies House, size,
 named contact — which is mechanical.
 
-The rest of this document is three such sources, strongest first.
+The rest of this document is those sources. One of the three originally
+listed here has since been withdrawn as prohibited — it is kept below with the
+reason, not deleted.
 
 ---
 
-## Source A — the IASME certificate register (`renewal`)
+## Source A — the IASME certificate register — **WITHDRAWN, DO NOT USE**
 
-**Why this is the best source for this campaign.** Cyber Essentials
-certificates last 12 months, and the public register carries the expiry date.
-A company 1–3 months from expiry has a dated, public, business-context reason to
-act, tied to a decision it has already made once. The ICP's strength table lists
-"published certification expiry/renewal" as **Strong** — eligible if the other
-gates pass, with no human-review escalation needed on trigger quality alone.
+> **This source is prohibited.** The NCSC/IASME certificate search page states:
+>
+> > Please note this search function is solely for the use of checking
+> > certification and must not be used for marketing, data research, or any
+> > other purpose.
+>
+> That rules out both uses this document originally proposed — finding
+> prospects and evidencing outreach. Established 6 August 2026. The
+> corresponding LIA change was withdrawn the same day, before approval:
+> [LIA Amendment 1](./LIA.md#amendment-1--withdrawn--ncsciasme-certificate-register).
 
-Register: <https://iasme.co.uk/cyber-essentials/ncsc-certificate-search/>
+The register was going to be the primary source for this segment, because it is
+the only public place carrying a dated Cyber Essentials expiry. It cannot be
+used. Do not reopen this without reading the withdrawal record first.
 
-> **Gated on LIA Amendment 1.** The register was not among the sources named in
-> the approved [LIA](./LIA.md), so it was added by
-> [Amendment 1](./LIA.md#amendment-1--source-addition-ncsciasme-certificate-register)
-> on 6 August 2026. **Until the owner signs that amendment, no prospect sourced
-> from the register may have `lia_status` set to `approved`.** Research may
-> proceed; approval and sending may not. The amendment also limits collection to
-> a browser, by hand — automated harvesting is not authorised.
+**What is still permitted:** checking the certification status of a company you
+have already identified through an approved source. That is what the page says
+the search is for. It cannot feed the campaign though — the register may not be
+cited as `trigger_evidence_url`, and an expiry date read from it may not become
+the reason for an email.
 
-**This must be done in a browser.** IASME returns 403 to automated requests on
-every path including the site root, established 3 August. Beyond the technical
-block, LIA Amendment 1 authorises manual browser collection only.
+### The `renewal` trigger is not dead, but its evidence must change
 
-### What the register actually shows
+A renewal trigger is still Strong under [ICP.md](./ICP.md). What changed is
+where the evidence may come from: the **company's own published material**, not
+the register. In practice that means a trust or security page that states a
+certification date or expiry, a certificate badge the company displays itself,
+or an announcement it published. All of that falls under the already-approved
+"public company websites and business-context pages", and it is found the same
+way as Source C.
 
-Confirmed by inspection on 6 August 2026.
-
-The results table carries five sortable columns: **Company Name**, **Certificate
-Reference**, **Certificate Level** (`CE` or `CE+`), **Certification Date** and
-**Certification Expiry**. Search matches a substring anywhere in the company
-name and is case-insensitive — `security` returns `SECURITYCAM LTD`,
-`The Security Institute` and `Security Foiling Limited`. Trading names appear
-too (`… Ltd, trading as …`), which helps identify the legal entity for the
-Companies House check.
-
-Every certificate runs exactly 12 months from its certification date.
-
-The certificate reference links to a detail page on
-`registry.blockmarktech.com` carrying the legal name, certification date,
-expiry with a precomputed "expires in N months", certificate ID, **scope**
-(e.g. "Whole Organisation"), and the **certification body**.
-
-**There is no location anywhere** — no address, postcode, town or region, in
-either the results table or the detail page. Postcode search is therefore moot:
-even if the box accepted one, no result field could confirm it. Working the
-register by geography does not work. The earlier third-party claim that postcode
-search exists should be treated as unconfirmed and unusable.
-
-There is also no sector and no employee count, so **every candidate still needs
-a Companies House lookup** before you know whether it is in ICP scope. The
-register tells you a company has a deadline; it tells you nothing about whether
-the company fits.
-
-### How to work it
-
-Sort **Certification Expiry** ascending and treat the register as a queue rather
-than a search index. The trigger then arrives pre-filtered, which is the whole
-advantage of this source.
-
-1. Sort by Certification Expiry, ascending. Confirm the direction by reading the
-   top row's date — earliest first is what you want.
-2. Page to the point where expiry is roughly **1–3 months ahead** of today.
-   Sooner and the renewal decision is already made; later and the trigger is not
-   yet current.
-3. Record per result: company name, certificate level, certification date,
-   expiry date, and the certificate detail URL. The detail URL is your
-   `trigger_evidence_url` — it is stable, public, and states the expiry date
-   plainly, which is exactly what the evidence standard below demands.
-4. Discard `CE+` holders for the direct-SME pitch unless the readiness framing
-   still fits — they are further along than the offer assumes.
-5. Note the **scope** from the detail page. A partial scope is worth mentioning
-   in `personalisation_note`; "Whole Organisation" is not distinctive enough to
-   be worth a sentence.
-6. Only then start the disqualifier order below. Companies House first.
-
-The **certification body** on the detail page is useful context: a renewal
-prospect already has a relationship with a CB, so the pitch is readiness
-*before* their reassessment, never a replacement for the CB. Touch 1 in
-[EMAIL-SEQUENCES.md](./EMAIL-SEQUENCES.md) already carries the line "BrightCert
-is a readiness service, not a Certification Body", which is exactly the right
-framing here — do not weaken it.
-
-**Still unconfirmed:** whether an empty search lists the whole register, and
-whether the sort applies across all results or only the current page. A
-page-local sort would make the queue approach much slower. Establish both before
-budgeting research time.
-
-### The honest caveat
-
-The register only lists certificates issued in the last 12 months, so lapsed
-holders drop off entirely. That cuts both ways: you cannot find companies that
-let certification lapse (arguably a better prospect), but everything you *do*
-find is current by construction.
+This is a genuine loss. The register offered a sorted queue of dated deadlines;
+company-published expiry dates are scattered and much rarer. Expect renewal to
+become an occasional find inside Source C rather than a source of its own.
 
 ---
 
@@ -218,7 +163,7 @@ findable — that is a replace, not a puzzle.
 
 | Column | Comes from | Notes |
 |---|---|---|
-| `trigger`, `trigger_evidence_url` | Source A/B/C | The reason you found them |
+| `trigger`, `trigger_evidence_url` | Source B/C | The reason you found them |
 | `source_url`, `source_date` | the page you actually read | `YYYY-MM-DD`, the date *you* checked |
 | `company_name`, `company_number`, `legal_entity_type` | Companies House | `verify` re-checks and overwrites provisional values |
 | `employee_band` | licensed enrichment or company source | band, never false precision |
@@ -285,5 +230,11 @@ again for the MSP segment where the competitor check adds a step.
 is the real cost of the campaign, and no tool removes it — the parts a scraper
 automates (name, domain, generic inbox) are the parts the gate rejects.
 
-Front-load Source A. It is the only source where the trigger, the deadline and
-the relevance arrive together in one row of a public register.
+Front-load Source B. Contracts Finder has a public API, so candidate notices
+can be gathered quickly and the judgement is spent on linking a notice to a
+specific company rather than on finding notices at all.
+
+The throughput figures above were written when Source A supplied a sorted queue
+of dated renewal deadlines. **They are now optimistic.** Sources B and C both
+require more judgement per candidate, so re-measure against a real hour of work
+before committing to a schedule.
