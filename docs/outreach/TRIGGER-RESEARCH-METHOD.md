@@ -70,37 +70,91 @@ find is current by construction.
 
 ---
 
-## Source B — Contracts Finder (`tender_requirement`, `supply_chain`)
+## Source B — Contracts Finder (`tender_requirement`, `supply_chain`, `msp_client_service`)
 
 Public-sector contract notices that require or score Cyber Essentials, and the
-suppliers around them. The ICP rates "live tender/framework requires or scores
-Cyber Essentials" as **Strong**.
+suppliers around them.
 
-Contracts Finder has a public API — `POST api/rest/2/search_notices/{MimeType}`,
-JSON/XML/CSV/OCDS, keyword and date search, with OAuth 2.0 only for protected
-endpoints:
+Contracts Finder has a public API — `POST api/rest/2/search_notices/json`,
+keyword and date search, no auth for public endpoints:
 <https://www.contractsfinder.service.gov.uk/apidocumentation/home>
 
-Two distinct plays, and they produce different rows:
+There is a helper for it:
 
-| Play | Who you contact | Trigger label |
-|---|---|---|
-| A notice requires Cyber Essentials → find SMEs bidding or likely to bid | The bidder | `tender_requirement` |
-| An awarded contract names a supplier → that supplier's own suppliers need it | The sub-supplier | `supply_chain` |
+```sh
+npm run outreach:contracts-finder -- \
+  --output outreach/runs/cf-candidates.csv \
+  --statuses Open,Awarded,Closed
+```
 
-The first is cleaner. The second requires a documented chain and will usually
-land as **Medium** strength, needing human review to connect the signal to the
-named role — budget for that.
+It writes **candidates for triage, never prospect rows**, and refuses to write
+into `.outreach/`. The one thing it does that matters: the API's keyword search
+is fuzzy, so every result is re-checked against the notice text before it is
+kept. Quote the phrase and the API is accurate; leave it unquoted and it returns
+unrelated notices — an unquoted `cyber essentials` search returned a Surrey
+County Council social-care notice with score 1 and no mention of the scheme.
 
-Also check the Find a Tender Service for higher-value notices.
+### What it actually yields — measured 6 August 2026
+
+Run against the live API, exact phrase `"cyber essentials"`:
+
+| Status | Notices |
+|---|---:|
+| **Open** | **0** |
+| Awarded | 70 |
+| Closed | 154 |
+| After de-duplication | 170 |
+| With a named awarded supplier | 70 |
+
+**Zero open notices.** The whole "find SMEs bidding on a notice that requires
+Cyber Essentials" play has nothing to work with on any given day, and even when
+a notice exists the API does not name the bidders — you would be inferring who
+might bid, which is the ICP's **Weak** row. Treat open notices as a monitoring
+signal, not a source: re-run the helper periodically rather than expecting a
+pipeline from it.
+
+Of the 70 named suppliers, only **6 were awarded in 2025 or later**; the
+distribution runs back to 2015. An award from 2018 evidences nothing current.
+
+### The reframing: this is an MSP source, not an SME source
+
+The named suppliers are overwhelmingly IT, security and software firms — Logiq
+Consulting, Prism Infosec, Synergi Software, Claranet, Select Technology
+Systems, 6ByThree Digital. That makes them poor direct-SME prospects: winning a
+contract that required Cyber Essentials means they already hold it.
+
+It makes them decent **MSP-segment** candidates. An IT provider that won public
+work requiring Cyber Essentials is an evidence-backed signal that the scheme is
+commercially relevant to them and their clients, which is what the MSP profile
+in [ICP.md](./ICP.md) asks for. Use `msp_client_service`.
+
+Two cautions before spending time there:
+
+- The MSP profile excludes providers with an obvious competing readiness or
+  evidence product. Several of these firms are security consultancies and some
+  are IASME-licensed Certification Bodies — the competitor check is not a
+  formality here, it is the main filter.
+- **IASME Consortium Ltd itself appears in the results.** A useful reminder that
+  the list is real, and that a named supplier is a starting point, not a
+  qualified prospect.
+
+Realistically this source is worth roughly the campaign's **30 MSP rows**, not
+its 120 SME rows. Recent awards to non-Certification-Body IT providers are the
+subset worth working.
 
 ### Where this gets weak
 
 A company merely *appearing* on a tender list is not a trigger. The notice must
-name Cyber Essentials in its requirements or scoring, and you must be able to
-link the specific company to that specific notice. "Company operates in a sector
-that sells to government" is the ICP's **Weak** row: block and research a better
-trigger.
+name Cyber Essentials in its requirements or scoring, and you must link the
+specific company to that specific notice. "Company operates in a sector that
+sells to government" is the ICP's **Weak** row: block and research a better
+trigger. The helper leaves `triage_decision` and `triage_note` blank precisely
+because it cannot make that judgement.
+
+Notice pages 403 automated requests, so `notice_url` must be opened in a
+browser — which the evidence standard requires anyway.
+
+Also check the Find a Tender Service for higher-value notices.
 
 ---
 
