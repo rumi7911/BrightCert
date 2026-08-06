@@ -276,19 +276,29 @@ repository.
 
 ## Realistic throughput
 
-Sources A and C need a browser and judgement. Expect roughly **6–10 qualified
-rows per focused hour** once the method is familiar, lower at first, and lower
-again for the MSP segment where the competitor check adds a step.
+**The original estimate no longer holds, and nothing has replaced it yet.**
 
-120 direct SME rows is therefore on the order of 15–20 hours of research. That
-is the real cost of the campaign, and no tool removes it — the parts a scraper
-automates (name, domain, generic inbox) are the parts the gate rejects.
+It said 6–10 qualified rows per focused hour, so 15–20 hours for the 120 direct
+SME rows. That assumed Source A supplied a sorted queue of dated renewal
+deadlines. Source A is withdrawn, and Source B turns out to be worth roughly the
+30 MSP rows rather than the 120 SME ones.
 
-Front-load Source B. Contracts Finder has a public API, so candidate notices
-can be gathered quickly and the judgement is spent on linking a notice to a
-specific company rather than on finding notices at all.
+What that leaves, honestly:
 
-The throughput figures above were written when Source A supplied a sorted queue
-of dated renewal deadlines. **They are now optimistic.** Sources B and C both
-require more judgement per candidate, so re-measure against a real hour of work
-before committing to a schedule.
+| Segment | Rows needed | Source | State |
+|---|---:|---|---|
+| MSP | 30 | B, recent awards to non-CB IT providers | ~22 candidates awarded 2024 or later; needs the competitor check |
+| Direct SME | 120 | **C, essentially alone** | No measured rate |
+
+Source C — finding companies whose own material names Cyber Essentials — is now
+carrying the entire SME segment on its own. It was written up as the third and
+weakest source, and it has not been measured.
+
+**Do not plan a schedule from the old number.** Work Source C by hand for one
+timed hour, count the rows that clear the ICP bar, and multiply from that. If
+the rate is 2–3 an hour rather than 6–10, the 120-row target needs revisiting
+with the owner rather than absorbing quietly into a longer timeline.
+
+What has not changed: no tool removes this cost. The parts a scraper automates
+— name, domain, generic inbox — are the parts the gate rejects, and the part
+that matters, a defensible trigger, is the part nothing automates.
