@@ -41,25 +41,81 @@ gates pass, with no human-review escalation needed on trigger quality alone.
 
 Register: <https://iasme.co.uk/cyber-essentials/ncsc-certificate-search/>
 
-It is searchable by company name and certificate number; searching by postcode
-is reported by third parties but **confirm that in the browser before relying on
-it** — it materially changes how you work the source.
+> **Gated on LIA Amendment 1.** The register was not among the sources named in
+> the approved [LIA](./LIA.md), so it was added by
+> [Amendment 1](./LIA.md#amendment-1--source-addition-ncsciasme-certificate-register)
+> on 6 August 2026. **Until the owner signs that amendment, no prospect sourced
+> from the register may have `lia_status` set to `approved`.** Research may
+> proceed; approval and sending may not. The amendment also limits collection to
+> a browser, by hand — automated harvesting is not authorised.
 
 **This must be done in a browser.** IASME returns 403 to automated requests on
-every path including the site root, established 3 August. Do not try to script
-it; that is also the wrong instinct here, because the LIA requires human
-approval of every row anyway.
+every path including the site root, established 3 August. Beyond the technical
+block, LIA Amendment 1 authorises manual browser collection only.
+
+### What the register actually shows
+
+Confirmed by inspection on 6 August 2026.
+
+The results table carries five sortable columns: **Company Name**, **Certificate
+Reference**, **Certificate Level** (`CE` or `CE+`), **Certification Date** and
+**Certification Expiry**. Search matches a substring anywhere in the company
+name and is case-insensitive — `security` returns `SECURITYCAM LTD`,
+`The Security Institute` and `Security Foiling Limited`. Trading names appear
+too (`… Ltd, trading as …`), which helps identify the legal entity for the
+Companies House check.
+
+Every certificate runs exactly 12 months from its certification date.
+
+The certificate reference links to a detail page on
+`registry.blockmarktech.com` carrying the legal name, certification date,
+expiry with a precomputed "expires in N months", certificate ID, **scope**
+(e.g. "Whole Organisation"), and the **certification body**.
+
+**There is no location anywhere** — no address, postcode, town or region, in
+either the results table or the detail page. Postcode search is therefore moot:
+even if the box accepted one, no result field could confirm it. Working the
+register by geography does not work. The earlier third-party claim that postcode
+search exists should be treated as unconfirmed and unusable.
+
+There is also no sector and no employee count, so **every candidate still needs
+a Companies House lookup** before you know whether it is in ICP scope. The
+register tells you a company has a deadline; it tells you nothing about whether
+the company fits.
 
 ### How to work it
 
-1. Search by area or by name patterns matching the allowed sectors in
-   [ICP.md](./ICP.md).
-2. Record, for each result: company name, certificate level, issue date, expiry
-   date, and the result URL.
-3. Keep only companies whose expiry falls **1–3 months ahead**. Sooner and the
-   decision is already made; later and the trigger is not yet current.
-4. Discard CE Plus holders for the direct-SME pitch unless the readiness
-   framing still fits — they are further along than the offer assumes.
+Sort **Certification Expiry** ascending and treat the register as a queue rather
+than a search index. The trigger then arrives pre-filtered, which is the whole
+advantage of this source.
+
+1. Sort by Certification Expiry, ascending. Confirm the direction by reading the
+   top row's date — earliest first is what you want.
+2. Page to the point where expiry is roughly **1–3 months ahead** of today.
+   Sooner and the renewal decision is already made; later and the trigger is not
+   yet current.
+3. Record per result: company name, certificate level, certification date,
+   expiry date, and the certificate detail URL. The detail URL is your
+   `trigger_evidence_url` — it is stable, public, and states the expiry date
+   plainly, which is exactly what the evidence standard below demands.
+4. Discard `CE+` holders for the direct-SME pitch unless the readiness framing
+   still fits — they are further along than the offer assumes.
+5. Note the **scope** from the detail page. A partial scope is worth mentioning
+   in `personalisation_note`; "Whole Organisation" is not distinctive enough to
+   be worth a sentence.
+6. Only then start the disqualifier order below. Companies House first.
+
+The **certification body** on the detail page is useful context: a renewal
+prospect already has a relationship with a CB, so the pitch is readiness
+*before* their reassessment, never a replacement for the CB. Touch 1 in
+[EMAIL-SEQUENCES.md](./EMAIL-SEQUENCES.md) already carries the line "BrightCert
+is a readiness service, not a Certification Body", which is exactly the right
+framing here — do not weaken it.
+
+**Still unconfirmed:** whether an empty search lists the whole register, and
+whether the sort applies across all results or only the current page. A
+page-local sort would make the queue approach much slower. Establish both before
+budgeting research time.
 
 ### The honest caveat
 

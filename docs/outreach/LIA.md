@@ -4,6 +4,13 @@
 >
 > This operating record is not legal advice. The owner completed a documented
 > self-review and approved the controls on 26 July 2026.
+>
+> **Amendment 1 — 6 August 2026 — PENDING OWNER APPROVAL.** One data source
+> added: the public NCSC/IASME Cyber Essentials certificate register. No other
+> change to audience, channel, offer, volume, tooling, or retention. Until the
+> owner signs the amendment record below, **no prospect sourced from the register
+> may have `lia_status` set to `approved`**. See
+> [Amendment 1](#amendment-1--source-addition-ncsciasme-certificate-register).
 
 | Record | Value |
 |---|---|
@@ -71,7 +78,7 @@ again at sign-off.
 | People | Relevant directors, owners in a corporate capacity, operations, IT, security, compliance, procurement, and MSP leadership/technical roles |
 | Personal data | Name, role, corporate work email, company affiliation, public source URL/date, trigger evidence, and a short business-context personalisation note |
 | Company data | Name, domain, company number, legal entity type, status, size band, sector, and Cyber Essentials trigger |
-| Sources | Public company websites and business-context pages; Companies House; licensed Clay data used for research and enrichment |
+| Sources | Public company websites and business-context pages; Companies House; the public NCSC/IASME Cyber Essentials certificate register (see [Amendment 1](#amendment-1--source-addition-ncsciasme-certificate-register)); licensed Clay data used for research and enrichment |
 | Operations | Research, validation, exact-number company verification, human review, manual email, suppression, outcome recording, reporting, and retention cleanup |
 | Recipients/processors | Authorised BrightCert operators and approved infrastructure/processors described in the public privacy notice; no onward sale |
 
@@ -220,3 +227,82 @@ sequence, no open tracking, immediate objection handling, and short retention.
 
 This is not an approval. Sending remains **no-go** until the sign-off fields are
 completed and every item in [LAUNCH-GATE.md](./LAUNCH-GATE.md) is passed.
+
+---
+
+## Amendment 1 — source addition: NCSC/IASME certificate register
+
+| Record | Value |
+|---|---|
+| Amendment date | 6 August 2026 |
+| Reassessment trigger | Data sources changed (see the trigger clause in the record table above) |
+| Change | One source added. Nothing removed |
+| Decision | ☐ approved with controls ☐ approved ☐ rejected |
+| Owner/legal sign-off | *pending — Muhammad Sohaib Roomi* |
+| Guidance re-check date | *pending* |
+
+**Until this row is signed, no prospect sourced from the register may have
+`lia_status` set to `approved`.**
+
+### What changed
+
+The [Sources](#processing-and-data) row now also names the public NCSC/IASME
+Cyber Essentials certificate register:
+
+<https://iasme.co.uk/cyber-essentials/ncsc-certificate-search/>
+
+Certificate detail pages are served from `registry.blockmarktech.com`, the
+registry platform IASME uses. Both are treated as one source for this record.
+
+The register publishes, per certificate: organisation name, certificate
+reference, certificate level (CE or CE+), certification date, expiry date,
+scope, and certification body. It publishes **no** address, sector, size, or
+contact details, so it cannot on its own establish ICP eligibility — Companies
+House verification is unchanged and still mandatory.
+
+### Why it was added
+
+The register is the only public source that carries a **dated Cyber Essentials
+renewal deadline**. [ICP.md](./ICP.md) rates "published certification
+expiry/renewal" as a Strong trigger, and
+[TRIGGER-RESEARCH-METHOD.md](./TRIGGER-RESEARCH-METHOD.md) makes it the primary
+source for the direct-SME segment. Without it, the `renewal` trigger has no
+citable evidence and the campaign leans on tender and assurance signals alone.
+
+### Why the balancing test is unaffected
+
+Re-checked against §3 rather than assumed:
+
+- **Reasonable expectations.** §3 already names "renewal" as a signal a relevant
+  contact may reasonably expect to be contacted about. This source makes that
+  existing expectation *evidenced* rather than inferred, and the register is
+  published by the scheme's own accreditation body — the opposite of the
+  "obscure … or obtained without clear provenance" case §3 warns against. The
+  organisation's presence on it is a consequence of its own certification.
+- **Personal data.** The register contains **no personal data at all** — only
+  corporate certificate records. It changes where the *company* comes from, not
+  what personal data is processed. The people data (name, role, corporate email)
+  still comes from the same public company websites already approved.
+- **Volume and character.** Unchanged: still 120 direct SME and 30 MSP
+  prospects, still one named contact each, still three manual emails.
+- **Necessity.** §2's commitment to "150 verified corporate prospects, not a
+  broad scraped list" is unaffected, and see the collection limit below.
+
+### Collection limit — browser only
+
+Collection from the register is **manual, in a browser, by the operator**.
+Automated harvesting, bulk export, and any script or agent retrieving register
+pages are **not authorised by this amendment**, whether against `iasme.co.uk` or
+`registry.blockmarktech.com`.
+
+This is deliberate. §2's necessity argument rests on a small hand-built cohort,
+and automated collection would change the character of the processing even
+though the register data itself is not personal data. Tooling is separately
+listed as a reassessment trigger. If bulk collection is ever wanted, reassess
+first.
+
+### What did not change
+
+Audience, channel, offer, volume, sequence, sender, tooling, retention,
+suppression, and every safeguard in §3. No other section of this assessment is
+modified by this amendment.
