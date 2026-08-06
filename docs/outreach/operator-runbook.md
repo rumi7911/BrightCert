@@ -93,6 +93,9 @@ its `sequence_status`.
 
 ## Commands
 
+These commands validate rows that already exist. For producing the rows in the
+first place, see [TRIGGER-RESEARCH-METHOD.md](./TRIGGER-RESEARCH-METHOD.md).
+
 Pre-review research-quality validation:
 
 ```sh
