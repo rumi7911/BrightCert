@@ -177,5 +177,13 @@ reports/78c383b1-….pdf   38,546 B  2026-06-30
 The local render of the same assessment measured 3.2–5.6 s. The deployed
 invocation took 14.5 s wall-clock including cold start, upload and signing.
 Well inside the 60 s ceiling, but roughly a quarter of it, and the document is
-now ~15× larger than the one those earlier numbers were taken from. Font
-subsetting reduces both size and render time and remains the top follow-up.
+now ~15× larger than the one those earlier numbers were taken from.
+
+> **Correction, later on 4 August.** This document originally proposed font
+> subsetting as the fix for that size, and that was wrong. The font programs in
+> this 3,860,209-byte PDF total **1,211 bytes**. 96.8% of the file is images:
+> 72 image objects that are only three distinct payloads, each embedded once per
+> page, dominated by the 512px header logo at 147,028 B × 24 pages = 3.53 MB.
+> `@react-pdf` cannot share an image across pages, so the fix is a smaller
+> asset, not subsetting. Addressed on `claude/pdf-size-and-race`
+> (`1d0ade6`): 12.6× smaller with byte-identical extracted text.

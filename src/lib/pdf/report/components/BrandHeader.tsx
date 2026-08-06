@@ -62,11 +62,21 @@ const styles = StyleSheet.create({
   },
 });
 
+// Deliberately a separate, small asset rather than the 512px `logo-mark.png`
+// the web UI uses. `@react-pdf` cannot share one image across pages: the
+// decode cache keys on the src string and returns null for a Buffer
+// (`@react-pdf/image` getCacheKey), and the renderer hands pdfkit
+// `node.image.data`, a Buffer, so pdfkit's string-keyed `_imageRegistry`
+// never matches either. Every page therefore embeds its own copy, and the
+// only lever on report size is how big that copy is.
+//
+// 96px renders the 22pt logo at roughly 314 DPI. At 512px the header logo
+// alone was 94.7% of a 3.86 MB report.
 let logoMark: Buffer | null = null;
 
 try {
   logoMark = fs.readFileSync(
-    path.join(process.cwd(), "public", "logo-mark.png")
+    path.join(process.cwd(), "public", "logo-mark-report.png")
   );
 } catch {
   logoMark = null;

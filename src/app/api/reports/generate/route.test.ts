@@ -77,6 +77,8 @@ function fakeAdminClient(
     organisations: { name: orgName },
   };
 
+  const reportRows: Array<Record<string, unknown>> = [];
+
   return {
     from(table: string) {
       if (table === "assessments") {
@@ -98,13 +100,50 @@ function fakeAdminClient(
       }
 
       if (table === "reports") {
+        // Stateful, because the route now claims before rendering and
+        // publishes the gcs_url afterwards. A fake that always reports "no
+        // row" would let a broken claim protocol pass.
         const query = {
           select: () => query,
           eq: () => query,
           order: () => query,
           limit: () => query,
-          maybeSingle: async () => ({ data: null, error: null }),
-          insert: async () => ({ error: null }),
+          maybeSingle: async () => ({ data: reportRows[0] ?? null, error: null }),
+          upsert: (values: Record<string, unknown>) => {
+            if (reportRows.length === 0) {
+              reportRows.push({ id: "report-1", ...values });
+              return {
+                select: () => ({
+                  maybeSingle: async () => ({ data: { id: "report-1" }, error: null }),
+                }),
+              };
+            }
+            // ignoreDuplicates: the conflicting row is not returned.
+            return {
+              select: () => ({
+                maybeSingle: async () => ({ data: null, error: null }),
+              }),
+            };
+          },
+          update: (values: Record<string, unknown>) => {
+            Object.assign(reportRows[0] ?? {}, values);
+            const chain = {
+              eq: () => chain,
+              lt: () => chain,
+              select: () => ({
+                maybeSingle: async () => ({ data: reportRows[0] ?? null, error: null }),
+              }),
+              then: (resolve: (value: { error: null }) => void) =>
+                resolve({ error: null }),
+            };
+            return chain;
+          },
+          delete: () => ({
+            eq: async () => {
+              reportRows.length = 0;
+              return { error: null };
+            },
+          }),
         };
         return query;
       }

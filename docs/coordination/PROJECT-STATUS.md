@@ -94,19 +94,19 @@ handoff, since the identical blob merged without conflict.
 
 ## Immediate priorities
 
-1. Fix the **triple PDF generation** race. Every purchase currently triggers
-   three concurrent renders and three `reports` rows, because the existence
-   guard in `src/app/api/reports/generate/route.ts:56-66` reads before any
-   concurrent insert lands. A unique index on `reports.assessment_id` plus an
-   upsert closes it. Not a correctness bug; a cost and noise bug — and since
-   4 August each of those three renders produces a ~3.7 MB document rather than
-   a ~250 KB one, so it now costs three times a much larger render.
-2. **Subset the six embedded typefaces.** Superseded the old "bundle Inter
-   locally" item, which shipped at `292263a` — fonts now load from
-   `public/fonts`, and the jsdelivr dependency is gone. The cost of that fix is
-   size: the PDF went from 250,964 to ~3.86 MB, entirely font data, and the
-   deployed render takes 14.5 s against `maxDuration = 60`. Subsetting to the
-   glyphs actually used should recover most of both.
+1. **Apply migration `20260804000100_reports_unique_assessment.sql`, then merge
+   and deploy `claude/pdf-size-and-race`.** That branch fixes priorities 1 and 2
+   as they were previously written here. The migration is a hard prerequisite:
+   the new code claims against the unique index, and without it PostgREST
+   rejects the upsert with `42P10` and every generation 500s.
+2. ~~Subset the six embedded typefaces.~~ **Withdrawn — the premise was wrong.**
+   The 3,860,209-byte report was not font data; the font programs total
+   **1,211 bytes**. 96.8% was images: three distinct payloads embedded once per
+   page each, dominated by the 512px header logo at 147,028 B × 24 pages.
+   `@react-pdf` cannot share an image across pages (it hands pdfkit a Buffer,
+   and both cache layers key on strings), so the fix was a dedicated 96px
+   asset — 12.6× smaller, measured, with identical extracted text. Subsetting
+   the fonts would have saved about a kilobyte.
 3. Verify the **Stripe webhook → generate chain on the deployed build**. The
    4 August verification invoked the route directly via its shared-secret path,
    so the webhook trigger has still only ever been exercised against
