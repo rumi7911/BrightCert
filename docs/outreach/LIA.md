@@ -4,6 +4,13 @@
 >
 > This operating record is not legal advice. The owner completed a documented
 > self-review and approved the controls on 26 July 2026.
+>
+> **Amendment 1 — 6 August 2026 — WITHDRAWN, NOT APPROVED.** Adding the
+> NCSC/IASME certificate register as a source was proposed and then withdrawn
+> the same day: the register's own page prohibits use for marketing or data
+> research. **The approved source list is unchanged.** The register must not be
+> used to find, qualify, or evidence prospects. See
+> [Amendment 1](#amendment-1--withdrawn--ncsciasme-certificate-register).
 
 | Record | Value |
 |---|---|
@@ -71,7 +78,7 @@ again at sign-off.
 | People | Relevant directors, owners in a corporate capacity, operations, IT, security, compliance, procurement, and MSP leadership/technical roles |
 | Personal data | Name, role, corporate work email, company affiliation, public source URL/date, trigger evidence, and a short business-context personalisation note |
 | Company data | Name, domain, company number, legal entity type, status, size band, sector, and Cyber Essentials trigger |
-| Sources | Public company websites and business-context pages; Companies House; licensed Clay data used for research and enrichment |
+| Sources | Public company websites and business-context pages; Companies House; licensed Clay data used for research and enrichment. **Not** the NCSC/IASME certificate register — see [Amendment 1](#amendment-1--withdrawn--ncsciasme-certificate-register) |
 | Operations | Research, validation, exact-number company verification, human review, manual email, suppression, outcome recording, reporting, and retention cleanup |
 | Recipients/processors | Authorised BrightCert operators and approved infrastructure/processors described in the public privacy notice; no onward sale |
 
@@ -220,3 +227,72 @@ sequence, no open tracking, immediate objection handling, and short retention.
 
 This is not an approval. Sending remains **no-go** until the sign-off fields are
 completed and every item in [LAUNCH-GATE.md](./LAUNCH-GATE.md) is passed.
+
+---
+
+## Amendment 1 — WITHDRAWN — NCSC/IASME certificate register
+
+| Record | Value |
+|---|---|
+| Proposed | 6 August 2026 |
+| **Withdrawn** | **6 August 2026, same day, before approval** |
+| Outcome | **Rejected. The approved source list is unchanged.** |
+| Reason | The register's own page prohibits use for marketing or data research |
+
+This record is kept rather than deleted so the question is not reopened without
+the reason being visible.
+
+### What was proposed
+
+Adding the public NCSC/IASME Cyber Essentials certificate register
+(<https://iasme.co.uk/cyber-essentials/ncsc-certificate-search/>) as a source,
+to supply the `renewal` trigger. It is the only public source carrying a dated
+Cyber Essentials expiry, and [ICP.md](./ICP.md) rates published
+certification expiry as a Strong trigger.
+
+### Why it was withdrawn
+
+The certificate search page states:
+
+> Please note this search function is solely for the use of checking
+> certification and must not be used for marketing, data research, or any other
+> purpose.
+
+That prohibits both intended uses — finding prospects (data research) and
+evidencing outreach (marketing). The page is also behind a Cloudflare human
+verification challenge, and the search refuses an empty query, which is
+consistent with the stated restriction rather than incidental to it.
+
+This is not a technicality that a careful LIA could work around:
+
+- **The balancing test cannot survive it.** §3 turns on whether a contact would
+  reasonably expect the approach given the source. A source used in direct
+  breach of its own stated terms fails that limb on its face, and no safeguard
+  elsewhere in this record compensates.
+- **The safeguard in §3 requires "public business-context or licensed sources
+  with URL and date lineage."** A source whose licence terms exclude this use is
+  not a licensed source for this use.
+- **Reputational exposure is severe and specific.** IASME is the accreditation
+  body for the scheme BrightCert sells readiness for. Mining their register to
+  cold-email their certificate holders, against their published terms, risks the
+  one relationship the business can least afford to damage — and BrightCert
+  already has to be careful to state it is not a Certification Body.
+
+### Narrow use that remains permitted
+
+Checking the certification status of a company already identified through an
+approved source is what the page says the search is for, and is unaffected.
+
+But that use cannot feed the campaign: the register may not be cited as
+`trigger_evidence_url`, and an expiry date read from it may not become the
+reason for an email. A `renewal` trigger must be evidenced from the **company's
+own published material** — its trust page, certificate badge, or an
+announcement it made itself — which falls under the already-approved "public
+company websites and business-context pages".
+
+### Consequence
+
+[TRIGGER-RESEARCH-METHOD.md](./TRIGGER-RESEARCH-METHOD.md) named the register as
+its primary source for the direct-SME segment. That section is withdrawn there
+too. Sources B (Contracts Finder) and C (company assurance material) are
+unaffected and become primary.
