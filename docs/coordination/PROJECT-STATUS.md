@@ -1,17 +1,20 @@
 # BrightCert project status
 
-Last reconciled: 6 August 2026, 20:45 BST
+Last reconciled: 8 August 2026, 21:00 BST
 
-Reconciled by: Claude Code
+Reconciled by: Codex
 
-Integrated coordination commit: `b46e957`.
+Local integrated coordination commit: `572ae58` (not pushed or deployed).
 
 ## Production
 
 - `https://brightcert.co.uk` resolves to Vercel deployment
   `dpl_95sCzWQSMZPQw14ie1T18RZrs6r8`
   (`brightcert-msexd7b0m`), Ready, created 6 August 2026 20:27 BST.
-- Local `main`, `origin/main` and the deployed build are all `b46e957`.
+- The deployed build and `origin/main` remain at `b46e957`. Local `main` is at
+  `572ae58`, seven commits ahead, after locally integrating the Contracts Finder
+  helper and its output-path confinement fix. Those local commits are not
+  pushed or deployed.
 - **The report PDF customers receive changed twice.** The redesigned document
   went live 4 August: 24 pages, six typefaces embedded from `public/fonts`
   rather than fetched from jsdelivr at render time. On 6 August it shrank from
@@ -49,6 +52,7 @@ was deployed, while local inspection made it look shipped.
 |---|---|---|---|
 | Social infographic system | `codex/social-infographic-system` | Integrated at `47515ea` | Complete |
 | Integrated signal sprint | `codex/integrated-signal-sprint` | Integrated at `aaf55a4` | Four founder drafts held at `Status: Founder review` |
+| Contracts Finder helper and review | `claude/contracts-finder`, `codex/contracts-finder-review` | Integrated locally at `572ae58`; not pushed | Source A withdrawn; Source B is an MSP-candidate source; output confined to CSV files under `outreach/runs/` |
 | PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; retest closed 3 Aug on `claude/pdf-production-retest` |
 | PDF sandbox retest | `claude/pdf-production-retest` | Integrated at `6b3d800` | Closed the final launch-gate row. Conflicts with `codex/reminder-evidence-integration` on `LAUNCH-GATE.md` |
 | Launch evidence backup | `claude/evidence-backup` | Integrated at `7a13d6c` | Complete |
@@ -129,12 +133,15 @@ handoff, since the identical blob merged without conflict.
    against `next dev`. This is the last untested link in the paid lifecycle, and
    closing it costs a real £199 purchase at roughly £3.19 in non-refundable
    fees. Owner decision.
-4. **Produce real outreach prospects.** The pipeline is built, rehearsed and
-   gate-verified but holds only the three fictitious rehearsal rows from
-   26 July — zero real prospects. Method is on
-   `claude/outreach-trigger-research`. The gating unknown is whether the IASME
-   register supports postcode search, which only a human browser can establish
-   since IASME 403s automated requests.
+4. **Complete the first real outreach cohort.** Source A (the IASME certificate
+   register) is withdrawn because its page forbids marketing and data research.
+   A live Contracts Finder run on 8 August produced 170 candidate notices; the
+   recent awarded suppliers were triaged as MSP candidates, but none is ready
+   to send. A timed Source C pass assessed 26 companies: four direct SMEs can
+   advance to mailbox, suppression, duplicate and owner checks; 19 were
+   excluded and three held. The private research file is mode 600 and remains
+   outside Git. The first sprint still needs 24 fully verified direct SMEs and
+   six fully verified MSPs before T0; there are currently zero send-ready rows.
 5. Decide on report retention. Nothing deletes a GCS object — not the refund
    handler, not row cleanup — so report PDFs persist indefinitely with no
    deletion path. Four orphaned objects remain in the bucket, one

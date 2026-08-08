@@ -7,16 +7,16 @@
 - Audience: UK SME owners and operations leaders considering Cyber Essentials
 - CTA: Start the free readiness assessment
 - Status: Founder review
-- Fact-check date: 2026-07-30
+- Fact-check date: 2026-08-08
 - Publication: Blocked until source recheck, founder approval, and owner-set schedule
 
 ## Primary sources
 
 | Claim | Primary source | Retrieved |
 |---|---|---:|
-| Certification has self-led and Certification Body supported routes managed through IASME | https://www.ncsc.gov.uk/cyberessentials/overview | 30 Jul 2026 |
-| BrightCert provides readiness assessment and preparation support but does not issue certification | https://brightcert.co.uk/how-it-works | 30 Jul 2026 |
-| The BrightCert assessment can be started free | https://brightcert.co.uk/pricing | 30 Jul 2026 |
+| Certification has self-led and Certification Body supported routes managed through IASME | https://www.ncsc.gov.uk/cyberessentials/overview | 8 Aug 2026 |
+| BrightCert provides readiness assessment and preparation support but does not issue certification | https://brightcert.co.uk/how-it-works | 8 Aug 2026 |
+| The BrightCert assessment can be started free | https://brightcert.co.uk/pricing | 8 Aug 2026 |
 
 ## Founder LinkedIn post
 
@@ -49,7 +49,7 @@ BrightCert helps organisations prepare for Cyber Essentials. It does not issue c
 
 ## Approval
 
-- [x] Claims checked against the recorded primary sources on 30 July 2026.
+- [x] Claims checked against the recorded primary sources on 8 August 2026.
 - [x] UK English, one CTA, no em dash, and the readiness disclaimer are present.
 - [ ] Muhammad has approved the claims and publishing copy.
 - [ ] Publication timing has been selected.
