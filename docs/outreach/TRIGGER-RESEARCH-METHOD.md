@@ -26,81 +26,136 @@ Every row sourced this way arrives with `trigger`, `trigger_evidence_url` and
 evidence. What remains is ordinary verification work — Companies House, size,
 named contact — which is mechanical.
 
-The rest of this document is three such sources, strongest first.
+The rest of this document is those sources. One of the three originally
+listed here has since been withdrawn as prohibited — it is kept below with the
+reason, not deleted.
 
 ---
 
-## Source A — the IASME certificate register (`renewal`)
+## Source A — the IASME certificate register — **WITHDRAWN, DO NOT USE**
 
-**Why this is the best source for this campaign.** Cyber Essentials
-certificates last 12 months, and the public register carries the expiry date.
-A company 1–3 months from expiry has a dated, public, business-context reason to
-act, tied to a decision it has already made once. The ICP's strength table lists
-"published certification expiry/renewal" as **Strong** — eligible if the other
-gates pass, with no human-review escalation needed on trigger quality alone.
+> **This source is prohibited.** The NCSC/IASME certificate search page states:
+>
+> > Please note this search function is solely for the use of checking
+> > certification and must not be used for marketing, data research, or any
+> > other purpose.
+>
+> That rules out both uses this document originally proposed — finding
+> prospects and evidencing outreach. Established 6 August 2026. The
+> corresponding LIA change was withdrawn the same day, before approval:
+> [LIA Amendment 1](./LIA.md#amendment-1--withdrawn--ncsciasme-certificate-register).
 
-Register: <https://iasme.co.uk/cyber-essentials/ncsc-certificate-search/>
+The register was going to be the primary source for this segment, because it is
+the only public place carrying a dated Cyber Essentials expiry. It cannot be
+used. Do not reopen this without reading the withdrawal record first.
 
-It is searchable by company name and certificate number; searching by postcode
-is reported by third parties but **confirm that in the browser before relying on
-it** — it materially changes how you work the source.
+**What is still permitted:** checking the certification status of a company you
+have already identified through an approved source. That is what the page says
+the search is for. It cannot feed the campaign though — the register may not be
+cited as `trigger_evidence_url`, and an expiry date read from it may not become
+the reason for an email.
 
-**This must be done in a browser.** IASME returns 403 to automated requests on
-every path including the site root, established 3 August. Do not try to script
-it; that is also the wrong instinct here, because the LIA requires human
-approval of every row anyway.
+### The `renewal` trigger is not dead, but its evidence must change
 
-### How to work it
+A renewal trigger is still Strong under [ICP.md](./ICP.md). What changed is
+where the evidence may come from: the **company's own published material**, not
+the register. In practice that means a trust or security page that states a
+certification date or expiry, a certificate badge the company displays itself,
+or an announcement it published. All of that falls under the already-approved
+"public company websites and business-context pages", and it is found the same
+way as Source C.
 
-1. Search by area or by name patterns matching the allowed sectors in
-   [ICP.md](./ICP.md).
-2. Record, for each result: company name, certificate level, issue date, expiry
-   date, and the result URL.
-3. Keep only companies whose expiry falls **1–3 months ahead**. Sooner and the
-   decision is already made; later and the trigger is not yet current.
-4. Discard CE Plus holders for the direct-SME pitch unless the readiness
-   framing still fits — they are further along than the offer assumes.
-
-### The honest caveat
-
-The register only lists certificates issued in the last 12 months, so lapsed
-holders drop off entirely. That cuts both ways: you cannot find companies that
-let certification lapse (arguably a better prospect), but everything you *do*
-find is current by construction.
+This is a genuine loss. The register offered a sorted queue of dated deadlines;
+company-published expiry dates are scattered and much rarer. Expect renewal to
+become an occasional find inside Source C rather than a source of its own.
 
 ---
 
-## Source B — Contracts Finder (`tender_requirement`, `supply_chain`)
+## Source B — Contracts Finder (`tender_requirement`, `supply_chain`, `msp_client_service`)
 
 Public-sector contract notices that require or score Cyber Essentials, and the
-suppliers around them. The ICP rates "live tender/framework requires or scores
-Cyber Essentials" as **Strong**.
+suppliers around them.
 
-Contracts Finder has a public API — `POST api/rest/2/search_notices/{MimeType}`,
-JSON/XML/CSV/OCDS, keyword and date search, with OAuth 2.0 only for protected
-endpoints:
+Contracts Finder has a public API — `POST api/rest/2/search_notices/json`,
+keyword and date search, no auth for public endpoints:
 <https://www.contractsfinder.service.gov.uk/apidocumentation/home>
 
-Two distinct plays, and they produce different rows:
+There is a helper for it:
 
-| Play | Who you contact | Trigger label |
-|---|---|---|
-| A notice requires Cyber Essentials → find SMEs bidding or likely to bid | The bidder | `tender_requirement` |
-| An awarded contract names a supplier → that supplier's own suppliers need it | The sub-supplier | `supply_chain` |
+```sh
+npm run outreach:contracts-finder -- \
+  --output outreach/runs/cf-candidates.csv \
+  --statuses Open,Awarded,Closed
+```
 
-The first is cleaner. The second requires a documented chain and will usually
-land as **Medium** strength, needing human review to connect the signal to the
-named role — budget for that.
+It writes **candidates for triage, never prospect rows**, and refuses to write
+into `.outreach/`. The one thing it does that matters: the API's keyword search
+is fuzzy, so every result is re-checked against the notice text before it is
+kept. Quote the phrase and the API is accurate; leave it unquoted and it returns
+unrelated notices — an unquoted `cyber essentials` search returned a Surrey
+County Council social-care notice with score 1 and no mention of the scheme.
 
-Also check the Find a Tender Service for higher-value notices.
+### What it actually yields — measured 6 August 2026
+
+Run against the live API, exact phrase `"cyber essentials"`:
+
+| Status | Notices |
+|---|---:|
+| **Open** | **0** |
+| Awarded | 70 |
+| Closed | 154 |
+| After de-duplication | 170 |
+| With a named awarded supplier | 70 |
+
+**Zero open notices.** The whole "find SMEs bidding on a notice that requires
+Cyber Essentials" play has nothing to work with on any given day, and even when
+a notice exists the API does not name the bidders — you would be inferring who
+might bid, which is the ICP's **Weak** row. Treat open notices as a monitoring
+signal, not a source: re-run the helper periodically rather than expecting a
+pipeline from it.
+
+Of the 70 named suppliers, only **6 were awarded in 2025 or later**; the
+distribution runs back to 2015. An award from 2018 evidences nothing current.
+
+### The reframing: this is an MSP source, not an SME source
+
+The named suppliers are overwhelmingly IT, security and software firms — Logiq
+Consulting, Prism Infosec, Synergi Software, Claranet, Select Technology
+Systems, 6ByThree Digital. That makes them poor direct-SME prospects: winning a
+contract that required Cyber Essentials means they already hold it.
+
+It makes them decent **MSP-segment** candidates. An IT provider that won public
+work requiring Cyber Essentials is an evidence-backed signal that the scheme is
+commercially relevant to them and their clients, which is what the MSP profile
+in [ICP.md](./ICP.md) asks for. Use `msp_client_service`.
+
+Two cautions before spending time there:
+
+- The MSP profile excludes providers with an obvious competing readiness or
+  evidence product. Several of these firms are security consultancies and some
+  are IASME-licensed Certification Bodies — the competitor check is not a
+  formality here, it is the main filter.
+- **IASME Consortium Ltd itself appears in the results.** A useful reminder that
+  the list is real, and that a named supplier is a starting point, not a
+  qualified prospect.
+
+Realistically this source is worth roughly the campaign's **30 MSP rows**, not
+its 120 SME rows. Recent awards to non-Certification-Body IT providers are the
+subset worth working.
 
 ### Where this gets weak
 
 A company merely *appearing* on a tender list is not a trigger. The notice must
-name Cyber Essentials in its requirements or scoring, and you must be able to
-link the specific company to that specific notice. "Company operates in a sector
-that sells to government" is the ICP's **Weak** row: block and research a better
-trigger.
+name Cyber Essentials in its requirements or scoring, and you must link the
+specific company to that specific notice. "Company operates in a sector that
+sells to government" is the ICP's **Weak** row: block and research a better
+trigger. The helper leaves `triage_decision` and `triage_note` blank precisely
+because it cannot make that judgement.
+
+Notice pages 403 automated requests, so `notice_url` must be opened in a
+browser — which the evidence standard requires anyway.
+
+Also check the Find a Tender Service for higher-value notices.
 
 ---
 
@@ -162,7 +217,7 @@ findable — that is a replace, not a puzzle.
 
 | Column | Comes from | Notes |
 |---|---|---|
-| `trigger`, `trigger_evidence_url` | Source A/B/C | The reason you found them |
+| `trigger`, `trigger_evidence_url` | Source B/C | The reason you found them |
 | `source_url`, `source_date` | the page you actually read | `YYYY-MM-DD`, the date *you* checked |
 | `company_name`, `company_number`, `legal_entity_type` | Companies House | `verify` re-checks and overwrites provisional values |
 | `employee_band` | licensed enrichment or company source | band, never false precision |
@@ -221,13 +276,29 @@ repository.
 
 ## Realistic throughput
 
-Sources A and C need a browser and judgement. Expect roughly **6–10 qualified
-rows per focused hour** once the method is familiar, lower at first, and lower
-again for the MSP segment where the competitor check adds a step.
+**The original estimate no longer holds, and nothing has replaced it yet.**
 
-120 direct SME rows is therefore on the order of 15–20 hours of research. That
-is the real cost of the campaign, and no tool removes it — the parts a scraper
-automates (name, domain, generic inbox) are the parts the gate rejects.
+It said 6–10 qualified rows per focused hour, so 15–20 hours for the 120 direct
+SME rows. That assumed Source A supplied a sorted queue of dated renewal
+deadlines. Source A is withdrawn, and Source B turns out to be worth roughly the
+30 MSP rows rather than the 120 SME ones.
 
-Front-load Source A. It is the only source where the trigger, the deadline and
-the relevance arrive together in one row of a public register.
+What that leaves, honestly:
+
+| Segment | Rows needed | Source | State |
+|---|---:|---|---|
+| MSP | 30 | B, recent awards to non-CB IT providers | ~22 candidates awarded 2024 or later; needs the competitor check |
+| Direct SME | 120 | **C, essentially alone** | No measured rate |
+
+Source C — finding companies whose own material names Cyber Essentials — is now
+carrying the entire SME segment on its own. It was written up as the third and
+weakest source, and it has not been measured.
+
+**Do not plan a schedule from the old number.** Work Source C by hand for one
+timed hour, count the rows that clear the ICP bar, and multiply from that. If
+the rate is 2–3 an hour rather than 6–10, the 120-row target needs revisiting
+with the owner rather than absorbing quietly into a longer timeline.
+
+What has not changed: no tool removes this cost. The parts a scraper automates
+— name, domain, generic inbox — are the parts the gate rejects, and the part
+that matters, a defensible trigger, is the part nothing automates.
