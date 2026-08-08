@@ -13,6 +13,7 @@ import {
   buildSearchBody,
   CANDIDATE_COLUMNS,
   filterCandidates,
+  resolveCandidateOutputPath,
   searchEndpoint,
   summarise,
   type NoticeItem,
@@ -52,14 +53,9 @@ function parseArgs(argv: readonly string[]): Args {
     }
   }
 
-  const output = get("output");
-  if (!output) throw new Error("--output is required");
-  if (output.startsWith(".outreach/")) {
-    // The canonical prospect file is human-owned; nothing automated writes there.
-    throw new Error(
-      "Refusing to write into .outreach/ — this tool produces triage candidates, not prospects"
-    );
-  }
+  const outputArg = get("output");
+  if (!outputArg) throw new Error("--output is required");
+  const output = resolveCandidateOutputPath(outputArg);
 
   return {
     phrase: get("phrase") ?? "cyber essentials",

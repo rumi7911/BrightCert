@@ -7,6 +7,7 @@ import {
   filterCandidates,
   noticeUrl,
   normaliseText,
+  resolveCandidateOutputPath,
   suggestedPlay,
   summarise,
   toCandidateRow,
@@ -190,6 +191,27 @@ describe("noticeUrl", () => {
   it("builds a browser-openable notice link", () => {
     expect(noticeUrl("abc-123")).toBe(
       "https://www.contractsfinder.service.gov.uk/notice/abc-123"
+    );
+  });
+});
+
+describe("resolveCandidateOutputPath", () => {
+  const cwd = "/workspace/brightcert";
+
+  it("accepts candidate CSVs inside the private run directory", () => {
+    expect(resolveCandidateOutputPath("outreach/runs/cf-candidates.csv", cwd)).toBe(
+      "/workspace/brightcert/outreach/runs/cf-candidates.csv"
+    );
+  });
+
+  it.each([
+    ".outreach/prospects.csv",
+    "outreach/runs/../../package.json",
+    "/workspace/brightcert/.outreach/prospects.csv",
+    "/tmp/cf-candidates.csv",
+  ])("rejects output outside outreach/runs: %s", (output) => {
+    expect(() => resolveCandidateOutputPath(output, cwd)).toThrow(
+      "Output must be a CSV beneath outreach/runs/"
     );
   });
 });

@@ -15,6 +15,8 @@
  * before it is emitted.
  */
 
+import { extname, isAbsolute, relative, resolve, sep } from "node:path";
+
 const SEARCH_ENDPOINT =
   "https://www.contractsfinder.service.gov.uk/api/rest/2/search_notices/json";
 
@@ -94,6 +96,26 @@ export function searchEndpoint(): string {
 
 export function noticeUrl(id: string): string {
   return `${NOTICE_URL_PREFIX}${id}`;
+}
+
+export function resolveCandidateOutputPath(
+  output: string,
+  cwd = process.cwd()
+): string {
+  const runsDirectory = resolve(cwd, "outreach/runs");
+  const resolvedOutput = resolve(cwd, output);
+  const relativeOutput = relative(runsDirectory, resolvedOutput);
+  const isInsideRuns =
+    relativeOutput.length > 0 &&
+    relativeOutput !== ".." &&
+    !relativeOutput.startsWith(`..${sep}`) &&
+    !isAbsolute(relativeOutput);
+
+  if (!isInsideRuns || extname(resolvedOutput).toLowerCase() !== ".csv") {
+    throw new Error("Output must be a CSV beneath outreach/runs/");
+  }
+
+  return resolvedOutput;
 }
 
 /**
