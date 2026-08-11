@@ -35,7 +35,7 @@ SHOT 4 — the report and Google Cloud
 ================================================================================
 Unlocking the full report is a one-off payment. The report is generated server-side and stored in Google Cloud Storage, then served through a signed, expiring URL, so the file is never public.
 
-Twenty-four pages: an executive summary, every control area scored, and a prioritised remediation plan the business can hand to whoever does the work.
+Nineteen pages: an executive summary, every control area scored, and a prioritised remediation plan the business can hand to whoever does the work.
 
 ================================================================================
 SHOT 5 — the honest boundary

@@ -20,7 +20,7 @@ pipeline or Node 22.
 | Hide or blur the sidebar email (`cognumiltd@gma…`) | It is visible on the results page and does not belong in a public video |
 | Browser at 1920×1080, no extensions bar, no other tabs | The current screenshots show three unrelated tabs |
 | Close DevTools | Nothing should suggest a staged environment |
-| Have the 24-page PDF downloaded and ready to scroll | Generating it live risks a 12-second dead pause |
+| Have the demo PDF downloaded and ready to scroll (`~/Desktop/brightcert-demo-report.pdf`) | Generating it live risks a 12-second dead pause |
 
 **Claim discipline — these are project rules, not style preferences:**
 
@@ -67,7 +67,7 @@ it, but a clip shorter than its narration cannot be fixed afterwards.
 | 4 — report and GCS | 22.3 s | 27 s |
 | 5 — the boundary | 10.0 s | 13 s |
 | 6 — close | 11.6 s | 15 s |
-| **Total** | **1:58** | |
+| **Total** | **1:59** | |
 
 Record the screen **silently** — no voice, no system sound. Narration is laid
 over afterwards, so a fluffed take costs one shot rather than the whole video.
@@ -129,14 +129,14 @@ Say "Gemini" out loud. Do not say "AI" or "the model".
 
 ### Shot 4 — the report and Google Cloud (1:05 – 1:35)
 
-**On screen:** the unlock panel, then the downloaded 24-page PDF, scrolling
+**On screen:** the unlock panel, then the downloaded 19-page PDF, scrolling
 through the executive summary, a control-area page, and the remediation plan.
 
 > Unlocking the full report is a one-off payment. The report itself is generated
 > server-side and stored in Google Cloud Storage, then served through a signed,
 > expiring URL — so the file is never public.
 >
-> Twenty-four pages: executive summary, every control area scored, and a
+> Nineteen pages: executive summary, every control area scored, and a
 > prioritised remediation plan the business can hand to whoever does the work.
 
 *Optional, only if you want the engineering detail:* the report renders in about
@@ -175,7 +175,7 @@ over-claiming is the obvious failure mode.
 | 49%, control areas 15/45/75/65/45, 11 issues | Assessment `6e262696`, submitted 10 Aug 2026 22:04 |
 | Gemini writes gaps and remediation | 5 `control_scores` rows, 4–5 gaps and 3 remediation steps each |
 | Report stored in Google Cloud Storage, signed URL | `PDF-SIZE-RACE-VERIFICATION-2026-08-06.md` |
-| 24 pages, ~308 KB, ~12 s | Same, measured on the deployed build |
+| 19 pages, 251,460 B, 9.3 s | The rumi ltd report, generated 11 Aug. Page count scales with the number of gaps and actions Gemini produces, so it is not a fixed property of the product |
 | Single-flight generation | Same — three concurrent callers, one render |
 | £199 one-off | `checkout/route.ts` inline `price_data`, `unit_amount: 19900` |
 | Not a Certification Body | Project rule; stated on the results page |
