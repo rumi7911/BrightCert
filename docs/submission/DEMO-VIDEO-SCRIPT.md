@@ -36,32 +36,41 @@ pipeline or Node 22.
 
 ---
 
-## Narration
+## Narration — generated, done
 
-Generated with **ElevenLabs**, one audio file per shot. The exact text to paste
-is in [`NARRATION.txt`](./NARRATION.txt) — numbers are spelled where a TTS engine
-would otherwise misread them, but the wording matches the shot list below.
+Six MP3s in [`narration/`](./narration/), generated with **ElevenLabs**
+(`eleven_multilingual_v2`, voice *George*, British). Regenerate or change voice:
 
-A macOS `say` version was built and rejected: the system voices sound
+```sh
+docs/submission/build-narration.sh                        # George, default
+docs/submission/build-narration.sh IKne3meq5aSn9XLyUdCD   # Charlie
+```
+
+The script parses [`NARRATION.txt`](./NARRATION.txt), so the spoken words and the
+written script cannot drift apart. Voice ids are listed in the script header.
+It needs `ELEVENLABS_API_KEY` in `.env.local`; the key in use is scoped to
+text-to-speech only and has no `voices_read` or `user_read` permission, so voice
+ids must be hard-coded rather than looked up.
+
+A macOS `say` version was built first and rejected — the system voices sound
 synthetic in a way that undercuts the product.
+
+**Measured durations. These are the recording targets.** Record each clip *at
+least* this long: trailing screen time is trimmed when the audio is laid over
+it, but a clip shorter than its narration cannot be fixed afterwards.
+
+| Shot | Narration | Record at least |
+|---|---:|---:|
+| 1 — the problem | 25.1 s | 30 s |
+| 2 — the assessment | 16.1 s | 20 s |
+| 3 — **Gemini** | 32.9 s | 40 s |
+| 4 — report and GCS | 22.3 s | 27 s |
+| 5 — the boundary | 10.0 s | 13 s |
+| 6 — close | 11.6 s | 15 s |
+| **Total** | **1:58** | |
 
 Record the screen **silently** — no voice, no system sound. Narration is laid
 over afterwards, so a fluffed take costs one shot rather than the whole video.
-
-Each clip must be **at least** as long as its narration. Trailing screen time is
-trimmed when the audio is laid over it; a clip shorter than its audio cannot be
-fixed afterwards. Measure the ElevenLabs output first, then record to it — the
-figures below are indicative only, from a 165 wpm reference read.
-
-| Shot | Indicative narration | Record at least |
-|---|---:|---:|
-| 1 — the problem | ~26 s | 30 s |
-| 2 — the assessment | ~16 s | 20 s |
-| 3 — **Gemini** | ~33 s | 40 s |
-| 4 — report and GCS | ~22 s | 26 s |
-| 5 — the boundary | ~10 s | 13 s |
-| 6 — close | ~10 s | 13 s |
-| **Total** | **~1:56** | |
 
 ---
 
