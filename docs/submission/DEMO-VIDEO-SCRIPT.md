@@ -36,6 +36,42 @@ pipeline or Node 22.
 
 ---
 
+## Narration: generated, not spoken
+
+**No camera and no microphone are needed.** The July promo's narration was made
+with the macOS `say` command using a UK system voice, and the demo uses the same
+approach:
+
+```sh
+videos/demo-narration/build-narration.sh            # default voice, Daniel
+videos/demo-narration/build-narration.sh Serena     # any macOS en_GB voice
+```
+
+That writes one WAV per shot to `videos/demo-narration/shots/`. Numbers and
+product names are spelled phonetically in the script because `say` reads
+"gemini-2.5-flash" and "49%" badly — the spoken wording still matches the shot
+list below in substance.
+
+**Measured durations, voice Daniel at 165 wpm — these are the recording
+targets.** Record each shot *at least* this long; trailing screen time is
+trimmed when the audio is laid over it, but a shot shorter than its narration
+cannot be fixed afterwards.
+
+| Shot | Narration | Record at least |
+|---|---:|---:|
+| 1 — the problem | 25.6 s | 30 s |
+| 2 — the assessment | 16.3 s | 20 s |
+| 3 — **Gemini** | 32.6 s | 40 s |
+| 4 — report and GCS | 21.7 s | 26 s |
+| 5 — the boundary | 9.8 s | 13 s |
+| 6 — close | 10.3 s | 13 s |
+| **Total** | **1:56** | |
+
+Record **silently** — no voice, no system sound. Narration is laid over
+afterwards, so a fluffed take costs one shot, not the whole video.
+
+---
+
 ## Shot list
 
 Total target: **1:50 – 2:10**. Timings are guides, not marks to hit exactly.
