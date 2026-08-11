@@ -1,0 +1,50 @@
+BrightCert submission demo — narration script
+Generate one audio file per shot. Written for ElevenLabs: natural punctuation,
+numbers spelled where a TTS engine would otherwise misread them.
+
+Every figure here is verified. See DEMO-VIDEO-SCRIPT.md for sources and for the
+claim rules (no certification claim, no unbuilt tiers, no £99 without the cap).
+
+================================================================================
+SHOT 1 — the problem
+================================================================================
+Cyber Essentials is the UK government-backed security standard. For a small business, it usually means two weeks of paperwork, or two to five thousand pounds for a consultant.
+
+BrightCert is a readiness service. It gets a company prepared in about two hours. And to be clear up front: it doesn't issue the certificate. That comes from a licensed Certification Body. What BrightCert does is get you ready to pass.
+
+================================================================================
+SHOT 2 — the assessment
+================================================================================
+The assessment is sixty plain-English questions across the five Cyber Essentials control areas: firewalls, secure configuration, user access, malware protection, and update management.
+
+There's no payment to start, and your progress saves as you go.
+
+================================================================================
+SHOT 3 — Gemini does the analysis        <-- the reason the video exists
+================================================================================
+When you submit, the answers go to Google's Gemini API. Gemini 2.5 Flash.
+
+Gemini scores each of the five control areas, writes the gap analysis in plain English, and produces a prioritised remediation plan.
+
+This is a real assessment. Forty-nine percent. Firewalls at fifteen. Secure configuration at forty-five. User access at seventy-five. Eleven issues to fix, each with a specific next step.
+
+And none of that text is templated. Gemini wrote it from these answers.
+
+================================================================================
+SHOT 4 — the report and Google Cloud
+================================================================================
+Unlocking the full report is a one-off payment. The report is generated server-side and stored in Google Cloud Storage, then served through a signed, expiring URL, so the file is never public.
+
+Twenty-four pages: an executive summary, every control area scored, and a prioritised remediation plan the business can hand to whoever does the work.
+
+================================================================================
+SHOT 5 — the honest boundary
+================================================================================
+That boundary is stated in the product, in the report, and in every email. BrightCert prepares you. An IASME-licensed Certification Body certifies you.
+
+================================================================================
+SHOT 6 — close
+================================================================================
+BrightCert. Built on the Gemini API and Google Cloud, for UK small businesses that need Cyber Essentials without the two-week detour.
+
+brightcert dot co dot uk

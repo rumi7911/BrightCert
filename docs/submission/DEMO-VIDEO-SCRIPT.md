@@ -36,39 +36,32 @@ pipeline or Node 22.
 
 ---
 
-## Narration: generated, not spoken
+## Narration
 
-**No camera and no microphone are needed.** The July promo's narration was made
-with the macOS `say` command using a UK system voice, and the demo uses the same
-approach:
+Generated with **ElevenLabs**, one audio file per shot. The exact text to paste
+is in [`NARRATION.txt`](./NARRATION.txt) — numbers are spelled where a TTS engine
+would otherwise misread them, but the wording matches the shot list below.
 
-```sh
-videos/demo-narration/build-narration.sh            # default voice, Daniel
-videos/demo-narration/build-narration.sh Serena     # any macOS en_GB voice
-```
+A macOS `say` version was built and rejected: the system voices sound
+synthetic in a way that undercuts the product.
 
-That writes one WAV per shot to `videos/demo-narration/shots/`. Numbers and
-product names are spelled phonetically in the script because `say` reads
-"gemini-2.5-flash" and "49%" badly — the spoken wording still matches the shot
-list below in substance.
+Record the screen **silently** — no voice, no system sound. Narration is laid
+over afterwards, so a fluffed take costs one shot rather than the whole video.
 
-**Measured durations, voice Daniel at 165 wpm — these are the recording
-targets.** Record each shot *at least* this long; trailing screen time is
-trimmed when the audio is laid over it, but a shot shorter than its narration
-cannot be fixed afterwards.
+Each clip must be **at least** as long as its narration. Trailing screen time is
+trimmed when the audio is laid over it; a clip shorter than its audio cannot be
+fixed afterwards. Measure the ElevenLabs output first, then record to it — the
+figures below are indicative only, from a 165 wpm reference read.
 
-| Shot | Narration | Record at least |
+| Shot | Indicative narration | Record at least |
 |---|---:|---:|
-| 1 — the problem | 25.6 s | 30 s |
-| 2 — the assessment | 16.3 s | 20 s |
-| 3 — **Gemini** | 32.6 s | 40 s |
-| 4 — report and GCS | 21.7 s | 26 s |
-| 5 — the boundary | 9.8 s | 13 s |
-| 6 — close | 10.3 s | 13 s |
-| **Total** | **1:56** | |
-
-Record **silently** — no voice, no system sound. Narration is laid over
-afterwards, so a fluffed take costs one shot, not the whole video.
+| 1 — the problem | ~26 s | 30 s |
+| 2 — the assessment | ~16 s | 20 s |
+| 3 — **Gemini** | ~33 s | 40 s |
+| 4 — report and GCS | ~22 s | 26 s |
+| 5 — the boundary | ~10 s | 13 s |
+| 6 — close | ~10 s | 13 s |
+| **Total** | **~1:56** | |
 
 ---
 
