@@ -1,17 +1,23 @@
 # BrightCert project status
 
-Last reconciled: 6 August 2026, 20:45 BST
+Last reconciled: 10 August 2026, 23:00 BST
 
 Reconciled by: Claude Code
 
-Integrated coordination commit: `b46e957`.
+Integrated coordination commit: `572ae58`, pushed and deployed.
 
 ## Production
 
 - `https://brightcert.co.uk` resolves to Vercel deployment
-  `dpl_95sCzWQSMZPQw14ie1T18RZrs6r8`
-  (`brightcert-msexd7b0m`), Ready, created 6 August 2026 20:27 BST.
-- Local `main`, `origin/main` and the deployed build are all `b46e957`.
+  `brightcert-jyhg4pzs9`, Ready, created 10 August 2026 22:42 BST.
+- Local `main`, `origin/main` and the deployed build are all `572ae58`. The
+  seven commits that sat unpushed between 6 and 10 August are now pushed.
+- **Both XPRIZE mandatory requirements are verified in production.** Gemini was
+  exercised end-to-end through the deployed build on 10 August: a real
+  browser-submitted assessment produced five scored control areas with generated
+  gaps and remediation. Google Cloud Storage holds the report PDFs, verified
+  6 August. Evidence:
+  [XPRIZE-MANDATORY-REQUIREMENTS-2026-08-10.md](../outreach/XPRIZE-MANDATORY-REQUIREMENTS-2026-08-10.md).
 - **The report PDF customers receive changed twice.** The redesigned document
   went live 4 August: 24 pages, six typefaces embedded from `public/fonts`
   rather than fetched from jsdelivr at render time. On 6 August it shrank from
