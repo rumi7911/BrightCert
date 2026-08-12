@@ -49,7 +49,7 @@ BrightCert doesn't issue the official Cyber Essentials certificate itself; that 
 | Database + Auth | Supabase (PostgreSQL + Supabase Auth, magic link + Google OAuth) |
 | AI engine | **Gemini API** (`gemini-2.5-flash`) — the sole LLM used, live in production for every assessment |
 | File storage | **Google Cloud Storage** — generated PDF reports, served via signed URLs |
-| Payments | Stripe Checkout (one-time + subscription tiers) |
+| Payments | Stripe Checkout (one-time payment for the report unlock) |
 | Email | Resend |
 | Hosting | Vercel |
 
