@@ -7,7 +7,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `09bdd39`
-- **Final commit:** The commit containing this handoff.
+- **Evidence commit:** `f628854` (`docs: record final outreach drafts`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Two account drafts ready for owner review; nothing sent
 
 ## Scope and ownership
