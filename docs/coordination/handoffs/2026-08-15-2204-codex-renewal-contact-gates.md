@@ -7,7 +7,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `e07c957`
-- **Final commit:** The commit containing this handoff.
+- **Evidence commit:** `5921972` (`docs: record renewal contact gates`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Enrichment complete; zero contacts are send-ready
 
 ## Scope and ownership
