@@ -8,6 +8,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `57a8d17`
+- **Evidence commit:** `69cb442` (`docs: record Cobleys live queue evidence`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Exactly one Cobleys row is `ready_manual_send`; nothing sent
 
 ## Scope and ownership
