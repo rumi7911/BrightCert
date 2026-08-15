@@ -1,7 +1,9 @@
 # Mobile dashboard and contact page design
 
-Date: 15 August 2026  
-Branch: `codex/mobile-contact-ux`  
+Date: 15 August 2026
+
+Branch: `codex/mobile-contact-ux`
+
 Worktree: `/Users/rumipro/Documents/Hackathon/brightcert/.worktrees/mobile-contact-ux`
 
 ## Objective
