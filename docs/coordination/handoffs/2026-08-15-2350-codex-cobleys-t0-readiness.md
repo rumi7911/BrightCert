@@ -7,6 +7,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `ee9cc87`
+- **Evidence commit:** `6d90933` (`docs: record Cobleys T0 readiness gate`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Canonical row locally eligible; live queue blocked before
   Companies House verification; nothing sent
 
