@@ -7,7 +7,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `795e919`
-- **Final commit:** The commit containing this handoff.
+- **Evidence commit:** `a16ed02` (`docs: record Hunter mailbox validation`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Hunter validation complete; two contacts ready for owner approval
 
 ## Scope and ownership
