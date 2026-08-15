@@ -120,17 +120,17 @@ function DashboardTopbar({
   unlockAssessmentId?: string;
 }) {
   return (
-    <div className="sticky top-14 z-30 -mx-4 mb-6 flex flex-col gap-3 border-b border-[#0F2044]/[0.07] bg-[#F3F4EC]/85 px-4 py-4 backdrop-blur-md backdrop-saturate-150 sm:flex-row sm:items-end sm:justify-between md:top-0 md:-mx-8 md:px-8">
+    <div className="sticky top-14 z-30 -mx-4 mb-6 flex flex-col gap-3 border-b border-[#0F2044]/[0.07] bg-[#F3F4EC]/85 px-4 py-4 backdrop-blur-md backdrop-saturate-150 md:top-0 md:-mx-8 md:px-8 lg:flex-row lg:items-end lg:justify-between">
       <div>
         <h1 className="font-display text-xl font-bold tracking-tight text-[#0F2044] sm:text-2xl">Dashboard</h1>
         <p className="mt-1 text-sm text-[#64748B]">{subtitle ?? "Your Cyber Essentials readiness overview"}</p>
       </div>
-      <div className="flex shrink-0 items-center gap-2.5">
+      <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto">
         {unlockAssessmentId && (
           <Button
             asChild
             size="sm"
-            className="bg-[#047857] hover:bg-[#065F46]"
+            className="h-11 w-full bg-[#047857] hover:bg-[#065F46] lg:h-9 lg:w-auto"
             title="£99 including VAT with code FOUNDING10 — £100 founding discount from £199, first 10 customers"
           >
             <CheckoutLink assessmentId={unlockAssessmentId}>
@@ -139,7 +139,12 @@ function DashboardTopbar({
             </CheckoutLink>
           </Button>
         )}
-        <Button asChild size="sm" variant={unlockAssessmentId ? "outline" : "cta"}>
+        <Button
+          asChild
+          size="sm"
+          variant={unlockAssessmentId ? "outline" : "cta"}
+          className="h-11 w-full lg:h-9 lg:w-auto"
+        >
           <Link href="/assessment/new">
             <Plus className="h-4 w-4" />
             New Assessment
@@ -154,13 +159,13 @@ function EmptyState() {
   return (
     <div>
       <DashboardTopbar />
-      <Card className="rounded-[16px] p-8 text-center sm:p-12">
+      <Card className="rounded-[16px] p-5 text-center sm:p-8 lg:p-12">
         <IconTile icon={ClipboardList} size="lg" className="mx-auto mb-4" />
         <h2 className="text-lg font-semibold text-[#0F2044]">Start your first assessment</h2>
         <p className="mx-auto mt-2 mb-6 max-w-md text-sm leading-relaxed text-[#64748B]">
           Complete a Cyber Essentials readiness assessment to see your score, identify gaps, and unlock a practical report.
         </p>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto">
           <Link href="/assessment/new">Start Assessment</Link>
         </Button>
       </Card>
@@ -172,8 +177,8 @@ function DraftState({ assessment }: { assessment: AssessmentRow }) {
   return (
     <div>
       <DashboardTopbar />
-      <Card className="rounded-[16px] p-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="rounded-[16px] p-5 sm:p-8">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-4">
             <IconTile icon={ClipboardList} size="lg" />
             <div>
@@ -184,7 +189,7 @@ function DraftState({ assessment }: { assessment: AssessmentRow }) {
               </p>
             </div>
           </div>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link href={`/assessment/${assessment.id}`}>Continue Assessment</Link>
           </Button>
         </div>
@@ -197,8 +202,8 @@ function SubmittedState({ assessment }: { assessment: AssessmentRow }) {
   return (
     <div>
       <DashboardTopbar />
-      <Card className="rounded-[16px] p-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="rounded-[16px] p-5 sm:p-8">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-4">
             <IconTile icon={Clock} size="lg" />
             <div>
@@ -209,7 +214,7 @@ function SubmittedState({ assessment }: { assessment: AssessmentRow }) {
               </p>
             </div>
           </div>
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link href={`/assessment/${assessment.id}/check-answers`}>View Answers</Link>
           </Button>
         </div>
@@ -268,7 +273,7 @@ function VerdictBand({
   const scoreColor = getScoreColor(score);
 
   return (
-    <section className="relative mb-8 overflow-hidden rounded-[14px] bg-gradient-to-br from-[#0F2044] to-[#08152e] px-6 py-6 sm:px-8 sm:py-7">
+    <section className="relative mb-8 overflow-hidden rounded-[14px] bg-gradient-to-br from-[#0F2044] to-[#08152e] px-4 py-5 sm:px-8 sm:py-7">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-36 right-[-70px] h-80 w-80 rounded-full bg-[#059669]/25 blur-3xl"
@@ -289,7 +294,7 @@ function VerdictBand({
       <div className="relative mt-3 flex flex-col gap-4 sm:flex-row sm:items-baseline sm:gap-8">
         <div className="flex shrink-0 items-baseline gap-1">
           {/* The one gradient-type moment in the app */}
-          <span className="font-display bg-[linear-gradient(100deg,#fff_30%,#6EE7B7_95%)] bg-clip-text text-[68px] font-extrabold leading-none tracking-tight text-transparent tabular-nums sm:text-[76px]">
+          <span className="font-display bg-[linear-gradient(100deg,#fff_30%,#6EE7B7_95%)] bg-clip-text text-[56px] font-extrabold leading-none tracking-tight text-transparent tabular-nums sm:text-[76px]">
             {score}
           </span>
           <span className="text-[26px] font-bold text-[#8DA0C4]">%</span>
@@ -298,9 +303,9 @@ function VerdictBand({
           <h2 className="font-display text-[22px] font-bold leading-snug tracking-tight text-white sm:text-2xl">
             {verdict}
           </h2>
-          <p className="mt-1.5 text-[13px] text-[#A9B8D6]">
+          <div className="mt-2 flex flex-col items-start gap-1 text-[13px] text-[#A9B8D6] sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2">
             {scoreChange != null && previousDate && (
-              <>
+              <span>
                 <span
                   className={cn(
                     "font-semibold tabular-nums",
@@ -309,20 +314,21 @@ function VerdictBand({
                 >
                   {scoreChange < 0 ? "▼" : "▲"} {Math.abs(scoreChange)} pts
                 </span>{" "}
-                since {previousDate} ·{" "}
-              </>
+                since {previousDate}
+              </span>
             )}
-            {p1Count > 0
-              ? `${p1Count} critical ${p1Count === 1 ? "issue" : "issues"} open`
-              : "no critical issues open"}
-            {" · "}
+            <span>
+              {p1Count > 0
+                ? `${p1Count} critical ${p1Count === 1 ? "issue" : "issues"} open`
+                : "No critical issues open"}
+            </span>
             <Link
               href={`/assessment/${latest.id}/results`}
               className="bc-focus-light font-semibold text-[#6EE7B7] hover:text-white"
             >
               What does my score mean? →
             </Link>
-          </p>
+          </div>
         </div>
       </div>
 
@@ -442,13 +448,13 @@ function HistorySection({
           return (
             <div
               key={assessment.id}
-              className="flex items-baseline gap-2 border-b border-[#0F2044]/[0.05] py-2 text-[13px] last:border-0"
+              className="flex items-start gap-2 border-b border-[#0F2044]/[0.05] py-2.5 text-[13px] last:border-0"
             >
-              <span className="font-bold tabular-nums text-[#0F2044]">
-                {assessment.overall_score != null ? `${assessment.overall_score}%` : "—"}
+              <span className="shrink-0 font-bold tabular-nums text-[#0F2044]">
+                {assessment.overall_score != null ? `${assessment.overall_score}%` : "Not scored"}
               </span>
-              <span className="min-w-0 flex-1 truncate text-[#77829A]">
-                · #{assessments.length - index} · {shortDate(assessment.created_at)}
+              <span className="min-w-0 flex-1 leading-relaxed text-[#77829A]">
+                Assessment #{assessments.length - index} · {shortDate(assessment.created_at)}
               </span>
               {assessment.status === "paid" ? (
                 <Link

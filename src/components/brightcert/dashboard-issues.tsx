@@ -82,7 +82,68 @@ export function DashboardIssues({
         </div>
         <p className="mb-4 text-[11.5px] text-[#77829A]">Select a row to filter the issues below by control area.</p>
 
-        <table className="w-full border-collapse text-[13px]">
+        <div className="divide-y divide-[#0F2044]/[0.06] border-y border-[#0F2044]/[0.07] sm:hidden">
+          {SECTIONS.map((section) => {
+            const control = controls.find((row) => row.sectionId === section.id);
+            const score = control?.score ?? 0;
+            const status = (control?.status ?? "missing") as keyof typeof CONTROL_STATUS;
+            const statusConfig = CONTROL_STATUS[status] ?? CONTROL_STATUS.missing;
+            const active = areaFilter === section.id;
+            const hasGaps = p1Gaps.some((gap) => gap.sectionId === section.id);
+            const content = (
+              <>
+                <span className="flex items-start justify-between gap-3">
+                  <span className={cn("min-w-0 text-left text-sm font-semibold", active ? "text-[#047857]" : "text-[#0F2044]")}>
+                    {section.id}. {section.shortTitle}
+                  </span>
+                  <span className="shrink-0 text-sm font-bold tabular-nums text-[#0F2044]">
+                    {control ? `${score}%` : "Not scored"}
+                  </span>
+                </span>
+                <span className="mt-1.5 flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#475569]">
+                    <span
+                      className="h-[7px] w-[7px] rounded-full"
+                      style={{ backgroundColor: statusConfig.dot }}
+                      aria-hidden
+                    />
+                    {statusConfig.label}
+                  </span>
+                  {hasGaps && (
+                    <span className="text-[11px] font-semibold text-[#047857]">
+                      {active ? "Showing critical issues" : "Filter critical issues"}
+                    </span>
+                  )}
+                </span>
+              </>
+            );
+
+            return hasGaps ? (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setAreaFilter(active ? null : section.id)}
+                aria-pressed={active}
+                aria-label={active ? `Clear filter for ${section.shortTitle}` : `Filter issues by ${section.shortTitle}`}
+                className={cn(
+                  "bc-focus block min-h-16 w-full px-1 py-3 text-left transition-colors",
+                  active ? "bg-[#059669]/[0.06]" : "hover:bg-[#F3F4EC]"
+                )}
+              >
+                {content}
+              </button>
+            ) : (
+              <div key={section.id} className="min-h-16 px-1 py-3">
+                {content}
+              </div>
+            );
+          })}
+        </div>
+
+        <table
+          aria-label="Cyber Essentials control area scores"
+          className="hidden w-full border-collapse text-[13px] sm:table"
+        >
           <thead>
             <tr>
               <th className="border-b border-[#0F2044]/[0.07] py-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#64748B]">
@@ -182,11 +243,13 @@ export function DashboardIssues({
               <Link
                 key={`${gap.issue}-${index}`}
                 href={`/assessment/${assessmentId}/results#priority-actions`}
-                className="bc-focus flex items-baseline gap-4 py-2.5 transition-colors hover:bg-[#F3F4EC]"
+                className="bc-focus flex flex-col items-start gap-1 py-3 transition-colors hover:bg-[#F3F4EC] sm:flex-row sm:gap-4 sm:py-2.5"
               >
-                <span className="mt-[3px] h-[6px] w-[6px] shrink-0 rounded-full bg-[#DC2626]" aria-hidden />
-                <span className="min-w-0 flex-1 truncate text-[13px] text-[#33405C]">{gap.issue}</span>
-                <span className="shrink-0 text-xs text-[#64748B]">{gap.sectionTitle}</span>
+                <span className="flex min-w-0 items-start gap-3 sm:flex-1">
+                  <span className="mt-[6px] h-[6px] w-[6px] shrink-0 rounded-full bg-[#DC2626]" aria-hidden />
+                  <span className="min-w-0 break-words text-[13px] leading-relaxed text-[#33405C]">{gap.issue}</span>
+                </span>
+                <span className="pl-[18px] text-xs text-[#64748B] sm:shrink-0 sm:pl-0">{gap.sectionTitle}</span>
               </Link>
             ))}
           </div>
