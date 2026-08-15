@@ -1,10 +1,12 @@
 import { getResend, FROM_EMAIL } from "./client";
+import { ENQUIRY_TYPES, type ContactSubmission } from "@/lib/contact/contact-form";
 
 const NAVY = "#0F2044";
 const EMERALD = "#047857";
 const SLATE = "#475569";
 const BORDER = "#E2E8F0";
 const BG = "#F8FAFC";
+const CONTACT_EMAIL = "hello@brightcert.co.uk";
 
 type ResendResponse = {
   data?: unknown;
@@ -53,6 +55,68 @@ function baseTemplate(body: string): string {
   </table>
 </body>
 </html>`;
+}
+
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
+export function buildContactEmail(input: ContactSubmission) {
+  const enquiryLabel = ENQUIRY_TYPES[input.enquiryType];
+  const organisationRow = input.organisation
+    ? `
+      <tr>
+        <td style="padding:5px 16px 5px 0;font-size:13px;font-weight:700;color:${NAVY};vertical-align:top;">Organisation</td>
+        <td style="padding:5px 0;font-size:13px;color:${SLATE};">${escapeHtml(input.organisation)}</td>
+      </tr>`
+    : "";
+  const message = escapeHtml(input.message).replace(/\r?\n/g, "<br>");
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:${NAVY};">New contact enquiry</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:${SLATE};line-height:1.6;">
+      A visitor submitted the BrightCert contact form.
+    </p>
+    <table cellpadding="0" cellspacing="0" style="width:100%;margin-bottom:24px;">
+      <tr>
+        <td style="padding:5px 16px 5px 0;font-size:13px;font-weight:700;color:${NAVY};vertical-align:top;">Name</td>
+        <td style="padding:5px 0;font-size:13px;color:${SLATE};">${escapeHtml(input.name)}</td>
+      </tr>
+      <tr>
+        <td style="padding:5px 16px 5px 0;font-size:13px;font-weight:700;color:${NAVY};vertical-align:top;">Email</td>
+        <td style="padding:5px 0;font-size:13px;color:${SLATE};">${escapeHtml(input.email)}</td>
+      </tr>
+      ${organisationRow}
+      <tr>
+        <td style="padding:5px 16px 5px 0;font-size:13px;font-weight:700;color:${NAVY};vertical-align:top;">Enquiry</td>
+        <td style="padding:5px 0;font-size:13px;color:${SLATE};">${escapeHtml(enquiryLabel)}</td>
+      </tr>
+    </table>
+    <div style="background:${BG};border:1px solid ${BORDER};border-radius:12px;padding:20px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:${NAVY};text-transform:uppercase;letter-spacing:0.06em;">Message</p>
+      <p style="margin:0;font-size:14px;color:${SLATE};line-height:1.65;">${message}</p>
+    </div>`;
+
+  return {
+    from: FROM_EMAIL,
+    to: CONTACT_EMAIL,
+    replyTo: input.email,
+    subject: `${enquiryLabel} enquiry from ${input.name}`,
+    html: baseTemplate(body),
+  };
+}
+
+export async function sendContactEmail(input: ContactSubmission): Promise<void> {
+  const response = await getResend().emails.send(buildContactEmail(input));
+  throwIfResendError(response);
 }
 
 export async function sendWelcomeEmail(email: string, orgName: string): Promise<void> {
