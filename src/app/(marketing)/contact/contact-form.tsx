@@ -20,7 +20,7 @@ export function ContactForm() {
   const error = (field: keyof typeof state.fieldErrors) => state.fieldErrors[field];
 
   return (
-    <form ref={formRef} action={formAction} className="space-y-5" noValidate>
+    <form ref={formRef} action={formAction} className="space-y-5">
       <div>
         <label htmlFor="contact-name" className="block text-sm font-semibold text-[#0F2044]">
           Name

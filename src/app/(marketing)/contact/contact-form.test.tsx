@@ -26,6 +26,7 @@ describe("ContactForm", () => {
     expect(screen.getByRole("button", { name: "Send message" })).toBeTruthy();
     expect(screen.getByText(/used only to reply/i)).toBeTruthy();
     expect(screen.getByRole("link", { name: "Privacy Policy" }).getAttribute("href")).toBe("/privacy");
+    expect(screen.getByRole("button", { name: "Send message" }).closest("form")?.noValidate).toBe(false);
   });
 
   test("shows field errors and retains visitor input after validation fails", async () => {
