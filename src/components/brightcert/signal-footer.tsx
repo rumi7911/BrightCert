@@ -27,7 +27,7 @@ const COMPANY_LINKS: FooterLink[] = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
   { label: "Cookie Settings", action: "cookie-settings" },
-  { label: "Contact us", href: "mailto:hello@brightcert.co.uk" },
+  { label: "Contact us", href: "/contact" },
 ];
 
 export function SignalFooter() {

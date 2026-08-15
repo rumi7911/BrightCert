@@ -22,6 +22,7 @@ describe("indexing signals", () => {
     expect(urls).toHaveLength(new Set(urls).size);
     expect(urls).toContain("https://brightcert.co.uk/");
     expect(urls).toContain("https://brightcert.co.uk/about");
+    expect(urls).toContain("https://brightcert.co.uk/contact");
     expect(urls).not.toContain("https://brightcert.co.uk/index");
     expect(urls).not.toContain("https://brightcert.co.uk/login");
     expect(urls).not.toContain("https://brightcert.co.uk/signup");
@@ -63,6 +64,7 @@ describe("indexing signals", () => {
       [SITE_PAGES.faq, () => import("./(marketing)/faq/page")],
       [SITE_PAGES.blog, () => import("./(marketing)/blog/page")],
       [SITE_PAGES.about, () => import("./(marketing)/about/page")],
+      [SITE_PAGES.contact, () => import("./(marketing)/contact/page")],
       [SITE_PAGES.privacy, () => import("./(marketing)/privacy/page")],
       [SITE_PAGES.terms, () => import("./(marketing)/terms/page")],
       [ARTICLES.whatIsCyberEssentials, () => import("./(marketing)/blog/what-is-cyber-essentials/page")],

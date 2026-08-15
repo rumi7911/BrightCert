@@ -77,6 +77,14 @@ export const SITE_PAGES = {
     indexable: true,
     lastModified: "2026-07-28",
   },
+  contact: {
+    path: "/contact",
+    title: "Contact BrightCert | Cyber Essentials Readiness Support",
+    description:
+      "Contact BrightCert about Cyber Essentials readiness assessments, reports, billing, privacy or partnerships.",
+    indexable: true,
+    lastModified: "2026-08-15",
+  },
   privacy: {
     path: "/privacy",
     title: "Privacy Policy | BrightCert",
