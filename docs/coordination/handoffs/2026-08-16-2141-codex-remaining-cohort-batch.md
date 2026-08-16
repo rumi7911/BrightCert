@@ -7,8 +7,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `6a29299`
-- **Evidence commit:** Pending first handoff commit.
-- **Final commit:** Pending evidence-SHA follow-up commit.
+- **Evidence commit:** `e565b38` (`docs: record remaining cohort batch`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** One founder-review candidate found; nothing sent or scheduled
 
 ## Scope and ownership
