@@ -7,8 +7,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `4d694ee`
-- **Evidence commit:** Pending first handoff commit.
-- **Final commit:** Pending evidence-SHA follow-up commit.
+- **Evidence commit:** `046e63c` (`docs: record Cobleys accidental send`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Owner-reported Touch 1 recorded; later direct touches paused
 
 ## Scope and ownership
