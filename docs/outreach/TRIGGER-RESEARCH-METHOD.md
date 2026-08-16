@@ -28,7 +28,8 @@ named contact — which is mechanical.
 
 The rest of this document is those sources. One of the three originally
 listed here has since been withdrawn as prohibited — it is kept below with the
-reason, not deleted.
+reason, not deleted. A fourth, narrowly controlled source was approved on
+16 August 2026; it is not a bulk-list substitute.
 
 ---
 
@@ -182,6 +183,27 @@ Strength depends entirely on what the page says:
 - A generic cyber-security page or an undated compliance claim → **Weak**.
   Block it. This is the most common way a research session quietly drifts below
   the bar, because the page *feels* relevant.
+
+---
+
+## Source D — public BlockMark digital certificate plus company confirmation (`renewal`)
+
+[LIA Amendment 2](./LIA.md#amendment-2--approved-with-controls--public-blockmark-digital-certificates)
+permits a narrow use of a public BlockMark organisation certificate page. It
+is eligible only when the company's own current website independently confirms
+the Cyber Essentials certification and every other campaign gate passes.
+
+This is a manual, account-specific evidence route. Do not bulk extract the
+registry, bypass access controls, use personal certificates or profiles, or
+retain viewer analytics. Keep only the corporate certificate facts required
+for the trigger. The contact and mailbox must come from separately approved
+company-context or licensed sources.
+
+If the recipient has hidden the certificate, its corporate identity is
+ambiguous, the company does not currently confirm the certification, or the
+source terms prohibit marketing or research, block the row. Never frame an
+expiry date as evidence that renewal has not started or that certification has
+lapsed.
 
 ---
 
