@@ -8,6 +8,8 @@
 - **Branch:** `codex/contracts-finder-review`
 - **Worktree:** `.worktrees/contracts-finder-review`
 - **Base commit:** `08600cd`
+- **Evidence commit:** `ed8588a` (`docs: record Sunday outreach preparation`)
+- **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** Preparation complete; Cobleys remains the only commercially
   suitable account; nothing sent or published
 
