@@ -11,19 +11,19 @@ All prices in GBP. UK product. Last updated: 28 July 2026.
 
 ## Monitor
 - Status: coming soon, not yet purchasable
-- Price: £99/month subscription
+- Price: not set — do not quote a price for this tier
 - For: businesses that want ongoing visibility after their initial readiness report
 - Includes: monthly readiness review, saved assessment history, remediation tracking, updated action list, report access, renewal preparation support
 
 ## CE Plus Pack
 - Status: coming soon, not yet purchasable
-- Price: £499 one-time
+- Price: not set — do not quote a price for this tier
 - For: businesses preparing for Cyber Essentials Plus before technical testing
 - Includes: CE Plus preparation checklist, evidence collection guidance, device and system readiness review, remediation planning, internal preparation summary, priority support
 
 ## MSP Partner
 - Status: coming soon, not yet purchasable
-- Price: £299/month subscription
+- Price: not set — do not quote a price for this tier
 - For: MSPs supporting multiple UK SME clients with Cyber Essentials preparation
 - Includes: multi-client dashboard, client assessment tracking, readiness reports, partner workflow tools, client remediation visibility, MSP-focused reporting
 
