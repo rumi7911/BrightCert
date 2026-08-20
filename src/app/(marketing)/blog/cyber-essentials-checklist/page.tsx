@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Download } from "lucide-react";
 import { JsonLd } from "@/components/brightcert/json-ld";
 import { SignalNav } from "@/components/brightcert/signal-nav";
 import { SignalFooter } from "@/components/brightcert/signal-footer";
@@ -13,6 +14,13 @@ import {
   ArticleRelatedLinks,
 } from "@/components/brightcert/article-kit";
 import { articleStructuredData, ARTICLES, metadataFor } from "@/lib/seo/registry";
+import checklistData from "@/lib/content/cyber-essentials-checklist.json";
+
+// Word version of the checklist, hosted externally.
+// PLACEHOLDER: replace "" with the share link once the .docx is uploaded.
+// While this is empty the download block does not render, so the page never
+// ships a broken link. Nothing else needs changing.
+const CHECKLIST_DOCX_URL = "";
 
 const ARTICLE = ARTICLES.cyberEssentialsChecklist;
 
@@ -25,141 +33,7 @@ type ChecklistGroup = {
   items: { task: string; evidence: string }[];
 };
 
-const CHECKLIST: ChecklistGroup[] = [
-  {
-    id: "scope",
-    stage: "1. Scope",
-    purpose: "Everything below inherits from this. Getting it wrong makes the rest of the work the wrong work.",
-    items: [
-      {
-        task: "List every location people work from, including homes",
-        evidence: "Written list of sites and home-working arrangements",
-      },
-      {
-        task: "List every device that can reach organisational data, including personally owned ones",
-        evidence: "Device inventory with owner and type",
-      },
-      {
-        task: "List every cloud service in use, including services adopted by one team",
-        evidence: "Cloud service inventory",
-      },
-      {
-        task: "Write down what is in scope, what is excluded, and the reason for each exclusion",
-        evidence: "Signed scope statement",
-      },
-    ],
-  },
-  {
-    id: "firewalls",
-    stage: "2. Boundary firewalls and internet gateways",
-    purpose: "What sits between your systems and the internet, and who decided each gap in it.",
-    items: [
-      {
-        task: "Identify every internet-facing device and cloud boundary",
-        evidence: "Network diagram or device list",
-      },
-      {
-        task: "Confirm default administrative passwords have been changed",
-        evidence: "Written confirmation per device, dated",
-      },
-      {
-        task: "Record the business reason for each inbound rule",
-        evidence: "Firewall rule list with justification and approver",
-      },
-      {
-        task: "Confirm a firewall is active on devices used outside the office",
-        evidence: "Device setting confirmation",
-      },
-    ],
-  },
-  {
-    id: "secure-configuration",
-    stage: "3. Secure configuration",
-    purpose: "Devices and software set up deliberately rather than left at whatever the vendor shipped.",
-    items: [
-      { task: "Remove or disable user accounts that are no longer needed", evidence: "Before and after account list" },
-      { task: "Remove or disable software that is not needed", evidence: "Installed software list per device type" },
-      { task: "Confirm no default credentials remain anywhere in scope", evidence: "Written confirmation, dated" },
-      { task: "Confirm devices lock automatically when unattended", evidence: "Screen-lock setting per device type" },
-    ],
-  },
-  {
-    id: "user-access",
-    stage: "4. User access control",
-    purpose: "Who can reach what, who approved it, and what happens when someone leaves.",
-    items: [
-      {
-        task: "Produce a user list showing role and whether the account is administrative",
-        evidence: "User access list",
-      },
-      {
-        task: "Confirm administrative accounts are approved and used only for administrative tasks",
-        evidence: "Approval record; separate day-to-day accounts",
-      },
-      {
-        task: "Confirm the leaver process removes access, with a recent example",
-        evidence: "Leaver process document and one completed instance",
-      },
-      {
-        task: "Per cloud service, record whether MFA is available and whether it is on for all users",
-        evidence: "Service-by-service MFA table with date and who checked",
-      },
-    ],
-  },
-  {
-    id: "malware",
-    stage: "5. Malware protection",
-    purpose: "One of three approaches per device type, and proof it is actually running.",
-    items: [
-      {
-        task: "Record which approach applies to each device type: anti-malware, allow-listing or sandboxing",
-        evidence: "Device type to approach mapping",
-      },
-      { task: "Confirm protection is active and updating", evidence: "Console screenshot or management report" },
-      {
-        task: "Confirm how personally owned devices in scope are covered",
-        evidence: "BYOD arrangement, or evidence the restriction is enforced",
-      },
-    ],
-  },
-  {
-    id: "updates",
-    stage: "6. Security update management",
-    purpose: "Supported software, patched inside the window. The support half fails quietly.",
-    items: [
-      {
-        task: "Produce a software inventory recording vendor support status and end-of-life dates",
-        evidence: "Software inventory",
-      },
-      { task: "Confirm nothing in scope is past vendor end of life", evidence: "Inventory review, dated" },
-      {
-        task: "Confirm critical and high-risk updates are applied within 14 days of release",
-        evidence: "Update policy stating the window",
-      },
-      { task: "Keep one sample patch record showing the window was met", evidence: "Patch log extract" },
-    ],
-  },
-  {
-    id: "final-review",
-    stage: "7. Final review before applying",
-    purpose: "The pass that catches answers describing last year's organisation.",
-    items: [
-      {
-        task: "Confirm every answer describes the arrangement as it is today",
-        evidence: "Reviewer name and date against each control area",
-      },
-      { task: "Confirm every claim has a named owner and evidence behind it", evidence: "Completed checklist" },
-      {
-        task: "Confirm you are working from the current Danzell question set and v3.3 requirements",
-        evidence: "Note of the question set in use",
-      },
-      {
-        task: "Choose a Certification Body and confirm the fee band for your headcount",
-        evidence: "Quote or fee confirmation",
-      },
-    ],
-  },
-];
+const CHECKLIST: ChecklistGroup[] = checklistData;
 
 const TOTAL_ITEMS = CHECKLIST.reduce((sum, group) => sum + group.items.length, 0);
 
@@ -293,6 +167,26 @@ export default function CyberEssentialsChecklistPage() {
                   except the checklist itself drops away.
                 </p>
               </ArticleProse>
+
+              {CHECKLIST_DOCX_URL ? (
+                <a
+                  href={CHECKLIST_DOCX_URL}
+                  target="_blank"
+                  rel="noopener"
+                  className="bc-focus mt-6 flex items-start gap-4 rounded-[16px] border border-[#A7F3D0] bg-[#ECFDF5] p-5 transition-colors hover:bg-[#DCFCE7]"
+                >
+                  <Download className="mt-0.5 h-5 w-5 shrink-0 text-[#059669]" strokeWidth={1.5} aria-hidden />
+                  <span>
+                    <span className="block font-display text-sm font-semibold text-[#065F46]">
+                      Download the checklist as a Word document
+                    </span>
+                    <span className="mt-1 block text-[13px] leading-relaxed text-[#047857]">
+                      All {TOTAL_ITEMS} items with owner and status columns you can fill in and keep. Opens in a new
+                      tab.
+                    </span>
+                  </span>
+                </a>
+              ) : null}
             </div>
 
             <section aria-labelledby="checklist-heading" className="mt-8 print:mt-0">
