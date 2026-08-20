@@ -10,6 +10,7 @@
     "test:run": "vitest run",
     "lint": "eslint",
     "prepare:report-fonts": "node scripts/prepare-report-fonts.mjs",
+    "seo:measure": "node scripts/seo-measure.mjs",
     "outreach": "tsx scripts/outreach.ts",
     "outreach:contracts-finder": "tsx scripts/contracts-finder.ts"
   },

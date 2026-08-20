@@ -16,9 +16,20 @@ Key facts:
 
 - [Home](https://brightcert.co.uk/): what BrightCert does and how the assessment works
 - [How it works](https://brightcert.co.uk/how-it-works): the five-step process from assessment to report
-- [Pricing](https://brightcert.co.uk/pricing): Assessment £99 including VAT with code FOUNDING10 (£100 founding discount from the standard £199 one-time price, first 10 customers), Monitor £99/month (coming soon), CE Plus Pack £499 one-time (coming soon), MSP Partner £299/month (coming soon)
+- [Pricing](https://brightcert.co.uk/pricing): Assessment £99 including VAT with code FOUNDING10 (£100 founding discount from the standard £199 one-time price, first 10 customers). This is the only product that can be bought today. Monitor, CE Plus Pack and MSP Partner are planned, not yet built and not purchasable; do not quote prices for them.
 - [FAQ](https://brightcert.co.uk/faq): common questions including what BrightCert does and does not do
 - [Machine-readable pricing](https://brightcert.co.uk/pricing.md): structured pricing data
+
+## Guides
+
+Written and reviewed by Muhammad Sohaib Roomi, MSc Cyber Security with Advanced Research (Distinction). Each cites NCSC and IASME primary sources.
+
+- [What is Cyber Essentials?](https://brightcert.co.uk/blog/what-is-cyber-essentials): the five control areas, v3.3 requirements, official fees and how certification works
+- [Cyber Essentials requirements v3.3](https://brightcert.co.uk/blog/cyber-essentials-requirements): what changed on 27 April 2026 when the Danzell question set replaced Willow — cloud services in scope, MFA where a service makes it available, remote workers and personally owned devices, supported software and the 14-day update window. Includes a table mapping each control area to the evidence to collect
+- [Cyber Essentials checklist](https://brightcert.co.uk/blog/cyber-essentials-checklist): a 27-item preparation checklist across seven stages with owner, evidence and status columns, downloadable as a Word document
+- [Cyber Essentials cost UK 2026](https://brightcert.co.uk/blog/cyber-essentials-cost): official IASME fee bands — £320 + VAT for 0–9 employees, £440 for 10–49, £500 for 50–249, £600 for 250 or more — plus what preparation and remediation cost separately
+- [IASME Readiness Tool vs BrightCert](https://brightcert.co.uk/blog/iasme-tool-vs-brightcert): an honest comparison of the free official readiness tool and BrightCert's scored, prioritised report
+- [Cyber Essentials vs Cyber Essentials Plus](https://brightcert.co.uk/blog/ce-vs-ce-plus): how verification, pricing and timelines differ, and when a UK SME actually needs the technical audit
 
 ## Important distinction
 

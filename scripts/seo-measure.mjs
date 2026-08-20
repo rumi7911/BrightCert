@@ -1,0 +1,142 @@
+#!/usr/bin/env node
+/**
+ * Search Console measurement — fills in the scorecard in
+ * docs/seo/ORGANIC-SEARCH-EXECUTION.md instead of re-deriving it by hand.
+ *
+ *   npm run seo:measure              # 90-day window, prints a summary
+ *   npm run seo:measure -- --days 28
+ *   npm run seo:measure -- --write   # also writes docs/growth/SEO-<date>.md
+ *
+ * Auth reuses GCS_CLIENT_EMAIL / GCS_PRIVATE_KEY from .env.local — the same
+ * service account that already holds siteFullUser on the property. No new
+ * credentials.
+ *
+ * The JWT is signed with node:crypto and exchanged at oauth2.googleapis.com
+ * directly, rather than via google-auth-library, because that library reaches
+ * www.googleapis.com which is unreachable from the agent sandbox.
+ */
+
+import { createSign } from "node:crypto";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+const SITE = "https://brightcert.co.uk/";
+const SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
+const TOKEN_URL = "https://oauth2.googleapis.com/token";
+
+function loadEnv() {
+  const path = join(process.cwd(), ".env.local");
+  if (!existsSync(path)) return;
+  for (const line of readFileSync(path, "utf8").split("\n")) {
+    const match = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
+    if (!match) continue;
+    let value = match[2].trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    process.env[match[1]] ??= value;
+  }
+}
+
+const b64url = (input) =>
+  Buffer.from(input).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+async function accessToken() {
+  const email = process.env.GCS_CLIENT_EMAIL;
+  const key = process.env.GCS_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  if (!email || !key) throw new Error("GCS_CLIENT_EMAIL and GCS_PRIVATE_KEY must be set (.env.local)");
+
+  const now = Math.floor(Date.now() / 1000);
+  const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = b64url(
+    JSON.stringify({ iss: email, scope: SCOPE, aud: TOKEN_URL, iat: now, exp: now + 3600 }),
+  );
+  const signer = createSign("RSA-SHA256");
+  signer.update(`${header}.${claims}`);
+  const assertion = `${header}.${claims}.${b64url(signer.sign(key))}`;
+
+  const res = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion,
+    }),
+  });
+  if (!res.ok) throw new Error(`token exchange failed: ${res.status} ${await res.text()}`);
+  return (await res.json()).access_token;
+}
+
+async function query(token, body) {
+  const url = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE)}/searchAnalytics/query`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`searchAnalytics failed: ${res.status} ${await res.text()}`);
+  return (await res.json()).rows ?? [];
+}
+
+const iso = (d) => d.toISOString().slice(0, 10);
+const num = (n, dp = 1) => (Math.round(n * 10 ** dp) / 10 ** dp).toFixed(dp);
+
+function table(title, rows, label) {
+  if (!rows.length) return `\n### ${title}\n\nNo data.\n`;
+  let out = `\n### ${title}\n\n| ${label} | Impressions | Clicks | Avg position |\n|---|---:|---:|---:|\n`;
+  for (const r of rows) {
+    out += `| ${r.keys[0]} | ${r.impressions} | ${r.clicks} | ${num(r.position)} |\n`;
+  }
+  return out;
+}
+
+async function main() {
+  loadEnv();
+  const args = process.argv.slice(2);
+  const days = Number(args[args.indexOf("--days") + 1]) || 90;
+  const write = args.includes("--write");
+
+  // Search Console data lags ~2 days; ending today would report a false decline.
+  const end = new Date(Date.now() - 2 * 86400000);
+  const start = new Date(end.getTime() - days * 86400000);
+  const range = { startDate: iso(start), endDate: iso(end) };
+
+  const token = await accessToken();
+  const [totals, pages, queries, devices, countries] = await Promise.all([
+    query(token, { ...range, rowLimit: 1 }),
+    query(token, { ...range, dimensions: ["page"], rowLimit: 15 }),
+    query(token, { ...range, dimensions: ["query"], rowLimit: 20 }),
+    query(token, { ...range, dimensions: ["device"], rowLimit: 5 }),
+    query(token, { ...range, dimensions: ["country"], rowLimit: 5 }),
+  ]);
+
+  const t = totals[0] ?? { clicks: 0, impressions: 0, ctr: 0, position: 0 };
+  const gbr = countries.find((row) => row.keys[0] === "gbr")?.impressions ?? 0;
+
+  let out = `# Search Console measurement — ${iso(new Date())}\n\n`;
+  out += `Property: \`${SITE}\` · Window: ${days} days, ${range.startDate} to ${range.endDate}\n`;
+  out += `· Generated by \`npm run seo:measure\`\n\n## Headline\n\n`;
+  out += `| Metric | Value |\n|---|---:|\n`;
+  out += `| Clicks | **${t.clicks}** |\n| Impressions | ${t.impressions} |\n`;
+  out += `| CTR | ${num(t.ctr * 100, 2)}% |\n| Average position | ${num(t.position)} |\n`;
+  out += `| UK share of impressions | ${t.impressions ? num((gbr / t.impressions) * 100) : "0.0"}% |\n`;
+  out += table("Pages", pages, "Page");
+  out += table("Queries", queries, "Query");
+  out += table("Devices", devices, "Device");
+
+  console.log(out);
+
+  if (write) {
+    const path = join(process.cwd(), "docs", "growth", `SEO-${iso(new Date())}.md`);
+    writeFileSync(path, out);
+    console.log(`\nWritten to ${path}`);
+  }
+}
+
+main().catch((error) => {
+  console.error(`\n${error.message}\n`);
+  process.exit(1);
+});
