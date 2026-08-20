@@ -168,6 +168,19 @@ export const ARTICLES = {
     kind: "article",
     datePublished: "2026-07-19",
   },
+  cyberEssentialsRequirements: {
+    path: "/blog/cyber-essentials-requirements",
+    title: "Cyber Essentials Requirements v3.3: What Changed in 2026 | BrightCert",
+    shortTitle: "Cyber Essentials requirements v3.3: what changed",
+    description:
+      "Cyber Essentials requirements v3.3 took effect on 27 April 2026 with the Danzell question set. What changed for cloud, MFA, remote work and BYOD scope.",
+    excerpt:
+      "What v3.3 changed on 27 April 2026, plus the evidence to collect for each of the five controls.",
+    indexable: true,
+    lastModified: "2026-08-20",
+    kind: "article",
+    datePublished: "2026-08-20",
+  },
 } as const satisfies Record<string, ArticleMeta>;
 
 export const SEO_PAGES: readonly SeoEntry[] = [

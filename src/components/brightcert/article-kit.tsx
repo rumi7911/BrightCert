@@ -49,9 +49,9 @@ export function ArticleHeader({
         </Link>
         , founder and reviewer at BrightCert
         <span aria-hidden> · </span>
-        Published {published}
+        Published <time dateTime={article.datePublished}>{published}</time>
         <span aria-hidden> · </span>
-        Reviewed {reviewed}
+        Reviewed <time dateTime={article.lastModified}>{reviewed}</time>
       </p>
       {related && (
         <p className="mt-2 text-sm text-[#94A3B8]">
