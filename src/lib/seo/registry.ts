@@ -181,6 +181,19 @@ export const ARTICLES = {
     kind: "article",
     datePublished: "2026-08-20",
   },
+  cyberEssentialsChecklist: {
+    path: "/blog/cyber-essentials-checklist",
+    title: "Cyber Essentials Checklist for UK SMEs (2026) | BrightCert",
+    shortTitle: "Cyber Essentials checklist for UK SMEs",
+    description:
+      "A printable Cyber Essentials checklist with owner, evidence and status columns. Scope first, then the five controls, evidence collection and final review.",
+    excerpt:
+      "A printable checklist with owner, evidence and status columns, covering scope, the five controls and the final review.",
+    indexable: true,
+    lastModified: "2026-08-20",
+    kind: "article",
+    datePublished: "2026-08-20",
+  },
 } as const satisfies Record<string, ArticleMeta>;
 
 export const SEO_PAGES: readonly SeoEntry[] = [
