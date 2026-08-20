@@ -15,6 +15,7 @@ import { ScanCard } from "@/components/brightcert/home/scan-card";
 import { HowItWorksRail, type RailStep } from "@/components/brightcert/how-it-works-rail";
 import { ControlAccordion } from "@/components/brightcert/home/control-accordion";
 import { ReportPreviewCard } from "@/components/brightcert/home/report-preview-card";
+import { DemoVideo } from "@/components/brightcert/home/demo-video";
 import { FaqAccordion, type FaqItem } from "@/components/brightcert/faq-accordion";
 import { MagneticLink } from "@/components/brightcert/magnetic-link";
 import { GlowLink } from "@/components/brightcert/glow-link";
@@ -170,6 +171,22 @@ export default async function HomePage() {
             url: "https://brightcert.co.uk/pricing",
             availability: "https://schema.org/InStock",
           },
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          name: "BrightCert \u2014 Cyber Essentials Readiness in 2 Hours, Powered by Gemini",
+          description:
+            "A full run through a BrightCert Cyber Essentials readiness assessment: plain-English questions, Gemini analysis across the five control areas, and the prioritised report produced at the end.",
+          thumbnailUrl: "https://brightcert.co.uk/demo-video-poster.jpg",
+          uploadDate: "2026-08-13",
+          duration: "PT2M4S",
+          embedUrl: "https://www.youtube-nocookie.com/embed/9SnF6wdi1AY",
+          contentUrl: "https://www.youtube.com/watch?v=9SnF6wdi1AY",
+          publisher: { "@id": "https://brightcert.co.uk/#organization" },
+          inLanguage: "en-GB",
         }}
       />
 
@@ -379,6 +396,40 @@ export default async function HomePage() {
               </Reveal>
             </div>
             <HowItWorksRail steps={HOME_HOW_STEPS} />
+          </div>
+        </section>
+
+        {/* ── DEMO VIDEO ───────────────────────────────────────────────── */}
+        <section
+          className="relative overflow-hidden bg-gradient-to-b from-[#0F2044] to-[#08152e] py-[clamp(72px,8.5vw,120px)]"
+          id="demo"
+          aria-labelledby="demo-heading"
+        >
+          <div className="relative max-w-[980px] mx-auto px-4">
+            <div className="max-w-[640px] mb-[clamp(32px,4vw,52px)]">
+              <Reveal>
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-[#A7F3D0] mb-4">
+                  See it working
+                </p>
+              </Reveal>
+              <Reveal delay={100}>
+                <h2
+                  id="demo-heading"
+                  className="font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-bold leading-[1.15] tracking-[-0.02em] text-white"
+                >
+                  Two minutes, start to finished report
+                </h2>
+              </Reveal>
+              <Reveal delay={160}>
+                <p className="mt-4 text-[15px] leading-relaxed text-white/70">
+                  A full run through the four steps above: answering the questions, the analysis, and the report that
+                  comes out the other end.
+                </p>
+              </Reveal>
+            </div>
+            <Reveal delay={220}>
+              <DemoVideo />
+            </Reveal>
           </div>
         </section>
 
