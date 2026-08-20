@@ -94,7 +94,10 @@ export default function RootLayout({
                   "@id": "https://brightcert.co.uk/about#person",
                   name: "Muhammad Sohaib Roomi",
                   url: "https://brightcert.co.uk/about",
-                  sameAs: ["https://www.linkedin.com/in/muhammad-sohaib-roomi"],
+                  sameAs: [
+                    "https://www.linkedin.com/in/muhammad-sohaib-roomi",
+                    "https://www.crunchbase.com/person/muhammad-sohaib-roomi",
+                  ],
                 },
                 parentOrganization: {
                   "@type": "Organization",

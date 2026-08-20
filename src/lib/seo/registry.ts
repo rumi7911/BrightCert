@@ -4,6 +4,8 @@ export const SITE_URL = "https://brightcert.co.uk";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og.jpg`;
 export const AUTHOR_URL = `${SITE_URL}/about`;
 export const AUTHOR_LINKEDIN_URL = "https://www.linkedin.com/in/muhammad-sohaib-roomi";
+export const AUTHOR_CRUNCHBASE_URL = "https://www.crunchbase.com/person/muhammad-sohaib-roomi";
+export const ORG_CRUNCHBASE_URL = "https://www.crunchbase.com/organization/brightcert";
 
 type SeoPath = "/" | `/${string}`;
 
@@ -267,7 +269,7 @@ export function articleStructuredData(article: ArticleMeta) {
           "@id": `${AUTHOR_URL}#person`,
           name: "Muhammad Sohaib Roomi",
           url: AUTHOR_URL,
-          sameAs: [AUTHOR_LINKEDIN_URL],
+          sameAs: [AUTHOR_LINKEDIN_URL, AUTHOR_CRUNCHBASE_URL],
         },
         publisher: { "@id": `${SITE_URL}/#organization` },
         mainEntityOfPage: url,
