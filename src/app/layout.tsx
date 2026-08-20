@@ -81,11 +81,14 @@ export default function RootLayout({
                 name: "BrightCert",
                 url: "https://brightcert.co.uk",
                 logo: "https://brightcert.co.uk/logo.png",
-                sameAs: ["https://www.linkedin.com/company/brightcert"],
+                sameAs: [
+                  "https://www.linkedin.com/company/brightcert",
+                  "https://www.crunchbase.com/organization/brightcert",
+                ],
                 description:
                   "BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports. BrightCert does not issue official Cyber Essentials certification.",
                 email: "hello@brightcert.co.uk",
-                foundingDate: "2026",
+                foundingDate: "2026-06-06",
                 founder: {
                   "@type": "Person",
                   "@id": "https://brightcert.co.uk/about#person",
@@ -93,7 +96,12 @@ export default function RootLayout({
                   url: "https://brightcert.co.uk/about",
                   sameAs: ["https://www.linkedin.com/in/muhammad-sohaib-roomi"],
                 },
-                parentOrganization: { "@type": "Organization", name: "Cognumi Ltd" },
+                parentOrganization: {
+                  "@type": "Organization",
+                  name: "Cognumi Ltd",
+                  identifier: "17265250",
+                  foundingDate: "2026-06-06",
+                },
                 areaServed: { "@type": "Country", name: "United Kingdom" },
               },
               {
