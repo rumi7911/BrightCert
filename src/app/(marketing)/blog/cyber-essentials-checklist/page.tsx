@@ -16,11 +16,12 @@ import {
 import { articleStructuredData, ARTICLES, metadataFor } from "@/lib/seo/registry";
 import checklistData from "@/lib/content/cyber-essentials-checklist.json";
 
-// Word version of the checklist, hosted externally.
-// PLACEHOLDER: replace "" with the share link once the .docx is uploaded.
-// While this is empty the download block does not render, so the page never
-// ships a broken link. Nothing else needs changing.
-const CHECKLIST_DOCX_URL = "";
+// Word version of the checklist, hosted on Google Docs.
+// The /export?format=docx form downloads the .docx directly; the /edit share
+// link would open the Google Docs editor instead, which is not what the link
+// text promises. Set this to "" to hide the download block entirely.
+const CHECKLIST_DOCX_URL =
+  "https://docs.google.com/document/d/1Wow3RkFaLNT8Krth2nSF_WHStAe3cQCyXGexPO745AU/export?format=docx";
 
 const ARTICLE = ARTICLES.cyberEssentialsChecklist;
 
