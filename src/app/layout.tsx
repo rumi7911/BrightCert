@@ -84,6 +84,7 @@ export default function RootLayout({
                 sameAs: [
                   "https://www.linkedin.com/company/brightcert",
                   "https://www.crunchbase.com/organization/brightcert",
+                  "https://www.wikidata.org/wiki/Q141136710",
                 ],
                 description:
                   "BrightCert helps UK SMEs prepare for Cyber Essentials with guided assessments, readiness scoring, gap analysis, and practical remediation reports. BrightCert does not issue official Cyber Essentials certification.",
@@ -104,6 +105,7 @@ export default function RootLayout({
                   name: "Cognumi Ltd",
                   identifier: "17265250",
                   foundingDate: "2026-06-06",
+                  sameAs: ["https://www.wikidata.org/wiki/Q141136710"],
                 },
                 areaServed: { "@type": "Country", name: "United Kingdom" },
               },
