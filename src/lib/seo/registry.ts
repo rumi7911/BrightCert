@@ -183,6 +183,19 @@ export const ARTICLES = {
     kind: "article",
     datePublished: "2026-08-20",
   },
+  cyberEssentialsAssessmentQuestions: {
+    path: "/blog/cyber-essentials-assessment-questions",
+    title: "Cyber Essentials Self-Assessment Questions: What to Prepare | BrightCert",
+    shortTitle: "Cyber Essentials self-assessment: what to prepare",
+    description:
+      "What the Cyber Essentials self-assessment questionnaire asks about in 2026, the information to gather before you start, and who in your business holds it.",
+    excerpt:
+      "What the Danzell question set asks about, the information to gather first, and who in the business actually holds it.",
+    indexable: true,
+    lastModified: "2026-08-27",
+    kind: "article",
+    datePublished: "2026-08-27",
+  },
   cyberEssentialsChecklist: {
     path: "/blog/cyber-essentials-checklist",
     title: "Cyber Essentials Checklist for UK SMEs (2026) | BrightCert",

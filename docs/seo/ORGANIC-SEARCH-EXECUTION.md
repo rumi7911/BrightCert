@@ -30,17 +30,55 @@ Each article requires founder review before publication. Do not publish a draft 
 | 2 | 10 Aug | Refresh four existing guides and publish About | Existing routes | Accuracy and trust | ✅ Done |
 | 3 | 17 Aug | Cyber Essentials Requirements v3.3: What Changed in 2026 | `/blog/cyber-essentials-requirements` | Requirements | ✅ Published 20 Aug |
 | 4 | 24 Aug | Cyber Essentials Checklist for UK SMEs | `/blog/cyber-essentials-checklist` | Checklist | ✅ Published 20 Aug |
-| 5 | 31 Aug | What Actually Happens in a Cyber Essentials Plus Audit | `/blog/cyber-essentials-plus-audit` | CE Plus audit | **Re-planned 20 Aug** |
-| 6 | 7 Sep | How to Prepare for a Cyber Essentials Plus Assessment | `/blog/cyber-essentials-plus-preparation` | CE Plus preparation | **Re-planned 20 Aug** |
-| 7 | 14 Sep | Cyber Essentials Plus Cost in 2026 | `/blog/cyber-essentials-plus-cost` | CE Plus cost | **Re-planned 20 Aug** |
-| 8 | 21 Sep | Cyber Essentials Scope: Cloud, Remote Work and BYOD | `/blog/cyber-essentials-scope` | Scope | Unchanged |
-| 9 | 28 Sep | Cyber Essentials MFA Requirements in 2026 | `/blog/cyber-essentials-mfa-requirements` | MFA | Moved from week 7 |
-| 10 | 5 Oct | How to Prepare for Cyber Essentials: Step by Step | `/blog/how-to-prepare-for-cyber-essentials` | Preparation | Moved from week 5 |
-| 11 | 12 Oct | Common Cyber Essentials Failure Reasons and Fixes | `/blog/cyber-essentials-failure-reasons` | Failure prevention | Unchanged |
-| 12 | 19 Oct | Cyber Essentials Renewal Checklist | `/blog/cyber-essentials-renewal-checklist` | Renewal | Unchanged |
-| 13 | 26 Oct | Cyber Essentials Assessment Questions: What to Prepare | `/blog/cyber-essentials-assessment-questions` | Questions | Deferred from week 6 |
+| 5 | 31 Aug | Cyber Essentials Self-Assessment Questions: What to Prepare | `/blog/cyber-essentials-assessment-questions` | Self-assessment | ✅ Published 27 Aug — **promoted from week 13** |
+| 6 | 7 Sep | What Actually Happens in a Cyber Essentials Plus Audit | `/blog/cyber-essentials-plus-audit` | CE Plus audit | Moved from week 5 |
+| 7 | 14 Sep | How to Prepare for a Cyber Essentials Plus Assessment | `/blog/cyber-essentials-plus-preparation` | CE Plus preparation | Moved from week 6 |
+| 8 | 21 Sep | Cyber Essentials Plus Cost in 2026 | `/blog/cyber-essentials-plus-cost` | CE Plus cost | Moved from week 7 |
+| 9 | 28 Sep | Cyber Essentials Scope: Cloud, Remote Work and BYOD | `/blog/cyber-essentials-scope` | Scope | Moved from week 8 |
+| 10 | 5 Oct | Cyber Essentials MFA Requirements in 2026 | `/blog/cyber-essentials-mfa-requirements` | MFA | Moved from week 9 |
+| 11 | 12 Oct | How to Prepare for Cyber Essentials: Step by Step | `/blog/how-to-prepare-for-cyber-essentials` | Preparation | Moved from week 10 |
+| 12 | 19 Oct | Common Cyber Essentials Failure Reasons and Fixes | `/blog/cyber-essentials-failure-reasons` | Failure prevention | Moved from week 11 |
+| 13 | 26 Oct | Cyber Essentials Renewal Checklist | `/blog/cyber-essentials-renewal-checklist` | Renewal | Moved from week 12 |
 | 14 | 2 Nov | How Long Does Cyber Essentials Take? | `/blog/how-long-does-cyber-essentials-take` | Timeline | Deferred from week 9 |
 | 15 | 9 Nov | Cyber Essentials for Government Contracts | `/blog/cyber-essentials-government-contracts` | Contracts | Deferred from week 10 |
+
+### Why week 5 changed again — 27 August
+
+The 20 August re-plan was made on a **truncated query table**. `seo:measure`
+requested only the top 20 queries, and Search Console orders rows by clicks
+descending — at zero clicks every row ties and the tie-break is alphabetical.
+The table was therefore the alphabetically-first 20 queries, cutting off at
+`cyber essentials plus audit` and hiding 32 others. Fixed on 27 August
+(`claude/seo-measure-sort`); the same bug reported UK share as 0.0% against a
+real 76.4%.
+
+With the full table visible, a second cluster of comparable size appears — and
+unlike CE Plus, it is the intent BrightCert actually serves:
+
+| Query | Impressions | Avg position |
+|---|---:|---:|
+| cyber essentials questionnaire | 12 | 88.5 |
+| cyber essentials readiness assessment | 9 | **26.3** |
+| cyber essentials self assessment | 8 | 32.1 |
+| cyber essentials self assessment questionnaire | 5 | 61.0 |
+| cyber essentials self-assessment | 4 | **31.5** |
+| iasme cyber essentials questionnaire | 4 | 75.3 |
+| cyber essentials readiness check | 4 | 78.3 |
+
+That is ~46 impressions against CE Plus's ~50, and three of these already sit
+in the 26–35 band with no page written for them — a far shorter climb than the
+CE Plus queries, which all sit at 65+.
+
+`/blog/cyber-essentials-assessment-questions` was deferred to week 13 on the
+stated grounds of "no measured demand yet". That premise came from the
+truncated table. It is promoted to week 5 and everything else slides one week;
+nothing is dropped.
+
+**Constraint that shapes the article:** the Danzell question set belongs to
+IASME and must not be reproduced. The article is built around what each part of
+the assessment *needs from you* and who in the business holds it — which is
+also the more durable asset, since a copied question list goes stale the day
+the set changes.
 
 ### Why weeks 5–7 changed
 
