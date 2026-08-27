@@ -81,7 +81,10 @@ async function query(token, body) {
   return (await res.json()).rows ?? [];
 }
 
+const ROW_LIMIT = 1000;
 const iso = (d) => d.toISOString().slice(0, 10);
+const topBy = (rows, n) =>
+  [...rows].sort((a, b) => b.impressions - a.impressions || a.keys[0].localeCompare(b.keys[0])).slice(0, n);
 const num = (n, dp = 1) => (Math.round(n * 10 ** dp) / 10 ** dp).toFixed(dp);
 
 function table(title, rows, label) {
@@ -105,12 +108,16 @@ async function main() {
   const range = { startDate: iso(start), endDate: iso(end) };
 
   const token = await accessToken();
+  // Search Console orders rows by clicks descending. At zero clicks every row
+  // ties, and the tie-break is alphabetical by key — so a small rowLimit
+  // returns the alphabetically-first rows, not the biggest ones. Ask for
+  // everything and rank by impressions here instead.
   const [totals, pages, queries, devices, countries] = await Promise.all([
     query(token, { ...range, rowLimit: 1 }),
-    query(token, { ...range, dimensions: ["page"], rowLimit: 15 }),
-    query(token, { ...range, dimensions: ["query"], rowLimit: 20 }),
-    query(token, { ...range, dimensions: ["device"], rowLimit: 5 }),
-    query(token, { ...range, dimensions: ["country"], rowLimit: 5 }),
+    query(token, { ...range, dimensions: ["page"], rowLimit: ROW_LIMIT }),
+    query(token, { ...range, dimensions: ["query"], rowLimit: ROW_LIMIT }),
+    query(token, { ...range, dimensions: ["device"], rowLimit: ROW_LIMIT }),
+    query(token, { ...range, dimensions: ["country"], rowLimit: ROW_LIMIT }),
   ]);
 
   const t = totals[0] ?? { clicks: 0, impressions: 0, ctr: 0, position: 0 };
@@ -123,9 +130,10 @@ async function main() {
   out += `| Clicks | **${t.clicks}** |\n| Impressions | ${t.impressions} |\n`;
   out += `| CTR | ${num(t.ctr * 100, 2)}% |\n| Average position | ${num(t.position)} |\n`;
   out += `| UK share of impressions | ${t.impressions ? num((gbr / t.impressions) * 100) : "0.0"}% |\n`;
-  out += table("Pages", pages, "Page");
-  out += table("Queries", queries, "Query");
-  out += table("Devices", devices, "Device");
+  out += table("Pages", topBy(pages, 15), "Page");
+  out += table("Queries", topBy(queries, 25), "Query");
+  out += `\nTop 25 of ${queries.length} distinct queries, ranked by impressions.\n`;
+  out += table("Devices", topBy(devices, 5), "Device");
 
   console.log(out);
 
