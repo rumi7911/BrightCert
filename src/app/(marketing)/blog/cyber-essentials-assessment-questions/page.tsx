@@ -94,7 +94,7 @@ const FAQS = [
   },
   {
     q: "What happens if the honest answer to a question is no?",
-    a: "It is a gap to close, not a disqualification. The mistake that costs organisations time is answering yes for something that is planned rather than in place. An assessor marks what you submitted, so an optimistic answer becomes a correction later rather than a pass now.",
+    a: "It is a gap to close, not a disqualification. The mistake that costs organisations time is answering yes for something that is planned rather than in place. The fee includes one free resubmission if you do not pass first time, so an optimistic answer spends that correction on a gap you already knew about, and leaves nothing in hand for one you did not.",
   },
   {
     q: "Does BrightCert submit the self-assessment for me?",
@@ -281,10 +281,15 @@ export default function CyberEssentialsAssessmentQuestionsPage() {
                 </p>
                 <p>
                   The temptation is to answer optimistically — to say yes because the fix is easy and somebody will
-                  get to it. It rarely works out cheaper. The assessment is marked on what you submitted, so an
-                  optimistic answer buys a correction cycle instead of a pass, and correction cycles are what turn a
-                  two-week timeline into a two-month one. Close the gap, then answer yes. If closing it will take
-                  longer than the time you have, that is a scheduling conversation, not a wording one.
+                  get to it. It rarely works out cheaper, and there is a specific reason why. The certification fee
+                  includes <strong>one free resubmission</strong> if you do not pass first time. After that, another
+                  failed attempt means paying the fee again.
+                </p>
+                <p>
+                  So an optimistic answer is not free. It spends the one correction you were given, on something you
+                  already knew about, and leaves you with none in hand for the thing you genuinely missed. Close the
+                  gap, then answer yes. If closing it will take longer than the time you have, that is a scheduling
+                  conversation, not a wording one.
                 </p>
               </ArticleProse>
             </section>
