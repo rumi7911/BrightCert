@@ -31,7 +31,7 @@ Each article requires founder review before publication. Do not publish a draft 
 | 3 | 17 Aug | Cyber Essentials Requirements v3.3: What Changed in 2026 | `/blog/cyber-essentials-requirements` | Requirements | ✅ Published 20 Aug |
 | 4 | 24 Aug | Cyber Essentials Checklist for UK SMEs | `/blog/cyber-essentials-checklist` | Checklist | ✅ Published 20 Aug |
 | 5 | 31 Aug | Cyber Essentials Self-Assessment Questions: What to Prepare | `/blog/cyber-essentials-assessment-questions` | Self-assessment | ✅ Published 27 Aug — **promoted from week 13** |
-| 6 | 7 Sep | What Actually Happens in a Cyber Essentials Plus Audit | `/blog/cyber-essentials-plus-audit` | CE Plus audit | Moved from week 5 |
+| 6 | 7 Sep | What Actually Happens in a Cyber Essentials Plus Audit | `/blog/cyber-essentials-plus-audit` | CE Plus audit | ✅ Published 29 Aug — moved from week 5 |
 | 7 | 14 Sep | How to Prepare for a Cyber Essentials Plus Assessment | `/blog/cyber-essentials-plus-preparation` | CE Plus preparation | Moved from week 6 |
 | 8 | 21 Sep | Cyber Essentials Plus Cost in 2026 | `/blog/cyber-essentials-plus-cost` | CE Plus cost | Moved from week 7 |
 | 9 | 28 Sep | Cyber Essentials Scope: Cloud, Remote Work and BYOD | `/blog/cyber-essentials-scope` | Scope | Moved from week 8 |
@@ -41,6 +41,36 @@ Each article requires founder review before publication. Do not publish a draft 
 | 13 | 26 Oct | Cyber Essentials Renewal Checklist | `/blog/cyber-essentials-renewal-checklist` | Renewal | Moved from week 12 |
 | 14 | 2 Nov | How Long Does Cyber Essentials Take? | `/blog/how-long-does-cyber-essentials-take` | Timeline | Deferred from week 9 |
 | 15 | 9 Nov | Cyber Essentials for Government Contracts | `/blog/cyber-essentials-government-contracts` | Contracts | Deferred from week 10 |
+
+### Week 6 published early — 29 August
+
+The CE Plus audit article was written and published on Saturday 29 August
+against a 7 September slot. The week that follows carries the Cobleys Touch 2
+and Touch 3 sends plus the week 7 article, so the choice was between shipping
+this one reviewed now or rushed later.
+
+Two things about the sourcing are worth recording, because both are recent
+enough that most competing pages do not have them:
+
+- The five test cases are taken from the **published NCSC Cyber Essentials Plus
+  test specification**, in the order the specification gives them, including the
+  Test case 2 pass criteria — vendor critical/high, or CVSS v3 base score 7 or
+  above, or no vendor detail — failing where a fix has been available for more
+  than 14 days.
+- The **April 2026 retest change** is from IASME's own update notice: a retest
+  now rechecks the original sample *and* a new random sample, and a second
+  failure means certification is not awarded. The same notice confirms the
+  verified self-assessment is locked before Plus testing begins. Neither point
+  appears in our existing CE Plus hub page.
+
+The `iasme.co.uk` certificate pages and the CE Knowledge Hub both refused
+automated fetching (403, and a JS-rendered shell respectively). The NCSC test
+specification PDF was the source that could be read directly and is cited on the
+page.
+
+**Section headings renumbered.** The three CE Plus briefs below were still
+labelled weeks 5–7 after the 27 August promotion slid everything by one, while
+the calendar above had them at 6–8. The headings now match the calendar.
 
 ### Why week 5 changed again — 27 August
 
@@ -165,7 +195,7 @@ Do not reproduce the official Danzell questionnaire verbatim.
   - https://iasme.co.uk/cyber-essentials/
 - Internal links: requirements guide, MFA guide, scope guide, assessment CTA.
 
-### Cyber Essentials Plus audit (week 5)
+### Cyber Essentials Plus audit (week 6)
 
 - Primary query: `cyber essentials plus audit` — 20 impressions, position 77.9, the single largest query the site is seen for
 - Concise answer: CE Plus adds an independent technical audit of a sample of your devices, carried out by a Certification Body assessor, after the same self-assessment that standard Cyber Essentials uses.
@@ -175,7 +205,7 @@ Do not reproduce the official Danzell questionnaire verbatim.
 - Internal links: the CE vs CE Plus hub, the requirements v3.3 guide, the checklist, assessment CTA
 - **Must not** imply BrightCert performs the audit or can pass you through it. BrightCert prepares; the audit belongs to an IASME-licensed Certification Body.
 
-### Cyber Essentials Plus preparation (week 6)
+### Cyber Essentials Plus preparation (week 7)
 
 - Primary query: `cyber essentials plus assessment` — 16 impressions, position 65.1
 - Concise answer: preparation for CE Plus is mostly making sure the things you claimed in the self-assessment are actually true on the devices the assessor will sample.
@@ -185,7 +215,7 @@ Do not reproduce the official Danzell questionnaire verbatim.
 - Internal links: the audit article, the checklist, the requirements v3.3 guide, assessment CTA
 - **Must not** market the CE Plus Pack tier, which is not built or purchasable.
 
-### Cyber Essentials Plus cost (week 7)
+### Cyber Essentials Plus cost (week 8)
 
 - Primary query: `cyber essentials plus cost`, plus `cyber essentials plus certification cost` which already sits at position **17** from a page not written for it
 - Concise answer: unlike standard Cyber Essentials, CE Plus has no fixed fee band. It is quoted per organisation because the audit effort depends on scope and network complexity.

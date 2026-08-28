@@ -196,6 +196,19 @@ export const ARTICLES = {
     kind: "article",
     datePublished: "2026-08-27",
   },
+  cyberEssentialsPlusAudit: {
+    path: "/blog/cyber-essentials-plus-audit",
+    title: "What Actually Happens in a Cyber Essentials Plus Audit | BrightCert",
+    shortTitle: "What happens in a Cyber Essentials Plus audit",
+    description:
+      "The five Cyber Essentials Plus test cases in the order they run, how the device sample is chosen, the 14-day patching bar, and what changed for retests in April 2026.",
+    excerpt:
+      "The five test cases in the order they run, how the device sample is chosen, and why the day needs the right people free.",
+    indexable: true,
+    lastModified: "2026-08-29",
+    kind: "article",
+    datePublished: "2026-08-29",
+  },
   cyberEssentialsChecklist: {
     path: "/blog/cyber-essentials-checklist",
     title: "Cyber Essentials Checklist for UK SMEs (2026) | BrightCert",
