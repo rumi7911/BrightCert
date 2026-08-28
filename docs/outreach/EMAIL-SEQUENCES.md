@@ -70,7 +70,7 @@ Hi {{first_name}},
 
 {{verified_trigger_sentence}}.
 
-After the free guided baseline and reviewed action plan, the optional permanent report and evidence-workspace unlock is £99 including VAT with the existing £100 FOUNDING10 discount from £199. Founder support is included through the pilot.
+After the free guided baseline and reviewed action plan, the optional permanent report and evidence-workspace unlock is £199, or £99 including VAT with the existing £100 FOUNDING10 discount, which is limited to the first 10 customers. Founder support is included through the pilot.
 
 Would you like me to send the baseline steps?
 
