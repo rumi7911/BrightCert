@@ -2,9 +2,22 @@
 
 Last reconciled: 10 August 2026, 23:00 BST
 
-Reconciled by: Claude Code
+Reconciled by: Codex
 
 Integrated coordination commit: `572ae58`, pushed and deployed.
+
+> **Partial update, 29 August 2026.** `codex/contracts-finder-review` was merged
+> on this date, bringing in LIA Amendment 2, Source D, seventeen outreach
+> handoffs covering 8–16 August, and four social briefs. That branch had been
+> written against 8 August, so where its status prose conflicted with this
+> file's 10 August text the newer text was kept, and two claims it carried
+> outside the conflict were corrected in place and marked.
+>
+> **This document has not otherwise been reconciled since 10 August**, so the
+> commit and deployment references below are older than `main`. A full
+> reconciliation is an owner-directed task. Until then, treat Git, `.outreach/`
+> and the dated handoffs as authoritative over this snapshot — as the protocol
+> in `AGENTS.md` already requires.
 
 ## Production
 
@@ -55,6 +68,7 @@ was deployed, while local inspection made it look shipped.
 |---|---|---|---|
 | Social infographic system | `codex/social-infographic-system` | Integrated at `47515ea` | Complete |
 | Integrated signal sprint | `codex/integrated-signal-sprint` | Integrated at `aaf55a4` | Four founder drafts held at `Status: Founder review` |
+| Contracts Finder helper and review | `claude/contracts-finder`, `codex/contracts-finder-review` | Merged to `main` on 29 August 2026 | Source A withdrawn; Source B is an MSP-candidate source; output confined to CSV files under `outreach/runs/` |
 | PDF production gate repair | `codex/pdf-production-gate` | Integrated at `6804252` | Renderer repair deployed; retest closed 3 Aug on `claude/pdf-production-retest` |
 | PDF sandbox retest | `claude/pdf-production-retest` | Integrated at `6b3d800` | Closed the final launch-gate row. Conflicts with `codex/reminder-evidence-integration` on `LAUNCH-GATE.md` |
 | Launch evidence backup | `claude/evidence-backup` | Integrated at `7a13d6c` | Complete |
@@ -135,12 +149,25 @@ handoff, since the identical blob merged without conflict.
    against `next dev`. This is the last untested link in the paid lifecycle, and
    closing it costs a real £199 purchase at roughly £3.19 in non-refundable
    fees. Owner decision.
-4. **Produce real outreach prospects.** The pipeline is built, rehearsed and
-   gate-verified but holds only the three fictitious rehearsal rows from
-   26 July — zero real prospects. Method is on
-   `claude/outreach-trigger-research`. The gating unknown is whether the IASME
-   register supports postcode search, which only a human browser can establish
-   since IASME 403s automated requests.
+4. **Complete the first real outreach cohort.** Source A (the IASME certificate
+   register) is withdrawn because its page forbids marketing and data research.
+   A live Contracts Finder run on 8 August produced 170 candidate notices; the
+   recent awarded suppliers were triaged as MSP candidates, but none is ready
+   to send. A timed Source C pass assessed 26 companies: four direct SMEs can
+   advance to mailbox, suppression, duplicate and owner checks; 19 were
+   excluded and three held. The private research file is mode 600 and remains
+   outside Git. The first sprint still needs 24 fully verified direct SMEs and
+   six fully verified MSPs before T0.
+
+   **Superseded in part, 29 August 2026.** The paragraph above records the
+   position on 8 August and is kept for that reason. Its original closing
+   clause — "there are currently zero send-ready rows" — was true then and is
+   not true now, and repeating it led later sessions to conclude that outreach
+   had never started. As of 29 August the campaign has six verified mailboxes
+   and two prospects in `.outreach/prospects.csv`; Cobleys Touch 1 was sent on
+   16 August and delivery was confirmed on 27 August. Read `.outreach/` and the
+   seventeen August handoffs merged alongside this note before restating cohort
+   status.
 5. Decide on report retention. Nothing deletes a GCS object — not the refund
    handler, not row cleanup — so report PDFs persist indefinitely with no
    deletion path. Four orphaned objects remain in the bucket, one

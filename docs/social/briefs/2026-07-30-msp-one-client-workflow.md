@@ -7,16 +7,16 @@
 - Audience: UK MSP founders, service-delivery leaders, and technical directors supporting SMEs
 - CTA: Read how the readiness workflow works
 - Status: Founder review
-- Fact-check date: 2026-07-30
+- Fact-check date: 2026-08-08
 - Publication: Blocked until source recheck, founder approval, and owner-set schedule
 
 ## Primary sources
 
 | Claim | Primary source | Retrieved |
 |---|---|---:|
-| Cyber Essentials is aligned to five technical controls | https://www.ncsc.gov.uk/cyberessentials/overview | 30 Jul 2026 |
-| Certification has separate self-led and Certification Body supported routes managed through IASME | https://www.ncsc.gov.uk/cyberessentials/overview | 30 Jul 2026 |
-| BrightCert provides a guided assessment, readiness scoring, gap analysis and practical remediation reporting | https://brightcert.co.uk/how-it-works | 30 Jul 2026 |
+| Cyber Essentials is aligned to five technical controls | https://www.ncsc.gov.uk/cyberessentials/overview | 8 Aug 2026 |
+| Certification has separate self-led and Certification Body supported routes managed through IASME | https://www.ncsc.gov.uk/cyberessentials/overview | 8 Aug 2026 |
+| BrightCert provides a guided assessment, readiness scoring, gap analysis and practical remediation reporting | https://brightcert.co.uk/how-it-works | 8 Aug 2026 |
 
 ## Founder LinkedIn post
 
@@ -49,7 +49,7 @@ BrightCert helps organisations prepare for Cyber Essentials. It does not issue c
 
 ## Approval
 
-- [x] Claims checked against the recorded primary sources on 30 July 2026.
+- [x] Claims checked against the recorded primary sources on 8 August 2026.
 - [x] UK English, one CTA, no em dash, and the readiness disclaimer are present.
 - [ ] Muhammad has approved the claims and publishing copy.
 - [ ] Publication timing has been selected.

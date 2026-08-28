@@ -78,7 +78,7 @@ again at sign-off.
 | People | Relevant directors, owners in a corporate capacity, operations, IT, security, compliance, procurement, and MSP leadership/technical roles |
 | Personal data | Name, role, corporate work email, company affiliation, public source URL/date, trigger evidence, and a short business-context personalisation note |
 | Company data | Name, domain, company number, legal entity type, status, size band, sector, and Cyber Essentials trigger |
-| Sources | Public company websites and business-context pages; Companies House; licensed Clay data used for research and enrichment. **Not** the NCSC/IASME certificate register — see [Amendment 1](#amendment-1--withdrawn--ncsciasme-certificate-register) |
+| Sources | Public company websites and business-context pages; Companies House; licensed Clay or Hunter data used for research and enrichment; and the narrow public BlockMark digital-certificate use approved in [Amendment 2](#amendment-2--approved-with-controls--public-blockmark-digital-certificates). **Not** the NCSC/IASME certificate register — see [Amendment 1](#amendment-1--withdrawn--ncsciasme-certificate-register) |
 | Operations | Research, validation, exact-number company verification, human review, manual email, suppression, outcome recording, reporting, and retention cleanup |
 | Recipients/processors | Authorised BrightCert operators and approved infrastructure/processors described in the public privacy notice; no onward sale |
 
@@ -296,3 +296,84 @@ company websites and business-context pages".
 its primary source for the direct-SME segment. That section is withdrawn there
 too. Sources B (Contracts Finder) and C (company assurance material) are
 unaffected and become primary.
+
+---
+
+## Amendment 2 — APPROVED WITH CONTROLS — public BlockMark digital certificates
+
+| Record | Value |
+|---|---|
+| Proposed and approved | 16 August 2026 |
+| Campaign/version | `founding_pilot_2026`; `sme-v1` |
+| Owner/privacy reviewer | Muhammad Sohaib Roomi (self-review) |
+| Decision | Approved with the controls below |
+| First account reviewed | Utonomy Ltd, company number 09612773 |
+| Review trigger | Any BlockMark terms change; any recipient privacy or visibility ambiguity; a materially different source, purpose, channel, or scale; or the next campaign LIA review |
+
+The source and guidance boundary was rechecked on 16 August 2026 against
+BlockMark's own recipient, registry-overview, and certificate-search material,
+and the ICO's current B2B marketing and legitimate-interests guidance. BlockMark
+describes recipient-controlled public visibility, public search and inspection,
+and the possibility that public accreditation can generate business. No
+equivalent to the IASME register's marketing/data-research prohibition was
+found. The ICO guidance remains marked as under review following the Data (Use
+and Access) Act, so a material update still triggers reassessment.
+
+### Narrow source addition
+
+The owner approved limited use of a public BlockMark organisation certificate
+page as company-level evidence of a Cyber Essentials renewal date when all of
+the following are true:
+
+- the certificate is deliberately public and names the same active corporate
+  body confirmed through Companies House;
+- the company's own current website independently displays or states the same
+  Cyber Essentials certification;
+- research is manual and account-specific, with no bulk extraction, scraping,
+  monitoring, or attempt to bypass access controls;
+- only company-level certificate facts needed for the trigger are retained,
+  such as certification type, status, issue date, and validity date;
+- the named contact and corporate mailbox come from separately approved public
+  business-context or licensed enrichment sources;
+- the message says only what the evidence supports and never implies that the
+  company has failed, is uncertified, or has not already started renewal; and
+- any source terms that prohibit marketing or data research block use
+  immediately, as they do for the NCSC/IASME register in Amendment 1.
+
+This amendment does not approve BlockMark as a bulk discovery list. It does
+not permit use of private certificates, personal certificates, certificate
+viewer analytics, personal profiles, or data unrelated to the corporate
+renewal signal.
+
+### Three-part assessment
+
+**Purpose.** The existing purpose remains unchanged: a small founder-led pilot
+offering a relevant Cyber Essentials readiness baseline to active UK corporate
+SMEs. A public, current company certificate date can establish timing without
+inferring a vulnerability or collecting private-life information.
+
+**Necessity.** The validity date is the minimum fact needed to make a renewal
+approach timely. It is used only after the company identity, size, current
+certification claim, decision-maker role, mailbox, customer status, duplicate
+status, and suppression status have been checked. General advertising would
+not test the same one-to-one proposition, and no open tracking or automated
+sequence is introduced.
+
+**Balancing.** A senior contact may reasonably expect a concise business
+message connected to a certification their employer currently displays and a
+certificate the organisation has made public. The residual impact is a brief
+inbox interruption and possible surprise. The safeguards are one named
+corporate contact, one factual date, a free first step, a plain identity and
+privacy notice, immediate objection handling, no tracking, short retention,
+and human approval of the exact copy before any send.
+
+### Utonomy account conclusion
+
+Utonomy Ltd passes this amended assessment in principle: it is an active UK
+limited company in the approved size band; its current company site displays
+Cyber Essentials and identifies [redacted: named individual] as CEO; the public BlockMark
+certificate is valid to 7 October 2026; and the named corporate mailbox was
+licensed-enriched and independently verified. The account may enter the
+private canonical file as `candidate`. Exact-copy approval, a timestamped
+`human_approved_at`, `sequence_status=approved`, fresh queue checks, and a
+manual send decision remain separate owner actions.
