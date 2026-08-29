@@ -312,12 +312,12 @@ The 15–16 August research batch was audited by reading the `source` column of
 
 | `source` family | Rows | Reading |
 |---|---:|---|
-| `first_party_*` — five variants | 47 | Source C, working as designed |
+| `first_party_*` — five variants | 46 | Source C, working as designed |
 | `public_assurance`, `third_party_ce_plus` | 2 | Neither is a certificate registry |
 | `public_digital_certificate_plus_first_party_assurance` | 1 | Utonomy — certificate page corroborating a first-party claim |
 | `public_digital_certificate_discovery` | 1 | Gemsatwork — certificate page as the discovery route |
 
-**Source C carried the batch.** Forty-seven rows in fifty came from companies'
+**Source C carried the batch.** Forty-six rows in fifty came from companies'
 own material. That is worth stating, because the working assumption after
 6 August had drifted toward treating the whole batch as registry-dependent, and
 it was not.
