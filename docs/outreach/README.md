@@ -41,8 +41,9 @@ and authorised in [LIA.md](./LIA.md):
 - **Source C** — the company's own published assurance material. First-party
   routes carried **46 of the first 50** researched rows, across five `source`
   variants, so this is the route to prefer. Counted from the private research
-  ledger on 29 August 2026; the 28 August handoff records 47, which is off by
-  one.
+  ledger. The 28 August handoff still records 47, which does not add up against
+  50 rows; the audit table in `TRIGGER-RESEARCH-METHOD.md` was corrected to 46
+  on 29 August.
 - **Source D** — a public BlockMark certificate page, eligible **only** where
   the company's own current website independently confirms the certification.
   Approved with controls by the owner on 16 August 2026 as LIA Amendment 2.
@@ -62,14 +63,10 @@ Two rules that are easy to violate by accident:
 Never frame an expiry date as evidence that certification has lapsed or that a
 renewal has not started.
 
-**Pending, and not yet on `main`.** The two rules immediately above — discovery
-method as an independent gate, and the ban on date-range targeting — are written
-up in full on the unmerged branch `claude/lia-amendment-2`, as a new section in
-`ICP.md` and a dated sourcing audit in `TRIGGER-RESEARCH-METHOD.md`. `ICP.md` on
-`main` does **not** yet contain them, so do not go looking there and conclude
-this README invented them. They are stated here because they are operative
-regardless of which branch carries the prose. Merging that branch closes the
-gap.
+Both rules are written up in full in `ICP.md`, under "How a candidate was found
+is itself a gate", and the audit that produced them is the dated sourcing audit
+at the end of `TRIGGER-RESEARCH-METHOD.md`. Both landed on `main` on 29 August
+2026.
 
 ### Gate 2 — Qualify
 
