@@ -99,6 +99,45 @@ Examples of acceptable trigger labels include `tender_requirement`,
 Use one stable label in `trigger` and put the factual explanation in
 `personalisation_note`.
 
+## How a candidate was found is itself a gate
+
+A trigger can be strong and the row still be ineligible, because the strength
+table above rates the *evidence* and says nothing about the *search*. Both are
+gates and they fail independently.
+
+**Record the discovery method for every row.** The research ledger carries a
+`source` column for this. It is not bookkeeping: on 28 August 2026 it was the
+only thing that could distinguish a company found from its own website from one
+found by searching a certificate registry, months after anyone could recall the
+difference. Write it at the moment of research, and name the method rather than
+the artefact — `first_party_renewal` says how the company surfaced;
+`public_digital_certificate` only says what was read.
+
+**A renewal window is not a search filter.** Do not express the target set as
+companies whose certificate expires inside a date range. Almost no company
+publishes its expiry date on its own site, so a date-range filter can only be
+satisfied by searching a certificate registry. No certificate registry is
+approved as a discovery route: the NCSC/IASME register is prohibited outright by
+[LIA Amendment 1](./LIA.md#amendment-1--withdrawn--ncsciasme-certificate-register),
+and the narrow BlockMark permission granted in Amendment 2 covers *evidencing* a
+date for a company already identified, expressly not bulk discovery.
+
+A filter of that shape reads as a targeting criterion and functions as an
+instruction to search a source that is not approved for searching. It is how the
+one registry-discovered row in the August batch was generated — see the sourcing
+audit in
+[TRIGGER-RESEARCH-METHOD.md](./TRIGGER-RESEARCH-METHOD.md#sourcing-audit-28-august-2026).
+
+The `renewal` trigger itself is unaffected and remains Strong. What changed is
+the direction of travel: find the company first through an approved source, then
+establish whether it has a renewal need, and only then date it. Never start from
+the date.
+
+A row whose only certification evidence is a registry page, with no first-party
+Cyber Essentials claim on the company's own current site, fails the campaign's
+approved conditions no matter how good the fit otherwise looks. Hold it and go
+looking for the company's own statement; do not send on the registry alone.
+
 ## Disqualifiers
 
 Exclude or block a record when any of the following applies:

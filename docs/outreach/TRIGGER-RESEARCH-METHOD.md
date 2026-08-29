@@ -324,3 +324,55 @@ with the owner rather than absorbing quietly into a longer timeline.
 What has not changed: no tool removes this cost. The parts a scraper automates
 — name, domain, generic inbox — are the parts the gate rejects, and the part
 that matters, a defensible trigger, is the part nothing automates.
+
+---
+
+## Sourcing audit, 28 August 2026
+
+The 15–16 August research batch was audited by reading the `source` column of
+`.outreach/research-2026-08-09.csv` for all 50 rows.
+
+| `source` family | Rows | Reading |
+|---|---:|---|
+| `first_party_*` — five variants | 46 | Source C, working as designed |
+| `public_assurance`, `third_party_ce_plus` | 2 | Neither is a certificate registry |
+| `public_digital_certificate_plus_first_party_assurance` | 1 | Utonomy — certificate page corroborating a first-party claim |
+| `public_digital_certificate_discovery` | 1 | Gemsatwork — certificate page as the discovery route |
+
+**Source C carried the batch.** Forty-six rows in fifty came from companies'
+own material. That is worth stating, because the working assumption after
+6 August had drifted toward treating the whole batch as registry-dependent, and
+it was not.
+
+**One row used the registry to find the company rather than to date it.**
+Gemsatwork's `source` is labelled `public_digital_certificate_discovery` and it
+carries no first-party citation. Source D permits a certificate page to
+*evidence* a date for a company whose own site confirms the certification; it is
+explicitly not a discovery list. That row was correctly left on `hold` at the
+time, with "obtain a company-published certification reference" recorded as its
+next action — which is Source D's own condition. The gate worked. Nothing was
+sent and the row never entered the canonical ledger.
+
+### The lesson is about the filter, not the citations
+
+`.outreach/remaining-cohort-progress-2026-08-16.md` states the target set as
+companies with "a public Cyber Essentials or Cyber Essentials Plus renewal
+between September and November 2026". Almost no company publishes its expiry
+date on its own site, so a date-range filter of that shape can only be satisfied
+by searching a registry. The same file's next-action list says to continue
+company-hosted discovery "to avoid dependence on registry-only signals", which
+shows the pull was felt at the time.
+
+The targeting criterion, not any individual decision, is what produced the one
+registry-discovered row. An out-of-scope source is far more likely to enter
+through a filter that quietly requires it than through a deliberate choice to
+use it. **Audit the filter, not just the citations.**
+[ICP.md](./ICP.md#how-a-candidate-was-found-is-itself-a-gate) now rules that
+filter out and makes discovery method a gate in its own right.
+
+### Keep filling in the `source` column
+
+It was the only record that could tell these two rows apart a fortnight later,
+and it worked because it was written at the moment of research by someone with
+no reason to be careful about a future dispute. Name the *method* by which the
+company surfaced, not the artefact that was read.
