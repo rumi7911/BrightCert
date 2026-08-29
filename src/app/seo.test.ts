@@ -78,6 +78,10 @@ describe("indexing signals", () => {
         () => import("./(marketing)/blog/cyber-essentials-assessment-questions/page"),
       ],
       [ARTICLES.cyberEssentialsPlusAudit, () => import("./(marketing)/blog/cyber-essentials-plus-audit/page")],
+      [
+        ARTICLES.cyberEssentialsPlusPreparation,
+        () => import("./(marketing)/blog/cyber-essentials-plus-preparation/page"),
+      ],
     ] as const;
 
     for (const [page, loadRoute] of routes) {

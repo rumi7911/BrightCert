@@ -32,7 +32,7 @@ Each article requires founder review before publication. Do not publish a draft 
 | 4 | 24 Aug | Cyber Essentials Checklist for UK SMEs | `/blog/cyber-essentials-checklist` | Checklist | ✅ Published 20 Aug |
 | 5 | 31 Aug | Cyber Essentials Self-Assessment Questions: What to Prepare | `/blog/cyber-essentials-assessment-questions` | Self-assessment | ✅ Published 27 Aug — **promoted from week 13** |
 | 6 | 7 Sep | What Actually Happens in a Cyber Essentials Plus Audit | `/blog/cyber-essentials-plus-audit` | CE Plus audit | ✅ Published 29 Aug — moved from week 5 |
-| 7 | 14 Sep | How to Prepare for a Cyber Essentials Plus Assessment | `/blog/cyber-essentials-plus-preparation` | CE Plus preparation | Moved from week 6 |
+| 7 | 14 Sep | How to Prepare for a Cyber Essentials Plus Assessment | `/blog/cyber-essentials-plus-preparation` | CE Plus preparation | ✅ Published 29 Aug — moved from week 6 |
 | 8 | 21 Sep | Cyber Essentials Plus Cost in 2026 | `/blog/cyber-essentials-plus-cost` | CE Plus cost | Moved from week 7 |
 | 9 | 28 Sep | Cyber Essentials Scope: Cloud, Remote Work and BYOD | `/blog/cyber-essentials-scope` | Scope | Moved from week 8 |
 | 10 | 5 Oct | Cyber Essentials MFA Requirements in 2026 | `/blog/cyber-essentials-mfa-requirements` | MFA | Moved from week 9 |
@@ -71,6 +71,28 @@ page.
 **Section headings renumbered.** The three CE Plus briefs below were still
 labelled weeks 5–7 after the 27 August promotion slid everything by one, while
 the calendar above had them at 6–8. The headings now match the calendar.
+
+### Week 7 published early too — 29 August
+
+Written the same day, immediately after the week 6 article, because the two are
+halves of one topic and drafting them together kept the boundary clean: week 6
+describes what the assessor does, week 7 describes what to do in the weeks
+before. Publishing them a fortnight apart would have meant re-reading the same
+primary sources twice.
+
+The original element is a **four-week countdown table** rather than another
+control-by-control checklist. The justification is in the sources rather than in
+style: two of the constraints are time windows, not settings. The 14-day
+patching rule means the fortnight before the audit is the period actually being
+assessed, and unsupported software has no same-week remedy because no fix
+exists to apply. Those two facts are what make preparation a calendar problem,
+and no competing page currently frames it that way.
+
+Owner and status columns are left blank so the table prints and gets used, in
+the same shape as the week 4 readiness checklist.
+
+The brief's constraint was observed: the CE Plus Pack tier is not mentioned
+anywhere on the page, because there is no working checkout for it.
 
 ### Why week 5 changed again — 27 August
 

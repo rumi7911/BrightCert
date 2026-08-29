@@ -196,6 +196,19 @@ export const ARTICLES = {
     kind: "article",
     datePublished: "2026-08-27",
   },
+  cyberEssentialsPlusPreparation: {
+    path: "/blog/cyber-essentials-plus-preparation",
+    title: "How to Prepare for a Cyber Essentials Plus Assessment | BrightCert",
+    shortTitle: "How to prepare for a Cyber Essentials Plus assessment",
+    description:
+      "A four-week countdown to a Cyber Essentials Plus audit: when the 14-day patching window actually opens, why unsupported software is the hard stop, and who has to be free on the day.",
+    excerpt:
+      "Preparation is a calendar problem before it is a technical one. What to do four weeks out, two weeks out, and the day before.",
+    indexable: true,
+    lastModified: "2026-08-29",
+    kind: "article",
+    datePublished: "2026-08-29",
+  },
   cyberEssentialsPlusAudit: {
     path: "/blog/cyber-essentials-plus-audit",
     title: "What Actually Happens in a Cyber Essentials Plus Audit | BrightCert",

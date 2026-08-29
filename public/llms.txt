@@ -36,6 +36,7 @@ Written and reviewed by Muhammad Sohaib Roomi, MSc Cyber Security with Advanced 
 - [IASME Readiness Tool vs BrightCert](https://brightcert.co.uk/blog/iasme-tool-vs-brightcert): an honest comparison of the free official readiness tool and BrightCert's scored, prioritised report
 - [Cyber Essentials vs Cyber Essentials Plus](https://brightcert.co.uk/blog/ce-vs-ce-plus): how verification, pricing and timelines differ, and when a UK SME actually needs the technical audit
 - [What happens in a Cyber Essentials Plus audit](https://brightcert.co.uk/blog/cyber-essentials-plus-audit): the five test cases in the order the NCSC test specification gives them, how the device sample is sized, the CVSS 7 and 14-day patching bar, and the April 2026 change that makes a retest cover a new random sample as well as the original one
+- [How to prepare for a Cyber Essentials Plus assessment](https://brightcert.co.uk/blog/cyber-essentials-plus-preparation): a four-week countdown to an audit date with owner and status columns, explaining why the 14-day patching rule makes the fortnight before the audit the one that is assessed, and why unsupported software is a hard stop rather than a finding
 
 ## Important distinction
 
