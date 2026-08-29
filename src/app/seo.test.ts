@@ -71,6 +71,13 @@ describe("indexing signals", () => {
       [ARTICLES.cyberEssentialsCost, () => import("./(marketing)/blog/cyber-essentials-cost/page")],
       [ARTICLES.iasmeToolVsBrightcert, () => import("./(marketing)/blog/iasme-tool-vs-brightcert/page")],
       [ARTICLES.ceVsCePlus, () => import("./(marketing)/blog/ce-vs-ce-plus/page")],
+      [ARTICLES.cyberEssentialsRequirements, () => import("./(marketing)/blog/cyber-essentials-requirements/page")],
+      [ARTICLES.cyberEssentialsChecklist, () => import("./(marketing)/blog/cyber-essentials-checklist/page")],
+      [
+        ARTICLES.cyberEssentialsAssessmentQuestions,
+        () => import("./(marketing)/blog/cyber-essentials-assessment-questions/page"),
+      ],
+      [ARTICLES.cyberEssentialsPlusAudit, () => import("./(marketing)/blog/cyber-essentials-plus-audit/page")],
     ] as const;
 
     for (const [page, loadRoute] of routes) {
