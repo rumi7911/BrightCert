@@ -6,6 +6,12 @@ Branch: `codex/contracts-finder-review`
 Worktree: `/Users/rumipro/Documents/Hackathon/brightcert/.worktrees/contracts-finder-review`
 Task commit: `200439b2cff507d3b381ea12137123b2c3b8a513`
 
+> **Redacted 29 August 2026.** This snapshot originally named an individual
+> at a prospect company and, in one place, their work email address. The
+> repository is public, so both were replaced with role descriptions. The
+> underlying values are unchanged in the private ledger under `.outreach/`,
+> which is where they belong. Nothing else in this record was altered.
+
 ## Bounded task
 
 Accept the owner-approved Utonomy certificate-source boundary, complete the
@@ -39,7 +45,8 @@ and LinkedIn first touches without sending or scheduling anything.
   band `10-49`.
 - Trigger: Utonomy's current company site displays Cyber Essentials; its public
   BlockMark organisation certificate is valid to 7 October 2026.
-- Contact: [redacted: named individual], current CEO and active director.
+- Contact: the company's current CEO, who is also an active director. Name
+  and mailbox are held in the private ledger only.
 - Mailbox: licensed Hunter domain search plus exact verification returned
   valid/deliverable, score 100, SMTP true, and accept-all false at
   `2026-08-16T20:40:34Z`.

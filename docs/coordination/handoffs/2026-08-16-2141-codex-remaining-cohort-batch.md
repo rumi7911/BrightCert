@@ -11,6 +11,12 @@
 - **Final commit:** The follow-up commit that records the evidence SHA above.
 - **Status:** One founder-review candidate found; nothing sent or scheduled
 
+> **Redacted 29 August 2026.** This snapshot originally named an individual
+> at a prospect company and, in one place, their work email address. The
+> repository is public, so both were replaced with role descriptions. The
+> underlying values are unchanged in the private ledger under `.outreach/`,
+> which is where they belong. Nothing else in this record was altered.
+
 ## Scope and ownership
 
 Private owner-only files changed:
@@ -60,10 +66,10 @@ promotion, LIA and copy approval.
 - Companies House: `https://find-and-update.company-information.service.gov.uk/company/09612773`
 - Current leadership: `https://utonomy.co.uk/team/`
 
-The current company page identifies [redacted: named individual] as CEO and Companies House
-lists [redacted: named individual] as an active director. A licensed Hunter
-domain search returned `[redacted: mailbox held in the private ledger]`. Exact verification then
-returned:
+The current company page identifies a named individual as CEO and Companies
+House lists the same individual as an active director. A licensed Hunter
+domain search returned that person's named corporate mailbox, which is held
+in the private ledger only. Exact verification then returned:
 
 ```text
 status: valid

@@ -369,11 +369,16 @@ and human approval of the exact copy before any send.
 
 ### Utonomy account conclusion
 
+> **Redacted 29 August 2026.** This section named the account's CEO. The
+> repository is public, so the name was replaced with the role. The
+> assessment and its conclusion are unchanged; the name is held in the
+> private ledger under `.outreach/`.
+
 Utonomy Ltd passes this amended assessment in principle: it is an active UK
 limited company in the approved size band; its current company site displays
-Cyber Essentials and identifies [redacted: named individual] as CEO; the public BlockMark
-certificate is valid to 7 October 2026; and the named corporate mailbox was
-licensed-enriched and independently verified. The account may enter the
+Cyber Essentials and names its CEO; the public BlockMark certificate is valid
+to 7 October 2026; and the named corporate mailbox was licensed-enriched and
+independently verified. The account may enter the
 private canonical file as `candidate`. Exact-copy approval, a timestamped
 `human_approved_at`, `sequence_status=approved`, fresh queue checks, and a
 manual send decision remain separate owner actions.

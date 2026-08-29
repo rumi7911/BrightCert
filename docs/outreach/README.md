@@ -182,6 +182,13 @@ Recorded so they are not repeated. Each one cost real work.
 4. **Suppressing by company name.** `scope: "company"` matches on
    `company_number`. A suppression written with a name normalises to something
    that never matches.
+5. **Writing a contact's name and mailbox into a handoff.** A dated evidence
+   snapshot recorded a prospect's CEO by name and their verified work email in
+   plain text. The repository is public, so both were readable by anyone for
+   almost two weeks before anyone checked. Redacted 29 August 2026. A handoff
+   proves the check was done by naming the *method and the result*; it never
+   needs the person. Before committing any outreach document, grep it for the
+   contact's name, the mailbox, and the company domain.
 
 Repository facts outrank status prose, including this file. If this README
 disagrees with `LIA.md`, the gate, or `.outreach/`, they win and this file is
