@@ -176,6 +176,59 @@ Weeks 13–15 carry the three articles displaced by the CE Plus cluster. None
 were cancelled; they addressed intents with no measured demand yet, which is a
 reason to sequence them later, not to abandon them.
 
+### Measurement, 30 August — the self-assessment cluster has overtaken CE Plus
+
+Reading filed at `docs/growth/SEO-2026-08-30.md`. The 27 August run was never
+written to a file, so the filed record jumps 20 August to 30 August.
+
+| Metric | 20 Aug | 30 Aug |
+|---|---:|---:|
+| Impressions | 189 | **380** |
+| Clicks | 0 | 0 |
+| Average position | 49.4 | 49.5 |
+| UK share | 0.0% (the measurement bug) | **77.4%** |
+
+Impressions doubled in ten days while average position stayed flat, so the
+growth is new queries entering the set rather than existing ones climbing.
+
+**This window ends 28 August and therefore contains no data on weeks 6 and 7**,
+both published on the 29th. `cyber essentials plus audit` at 27 impressions and
+position 77.2 is still being served by `/blog/ce-vs-ce-plus`, not by the new
+audit article. Do not read this table as a verdict on either CE Plus piece.
+
+The two clusters have now separated:
+
+| Cluster | Impressions | Best position within it |
+|---|---:|---:|
+| Questionnaire, self-assessment, readiness | **79** | 24.0 |
+| CE Plus | 54 | 65.9 |
+
+The self-assessment cluster was ~46 on 27 August against CE Plus's ~50. It is
+also the one that is moving: `cyber essentials self assessment` went 8 → 16
+impressions and 32.1 → **27.3**, and `cyber essentials questionnaire` 12 → 18.
+Every CE Plus query remains at 65 or worse.
+
+**Week 5 justified its promotion.** `/blog/cyber-essentials-assessment-questions`
+took 27 impressions at position **24.2** with only two days inside the window —
+the strongest debut any page on the site has had.
+
+**A flag on week 8, not yet a decision.** Its primary query
+`cyber essentials plus cost` sits at 3 impressions and position 86.0, unchanged
+on both counts since 20 August. The brief's supporting argument cites
+`cyber essentials plus certification cost` at position 17, but that query
+carries roughly one impression. Week 8's target is the weakest measured demand
+in the calendar.
+
+That is not sufficient grounds to re-plan today. Weeks 5, 6 and 7 have between
+zero and two days of data each, so the next reading is the first one that can
+judge them. **Decide week 8 at the 6 September measurement**, which still leaves
+a fortnight before the 21 September slot. Re-planning twice on thin data is the
+error the 20 August truncated table already caused once.
+
+**One unserved query worth recording:** `cyber essentials danzell update`, 9
+impressions at position 31.8, with no page written for it. The Willow-to-Danzell
+change is currently a passage inside other articles rather than a destination.
+
 ## Required article brief
 
 Create the brief before drafting:
