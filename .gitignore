@@ -61,9 +61,18 @@ next-env.d.ts
 /output/
 /.playwright-cli/
 
-# Promo video: authored source (STORYBOARD.md, SCRIPT.md, DESIGN.md,
-# compositions/, *.json) stays visible; only the ~32MB of rendered and
-# captured media is ignored.
+# Promo video. The rule below used to keep the authored source
+# (STORYBOARD.md, SCRIPT.md, DESIGN.md, compositions/, *.json) visible and
+# ignore only the rendered media, on the assumption the source would be
+# committed. It never was. Video work was closed by owner decision on
+# 20 August 2026 and the shipped demo video was built elsewhere, in
+# ~/Documents/Hackathon/video-build/, so /videos/ holds a dead July project
+# whose 13 authored files sat untracked-but-not-ignored in a public
+# repository — one `git add .` from being committed. The whole directory is
+# now ignored. Nothing has been deleted; the files remain on disk. If video
+# work ever restarts, narrow this back to the media-only rules kept below.
+/videos/
+# Retained so the media rules still apply if /videos/ is ever un-ignored.
 /videos/**/renders/
 /videos/**/capture/
 /videos/**/snapshots/
