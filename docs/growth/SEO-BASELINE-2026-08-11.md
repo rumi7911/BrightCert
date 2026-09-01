@@ -123,11 +123,23 @@ change. The honest next step is more cost-and-comparison content in the shape of
 
 ## How to re-measure
 
+> **Redacted 1 September 2026.** This section originally named the Google
+> Cloud service account in full, stated the privilege it holds, and gave the
+> project number. None of that is a credential and none of it granted access,
+> but the repository is public and together they named a principal, its
+> privilege level and the procedure to use it — which is reconnaissance value
+> for no operational benefit, since anyone entitled to run this already has
+> the values. They were replaced with pointers to where the values live. The
+> method below is unchanged and still works. Nothing else in this record was
+> altered.
+
 Access is already provisioned and needs no new credentials:
 
-- The GCS service account `brightcert-sa@gen-lang-client-0678657493.iam.gserviceaccount.com`
-  holds `siteFullUser` on the property.
-- The Search Console API is enabled on project `644516388095`.
+- The service account that holds `siteFullUser` on the Search Console
+  property is the one named in `GCS_CLIENT_EMAIL`; its key is in
+  `GCS_PRIVATE_KEY`. See `.env.example` for the full set.
+- The Search Console API is enabled on the same Google Cloud project that
+  backs `GCS_PROJECT_ID`.
 - Mint a JWT with scope `https://www.googleapis.com/auth/webmasters.readonly`
   against `oauth2.googleapis.com/token`, then POST to
   `searchconsole.googleapis.com/webmasters/v3/sites/{site}/searchAnalytics/query`.

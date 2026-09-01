@@ -83,3 +83,22 @@ next-env.d.ts
 *.aiff
 *.mp4
 *.mov
+
+# Google Cloud service-account key files. Nothing here expects one to exist:
+# credentials are supplied as environment variables (GCS_CLIENT_EMAIL,
+# GCS_PRIVATE_KEY — see .env.example), so a key file on disk is always
+# either a mistake or a temporary debugging artefact. The rules below exist
+# because the repository is PUBLIC, and a committed service-account key is
+# an immediate compromise plus a forced rotation, not an embarrassment.
+# This is the same failure shape as the /videos/ directory above: files that
+# were untracked but not ignored, one `git add .` from being committed.
+# Added 1 September 2026 after an audit found no key material committed
+# anywhere, but no rule preventing it either.
+*service-account*.json
+*service_account*.json
+gcp-*.json
+gcloud-*.json
+credentials.json
+client_secret*.json
+brightcert-sa*.json
+*-key.json
